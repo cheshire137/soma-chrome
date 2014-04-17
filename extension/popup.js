@@ -25,18 +25,36 @@ SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.play = function() {
     var station;
+    this.station_select.attr('disabled', 'disabled');
     station = this.station_select.val();
     console.debug('play button clicked, station', station);
-    this.pause_button.removeClass('hidden');
-    return this.play_button.addClass('hidden');
+    return SomaPlayerUtil.send_message({
+      action: 'play',
+      station: station
+    }, (function(_this) {
+      return function() {
+        console.debug('finishing telling station to play');
+        _this.pause_button.removeClass('hidden');
+        return _this.play_button.addClass('hidden');
+      };
+    })(this));
   };
 
   SomaPlayerPopup.prototype.pause = function() {
     var station;
     station = this.station_select.val();
     console.debug('pause button clicked, station', station);
-    this.pause_button.addClass('hidden');
-    return this.play_button.removeClass('hidden');
+    return SomaPlayerUtil.send_message({
+      action: 'pause',
+      station: station
+    }, (function(_this) {
+      return function() {
+        console.debug('finished telling station to pause');
+        _this.pause_button.addClass('hidden');
+        _this.play_button.removeClass('hidden');
+        return _this.station_select.removeAttr('disabled');
+      };
+    })(this));
   };
 
   SomaPlayerPopup.prototype.station_changed = function() {
