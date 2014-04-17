@@ -7,20 +7,33 @@ class SomaPlayerBackground
 
   play: ->
     console.debug 'playing station', @station
-    $('body').append $("<audio src='#{@stream_url}' autoplay='true'></audio>")
+    $('body').append $("<audio src='#{@stream_url}' autoplay='true' data-station='#{@station}'></audio>")
 
   pause: ->
     console.debug 'pausing station', @station
     $('audio').remove()
 
+  @get_current_station: ->
+    audio = $('audio')
+    if audio.length < 1
+      ''
+    else
+      audio.data('station')
+
 SomaPlayerUtil.receive_message (request, sender, send_response) ->
   console.debug 'received message:', request
-  bg = new SomaPlayerBackground(request.station)
   if request.action == 'play'
+    bg = new SomaPlayerBackground(request.station)
     bg.play()
-    send_response({})
+    send_response()
     return true
   else if request.action == 'pause'
+    bg = new SomaPlayerBackground(request.station)
     bg.pause()
-    send_response({})
+    send_response()
+    return true
+  else if request.action == 'info'
+    station = SomaPlayerBackground.get_current_station()
+    console.debug 'current station:', station
+    send_response(station)
     return true

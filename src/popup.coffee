@@ -10,6 +10,20 @@ class SomaPlayerPopup
       @play()
     @pause_button.click =>
       @pause()
+    @load_current_station()
+
+  load_current_station: ->
+    @station_select.attr('disabled', 'disabled')
+    SomaPlayerUtil.send_message {action: 'info'}, (station) =>
+      console.debug 'finished info request, station', station
+      @station_select.val(station)
+      @station_select.removeAttr('disabled')
+      @station_select.trigger('change')
+      @station_is_playing() unless station == ''
+
+  station_is_playing: ->
+    @pause_button.removeClass('hidden')
+    @play_button.addClass('hidden')
 
   play: ->
     @station_select.attr('disabled', 'disabled')
@@ -17,8 +31,7 @@ class SomaPlayerPopup
     console.debug 'play button clicked, station', station
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
       console.debug 'finishing telling station to play'
-      @pause_button.removeClass('hidden')
-      @play_button.addClass('hidden')
+      @station_is_playing()
 
   pause: ->
     station = @station_select.val()

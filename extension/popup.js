@@ -21,7 +21,30 @@ SomaPlayerPopup = (function() {
         return _this.pause();
       };
     })(this));
+    this.load_current_station();
   }
+
+  SomaPlayerPopup.prototype.load_current_station = function() {
+    this.station_select.attr('disabled', 'disabled');
+    return SomaPlayerUtil.send_message({
+      action: 'info'
+    }, (function(_this) {
+      return function(station) {
+        console.debug('finished info request, station', station);
+        _this.station_select.val(station);
+        _this.station_select.removeAttr('disabled');
+        _this.station_select.trigger('change');
+        if (station !== '') {
+          return _this.station_is_playing();
+        }
+      };
+    })(this));
+  };
+
+  SomaPlayerPopup.prototype.station_is_playing = function() {
+    this.pause_button.removeClass('hidden');
+    return this.play_button.addClass('hidden');
+  };
 
   SomaPlayerPopup.prototype.play = function() {
     var station;
@@ -34,8 +57,7 @@ SomaPlayerPopup = (function() {
     }, (function(_this) {
       return function() {
         console.debug('finishing telling station to play');
-        _this.pause_button.removeClass('hidden');
-        return _this.play_button.addClass('hidden');
+        return _this.station_is_playing();
       };
     })(this));
   };
