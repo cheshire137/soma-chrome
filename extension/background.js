@@ -3,14 +3,18 @@ var SomaPlayerBackground;
 SomaPlayerBackground = (function() {
   function SomaPlayerBackground(station) {
     this.station = station;
+    this.playlist_url = "http://somafm.com/" + this.station + ".pls";
+    this.stream_url = "http://ice.somafm.com/" + this.station;
   }
 
   SomaPlayerBackground.prototype.play = function() {
-    return console.debug('playing station', this.station);
+    console.debug('playing station', this.station);
+    return $('body').append($("<audio src='" + this.stream_url + "' autoplay='true'></audio>"));
   };
 
   SomaPlayerBackground.prototype.pause = function() {
-    return console.debug('pausing station', this.station);
+    console.debug('pausing station', this.station);
+    return $('audio').remove();
   };
 
   return SomaPlayerBackground;
