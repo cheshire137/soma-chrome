@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "SomaPlayer",
+  "description": "Listen to SomaFM stations and scrobble to your Last.fm account.",
+  "version": "0.0.0.1",
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_page": "options.html",
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+  "browser_action": {
+    "default_icon": "icon48.png",
+    "default_popup": "popup.html",
+    "default_title": "Play/Pause SomaFM and scrobbling"
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

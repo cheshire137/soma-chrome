@@ -27,28 +27,28 @@ var dest_path = './extension';
 
 // Compile LESS into CSS
 gulp.task('less', function() {
-  return gulp.src(src_path + '/*.css.less').
+  return gulp.src(src_path + '/*.less').
               pipe(less().on('error', on_error)).
               pipe(gulp.dest(dest_path));
 });
 
 // Compile CoffeeScript into JavaScript
 gulp.task('coffee', function() {
-  return gulp.src(src_path + '/*.js.coffee').
+  return gulp.src(src_path + '/*.coffee').
               pipe(coffee({bare: true}).on('error', on_error)).
               pipe(gulp.dest(dest_path));
 });
 
 // Compile Haml into HTML
 gulp.task('haml', function() {
-  return gulp.src(src_path + '/*.html.haml', {read: false}).
+  return gulp.src(src_path + '/*.haml', {read: false}).
               pipe(haml().on('error', on_error)).
               pipe(gulp.dest(dest_path));
 });
 
 // Watch for changes in Haml files
 gulp.task('haml-watch', function() {
-  return gulp.src(src_path + '/*.html.haml', {read: false}).
+  return gulp.src(src_path + '/*.haml', {read: false}).
               pipe(watch()).
               pipe(haml().on('error', on_error)).
               pipe(gulp.dest(dest_path));
@@ -56,8 +56,8 @@ gulp.task('haml-watch', function() {
 
 // Watch files for changes
 gulp.task('watch', function() {
-  gulp.watch([src_path + '/*.css.less'], ['less']);
-  gulp.watch([src_path + '/*.js.coffee'], ['coffee']);
+  gulp.watch([src_path + '/*.less'], ['less']);
+  gulp.watch([src_path + '/*.coffee'], ['coffee']);
 });
 
 // Default task
