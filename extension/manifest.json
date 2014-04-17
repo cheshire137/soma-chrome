@@ -19,5 +19,10 @@
   "icons": {
     "48": "icon48.png",
     "128": "icon128.png"
-  }
+  },
+  "web_accessible_resources": ["fonts/fontawesome-webfont.eot",
+                               "fonts/fontawesome-webfont.svg",
+                               "fonts/fontawesome-webfont.ttf",
+                               "fonts/fontawesome-webfont.woff",
+                               "fonts/FontAwesome.otf"]
 }

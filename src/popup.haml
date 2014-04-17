@@ -2,11 +2,15 @@
 %html
   %head
     %title SomaPlayer Popup
+    %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'reset.css'}
+    %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'font-awesome.min.css'}
     %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'style.css'}
   %body.popup
-    %form
+    %h1 SomaPlayer
+    %form#player-form
       %label{for: 'station'} Station:
       %select#station{name: 'station'}
+        %option{value: ''} Choose a station
         %option{value: 'bagel'} BAGeL Radio
         %option{value: 'beatblender'} Beat Blender
         %option{value: 'bootliquor'} Boot Liquor
@@ -33,5 +37,11 @@
         %option{value: 'thetrip'} The Trip
         %option{value: 'u80s'} Underground 80s
         %option{value: 'xmasinfrisko'} Xmas in Frisko
+      %button#play{type: 'submit', name: 'action', value: 'play'}
+        %i.fa.fa-play
+        Play
+      %button#pause{type: 'submit', name: 'action', value: 'pause'}
+        %i.fa.fa-pause
+        Pause
     %script{src: 'jquery-2.1.0.min.js'}
     %script{src: 'popup.js'}
