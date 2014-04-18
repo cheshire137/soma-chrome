@@ -4,7 +4,7 @@
   "description": "Listen to SomaFM stations and scrobble to your Last.fm account.",
   "version": "0.0.0.1",
   "permissions": [
-    "storage"
+    "storage", "notifications"
   ],
   "background": {
     "scripts": ["socket.io.min.js", "jquery-2.1.0.min.js", "util.js",
@@ -25,5 +25,6 @@
                                "fonts/fontawesome-webfont.svg",
                                "fonts/fontawesome-webfont.ttf",
                                "fonts/fontawesome-webfont.woff",
-                               "fonts/FontAwesome.otf"]
+                               "fonts/FontAwesome.otf",
+                               "icon48.png"]
 }

@@ -27,6 +27,12 @@ body.popup {
   min-width: 19em;
   text-align: center;
 }
+body.popup #currently-playing {
+  margin-bottom: 10px;
+}
+body.popup #title {
+  font-weight: 700;
+}
 button {
   color: #333;
   background-color: #fff;

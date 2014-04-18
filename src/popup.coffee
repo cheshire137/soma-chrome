@@ -4,22 +4,29 @@ class SomaPlayerPopup
     @station_select = $('#station')
     @play_button = $('#play')
     @pause_button = $('#pause')
+    @current_info_el = $('#currently-playing')
+    @title_el = $('span#title')
+    @artist_el = $('span#artist')
     @station_select.change =>
       @station_changed()
     @play_button.click =>
       @play()
     @pause_button.click =>
       @pause()
-    @load_current_station()
+    @load_current_info()
 
-  load_current_station: ->
+  load_current_info: ->
     @station_select.attr('disabled', 'disabled')
-    SomaPlayerUtil.send_message {action: 'info'}, (station) =>
-      console.debug 'finished info request, station', station
-      @station_select.val(station)
+    SomaPlayerUtil.send_message {action: 'info'}, (info) =>
+      console.debug 'finished info request, info', info
+      @station_select.val(info.station)
       @station_select.removeAttr('disabled')
       @station_select.trigger('change')
-      @station_is_playing() unless station == ''
+      @station_is_playing() unless info.station == ''
+      if info.artist || info.title
+        @title_el.text info.title
+        @artist_el.text info.artist
+        @current_info_el.removeClass('hidden')
 
   station_is_playing: ->
     @pause_button.removeClass('hidden')
@@ -31,6 +38,7 @@ class SomaPlayerPopup
     console.debug 'play button clicked, station', station
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
       console.debug 'finishing telling station to play'
+
       @station_is_playing()
 
   pause: ->

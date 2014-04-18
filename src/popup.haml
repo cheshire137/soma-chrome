@@ -7,6 +7,10 @@
     %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'style.css'}
   %body.popup
     %h1 SomaPlayer
+    #currently-playing.hidden
+      %span#title
+      by
+      %span#artist
     .form-group
       %label.sr-only{for: 'station'} Station:
       %select#station{name: 'station'}

@@ -6,6 +6,9 @@ SomaPlayerPopup = (function() {
     this.station_select = $('#station');
     this.play_button = $('#play');
     this.pause_button = $('#pause');
+    this.current_info_el = $('#currently-playing');
+    this.title_el = $('span#title');
+    this.artist_el = $('span#artist');
     this.station_select.change((function(_this) {
       return function() {
         return _this.station_changed();
@@ -21,21 +24,26 @@ SomaPlayerPopup = (function() {
         return _this.pause();
       };
     })(this));
-    this.load_current_station();
+    this.load_current_info();
   }
 
-  SomaPlayerPopup.prototype.load_current_station = function() {
+  SomaPlayerPopup.prototype.load_current_info = function() {
     this.station_select.attr('disabled', 'disabled');
     return SomaPlayerUtil.send_message({
       action: 'info'
     }, (function(_this) {
-      return function(station) {
-        console.debug('finished info request, station', station);
-        _this.station_select.val(station);
+      return function(info) {
+        console.debug('finished info request, info', info);
+        _this.station_select.val(info.station);
         _this.station_select.removeAttr('disabled');
         _this.station_select.trigger('change');
-        if (station !== '') {
-          return _this.station_is_playing();
+        if (info.station !== '') {
+          _this.station_is_playing();
+        }
+        if (info.artist || info.title) {
+          _this.title_el.text(info.title);
+          _this.artist_el.text(info.artist);
+          return _this.current_info_el.removeClass('hidden');
         }
       };
     })(this));
