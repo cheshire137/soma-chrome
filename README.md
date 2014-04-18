@@ -1,7 +1,8 @@
-soma-chrome
-===========
+# SomaPlayer for Chrome
 
-Chrome extension for playing and scrobbling stations from SomaFM.
+SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaFM](http://somafm.com).
+
+![Screenshot of extension popup](http://github.com/moneypenny/soma-chrome/raw/master/screenshot.png)
 
 ## How to Build
 
