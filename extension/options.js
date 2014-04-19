@@ -2,7 +2,6 @@ var SomaPlayerOptions;
 
 SomaPlayerOptions = (function() {
   function SomaPlayerOptions() {
-    this.config = SomaPlayerUtil.config();
     this.status_area = $('#status-message');
     this.lastfm_button = $('button#lastfm-auth');
     this.disable_scrobbling = $('#disable_scrobbling');
@@ -72,7 +71,7 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.init_authenticate_lastfm = function() {
-    return window.location.href = 'http://www.last.fm/api/auth/' + '?api_key=' + this.config.lastfm_api_key + '&cb=' + window.location.href;
+    return window.location.href = 'http://www.last.fm/api/auth/' + '?api_key=' + SomaPlayerConfig.lastfm_api_key + '&cb=' + window.location.href;
   };
 
   SomaPlayerOptions.prototype.authenticate_lastfm = function() {

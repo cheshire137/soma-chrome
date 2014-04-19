@@ -2,7 +2,6 @@ var SomaPlayerBackground;
 
 SomaPlayerBackground = (function() {
   function SomaPlayerBackground(station) {
-    this.config = SomaPlayerUtil.config();
     this.lastfm = SomaPlayerUtil.get_lastfm_connection();
     this.station = station;
     this.audio = $('audio');
@@ -19,7 +18,7 @@ SomaPlayerBackground = (function() {
     if (this.station) {
       this.playlist_url = "http://somafm.com/" + this.station + ".pls";
       this.stream_url = "http://ice.somafm.com/" + this.station;
-      this.socket = io.connect(this.config.scrobbler_api_url);
+      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
       this.subscribe();
       this.listen_for_track_changes();
     }
@@ -61,8 +60,8 @@ SomaPlayerBackground = (function() {
         if (opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling) {
           console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
           scrobble_data = {
-            artist: SomaPlayerUtil.scrobble_encode(track.artist),
-            track: SomaPlayerUtil.scrobble_encode(track.title),
+            artist: (track.artist || '').replace(/"/g, "'"),
+            track: (track.title || '').replace(/"/g, "'"),
             user: opts.lastfm_user,
             timestamp: Math.round((new Date()).getTime() / 1000)
           };
@@ -70,7 +69,15 @@ SomaPlayerBackground = (function() {
             key: opts.lastfm_session_key
           }, {
             success: function() {
-              $('iframe').contents().find('form').submit();
+              var e;
+              try {
+                $('iframe').contents().find('form').submit();
+              } catch (_error) {
+                e = _error;
+                if (e.name !== 'SecurityError') {
+                  throw e;
+                }
+              }
               return console.debug('scrobbled track');
             },
             error: function(data) {

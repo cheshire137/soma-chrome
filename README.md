@@ -12,6 +12,9 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 1. `npm install` to install necessary Gulp modules
 1. `bundle` to install necessary gems
 1. `gulp` to watch CoffeeScript, LESS, and Haml files for changes
+1. `cp extension/config.js.example extension/config.js`
+1. Customize extension/config.js by filling in [your Last.fm API key and secret](http://www.last.fm/api/accounts).
+1. In Chrome at `chrome://extensions/`, click 'Load unpacked extension...' and choose the extension directory.
 
 ## To Do
 

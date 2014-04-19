@@ -1,6 +1,5 @@
 class SomaPlayerOptions
   constructor: ->
-    @config = SomaPlayerUtil.config()
     @status_area = $('#status-message')
     @lastfm_button = $('button#lastfm-auth')
     @disable_scrobbling = $('#disable_scrobbling')
@@ -43,7 +42,7 @@ class SomaPlayerOptions
 
   init_authenticate_lastfm: ->
     window.location.href = 'http://www.last.fm/api/auth/' +
-                           '?api_key=' + @config.lastfm_api_key +
+                           '?api_key=' + SomaPlayerConfig.lastfm_api_key +
                            '&cb=' + window.location.href
 
   authenticate_lastfm: ->

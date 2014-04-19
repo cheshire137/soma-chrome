@@ -1,6 +1,5 @@
 class SomaPlayerBackground
   constructor: (station) ->
-    @config = SomaPlayerUtil.config()
     @lastfm = SomaPlayerUtil.get_lastfm_connection()
     @station = station
     @audio = $('audio')
@@ -16,7 +15,7 @@ class SomaPlayerBackground
       @playlist_url = "http://somafm.com/#{@station}.pls"
       # TODO: download playlist and read stream URL from it
       @stream_url = "http://ice.somafm.com/#{@station}"
-      @socket = io.connect(@config.scrobbler_api_url)
+      @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
       @subscribe()
       @listen_for_track_changes()
 
@@ -43,13 +42,20 @@ class SomaPlayerBackground
       if opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling
         console.debug 'scrobbling track for Last.fm user', opts.lastfm_user
         scrobble_data =
-          artist: SomaPlayerUtil.scrobble_encode(track.artist)
-          track: SomaPlayerUtil.scrobble_encode(track.title)
+          artist: (track.artist || '').replace(/"/g, "'")
+          track: (track.title || '').replace(/"/g, "'")
           user: opts.lastfm_user
           timestamp: Math.round((new Date()).getTime() / 1000)
         @lastfm.track.scrobble scrobble_data, {key: opts.lastfm_session_key},
           success: ->
-            $('iframe').contents().find('form').submit()
+            try
+              $('iframe').contents().find('form').submit()
+            catch e
+              # Mysterious second submit after scrobble form has already POSTed
+              # to Last.fm and the iframe has its origin changed to
+              # ws.audioscrobbler.com, which can't be touched by the extension.
+              unless e.name == 'SecurityError'
+                throw e
             console.debug 'scrobbled track'
           error: (data) ->
             console.error 'failed to scrobble track; response:', data
