@@ -14,6 +14,7 @@ class SomaPlayerPopup
     @pause_button.click =>
       @pause()
     @load_current_info()
+    @handle_links()
 
   load_current_info: ->
     @station_select.attr('disabled', 'disabled')
@@ -59,6 +60,17 @@ class SomaPlayerPopup
       @play_button.attr('disabled', 'disabled')
     else
       @play_button.removeAttr('disabled')
+
+  handle_links: ->
+    $('a').click (e) ->
+      e.preventDefault()
+      link = $(this)
+      if link.attr('href') == '#options'
+        url = chrome.extension.getURL('options.html')
+      else
+        url = link.attr('href')
+      chrome.tabs.create({url: url})
+      false
 
 document.addEventListener 'DOMContentLoaded', ->
   new SomaPlayerPopup()

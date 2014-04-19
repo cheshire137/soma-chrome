@@ -48,6 +48,9 @@ body.popup {
 body.popup #currently-playing {
   margin-bottom: 10px;
 }
+body.popup footer {
+  margin-top: 0;
+}
 body.popup #title {
   font-weight: 700;
 }
@@ -201,4 +204,14 @@ select[disabled] {
 }
 strong {
   font-weight: 700;
+}
+ul.list-inline {
+  padding-left: 0;
+  list-style: none;
+  margin-left: -5px;
+}
+ul.list-inline li {
+  display: inline-block;
+  padding-left: 5px;
+  padding-right: 5px;
 }

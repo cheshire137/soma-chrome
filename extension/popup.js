@@ -25,6 +25,7 @@ SomaPlayerPopup = (function() {
       };
     })(this));
     this.load_current_info();
+    this.handle_links();
   }
 
   SomaPlayerPopup.prototype.load_current_info = function() {
@@ -99,6 +100,23 @@ SomaPlayerPopup = (function() {
     } else {
       return this.play_button.removeAttr('disabled');
     }
+  };
+
+  SomaPlayerPopup.prototype.handle_links = function() {
+    return $('a').click(function(e) {
+      var link, url;
+      e.preventDefault();
+      link = $(this);
+      if (link.attr('href') === '#options') {
+        url = chrome.extension.getURL('options.html');
+      } else {
+        url = link.attr('href');
+      }
+      chrome.tabs.create({
+        url: url
+      });
+      return false;
+    });
   };
 
   return SomaPlayerPopup;

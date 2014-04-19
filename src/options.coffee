@@ -1,13 +1,12 @@
 class SomaPlayerOptions
   constructor: ->
+    @config = SomaPlayerUtil.config()
     @status_area = $('#status-message')
     @lastfm_button = $('button#lastfm-auth')
     @disable_scrobbling = $('#disable_scrobbling')
     @enable_scrobbling = $('#enable_scrobbling')
     @lastfm_connected_message = $('#lastfm-is-authenticated')
     @lastfm_user = $('#lastfm-user')
-    @lastfm_api_key = 'cbf33bb9eef14a25b0e08cd47530706c'
-    @lastfm_api_secret = '797d623a73501d358f6ca0e5f8fd3cf0'
     @lastfm_token = SomaPlayerUtil.get_url_param('token')
     @options = {scrobbling: false}
     console.debug 'Last.fm token:', @lastfm_token
@@ -44,17 +43,13 @@ class SomaPlayerOptions
 
   init_authenticate_lastfm: ->
     window.location.href = 'http://www.last.fm/api/auth/' +
-                           '?api_key=' + @lastfm_api_key +
+                           '?api_key=' + @config.lastfm_api_key +
                            '&cb=' + window.location.href
 
   authenticate_lastfm: ->
     return if @lastfm_token == ''
     console.debug 'authenticating with Last.fm token...'
-    lastfm = new LastFM
-      apiKey: @lastfm_api_key
-      apiSecret: @lastfm_api_secret
-      apiUrl: 'https://ws.audioscrobbler.com/2.0/'
-      cache: new LastFMCache()
+    lastfm = SomaPlayerUtil.get_lastfm_connection()
     lastfm.auth.getSession {token: @lastfm_token},
       success: (data) =>
         @options.lastfm_session_key = data.session.key

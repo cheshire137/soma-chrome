@@ -2,7 +2,8 @@ var SomaPlayerBackground;
 
 SomaPlayerBackground = (function() {
   function SomaPlayerBackground(station) {
-    this.scrobbler_api_url = 'http://api.somascrobbler.com';
+    this.config = SomaPlayerUtil.config();
+    this.lastfm = SomaPlayerUtil.get_lastfm_connection();
     this.station = station;
     this.audio = $('audio');
     this.title_el = $('div#title');
@@ -18,7 +19,7 @@ SomaPlayerBackground = (function() {
     if (this.station) {
       this.playlist_url = "http://somafm.com/" + this.station + ".pls";
       this.stream_url = "http://ice.somafm.com/" + this.station;
-      this.socket = io.connect(this.scrobbler_api_url);
+      this.socket = io.connect(this.config.scrobbler_api_url);
       this.subscribe();
       this.listen_for_track_changes();
     }
@@ -39,18 +40,65 @@ SomaPlayerBackground = (function() {
     })(this));
   };
 
+  SomaPlayerBackground.prototype.unsubscribe = function() {
+    console.debug('unsubscribing from', this.station, '...');
+    return this.socket.emit('unsubscribe', this.station, (function(_this) {
+      return function(response) {
+        if (response.unsubscribed) {
+          return console.debug('unsubscribed from', _this.station);
+        } else {
+          return console.error('failed to unsubscribe from', _this.station);
+        }
+      };
+    })(this));
+  };
+
+  SomaPlayerBackground.prototype.scrobble_track = function(track) {
+    return chrome.storage.sync.get('somaplayer_options', (function(_this) {
+      return function(opts) {
+        var scrobble_data;
+        opts = opts.somaplayer_options || {};
+        if (opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling) {
+          console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
+          scrobble_data = {
+            artist: SomaPlayerUtil.scrobble_encode(track.artist),
+            track: SomaPlayerUtil.scrobble_encode(track.title),
+            user: opts.lastfm_user,
+            timestamp: Math.round((new Date()).getTime() / 1000)
+          };
+          return _this.lastfm.track.scrobble(scrobble_data, {
+            key: opts.lastfm_session_key
+          }, {
+            success: function() {
+              $('iframe').contents().find('form').submit();
+              return console.debug('scrobbled track');
+            },
+            error: function(data) {
+              return console.error('failed to scrobble track; response:', data);
+            }
+          });
+        }
+      };
+    })(this));
+  };
+
+  SomaPlayerBackground.prototype.notify_of_track = function(track) {
+    var notice;
+    notice = webkitNotifications.createNotification('icon48.png', track.title, track.artist);
+    notice.show();
+    return setTimeout((function() {
+      return notice.cancel();
+    }), 3000);
+  };
+
   SomaPlayerBackground.prototype.listen_for_track_changes = function() {
     return this.socket.on('track', (function(_this) {
       return function(track) {
-        var notice;
         console.debug('new track:', track);
         _this.title_el.text(track.title);
         _this.artist_el.text(track.artist);
-        notice = webkitNotifications.createNotification('icon48.png', track.title, track.artist);
-        notice.show();
-        return setTimeout((function() {
-          return notice.cancel();
-        }), 3000);
+        _this.notify_of_track(track);
+        return _this.scrobble_track(track);
       };
     })(this));
   };
@@ -62,6 +110,7 @@ SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.pause = function() {
     console.debug('pausing station', this.station);
+    this.unsubscribe();
     this.audio.remove();
     this.title_el.text('');
     return this.artist_el.text('');

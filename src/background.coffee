@@ -1,6 +1,7 @@
 class SomaPlayerBackground
   constructor: (station) ->
-    @scrobbler_api_url = 'http://api.somascrobbler.com'
+    @config = SomaPlayerUtil.config()
+    @lastfm = SomaPlayerUtil.get_lastfm_connection()
     @station = station
     @audio = $('audio')
     @title_el = $('div#title')
@@ -15,7 +16,7 @@ class SomaPlayerBackground
       @playlist_url = "http://somafm.com/#{@station}.pls"
       # TODO: download playlist and read stream URL from it
       @stream_url = "http://ice.somafm.com/#{@station}"
-      @socket = io.connect(@scrobbler_api_url)
+      @socket = io.connect(@config.scrobbler_api_url)
       @subscribe()
       @listen_for_track_changes()
 
@@ -28,15 +29,44 @@ class SomaPlayerBackground
         else
           console.error 'failed to subscribe to', @station
 
+  unsubscribe: ->
+    console.debug 'unsubscribing from', @station, '...'
+    @socket.emit 'unsubscribe', @station, (response) =>
+      if response.unsubscribed
+        console.debug 'unsubscribed from', @station
+      else
+        console.error 'failed to unsubscribe from', @station
+
+  scrobble_track: (track) ->
+    chrome.storage.sync.get 'somaplayer_options', (opts) =>
+      opts = opts.somaplayer_options || {}
+      if opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling
+        console.debug 'scrobbling track for Last.fm user', opts.lastfm_user
+        scrobble_data =
+          artist: SomaPlayerUtil.scrobble_encode(track.artist)
+          track: SomaPlayerUtil.scrobble_encode(track.title)
+          user: opts.lastfm_user
+          timestamp: Math.round((new Date()).getTime() / 1000)
+        @lastfm.track.scrobble scrobble_data, {key: opts.lastfm_session_key},
+          success: ->
+            $('iframe').contents().find('form').submit()
+            console.debug 'scrobbled track'
+          error: (data) ->
+            console.error 'failed to scrobble track; response:', data
+
+  notify_of_track: (track) ->
+    notice = webkitNotifications.createNotification('icon48.png', track.title,
+                                                    track.artist)
+    notice.show()
+    setTimeout (-> notice.cancel()), 3000
+
   listen_for_track_changes: ->
     @socket.on 'track', (track) =>
       console.debug 'new track:', track
       @title_el.text track.title
       @artist_el.text track.artist
-      notice = webkitNotifications.createNotification('icon48.png', track.title,
-                                                      track.artist)
-      notice.show()
-      setTimeout (-> notice.cancel()), 3000
+      @notify_of_track(track)
+      @scrobble_track(track)
 
   play: ->
     console.debug 'playing station', @station
@@ -44,6 +74,7 @@ class SomaPlayerBackground
 
   pause: ->
     console.debug 'pausing station', @station
+    @unsubscribe()
     @audio.remove()
     @title_el.text ''
     @artist_el.text ''

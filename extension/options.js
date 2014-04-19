@@ -2,14 +2,13 @@ var SomaPlayerOptions;
 
 SomaPlayerOptions = (function() {
   function SomaPlayerOptions() {
+    this.config = SomaPlayerUtil.config();
     this.status_area = $('#status-message');
     this.lastfm_button = $('button#lastfm-auth');
     this.disable_scrobbling = $('#disable_scrobbling');
     this.enable_scrobbling = $('#enable_scrobbling');
     this.lastfm_connected_message = $('#lastfm-is-authenticated');
     this.lastfm_user = $('#lastfm-user');
-    this.lastfm_api_key = 'cbf33bb9eef14a25b0e08cd47530706c';
-    this.lastfm_api_secret = '797d623a73501d358f6ca0e5f8fd3cf0';
     this.lastfm_token = SomaPlayerUtil.get_url_param('token');
     this.options = {
       scrobbling: false
@@ -73,7 +72,7 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.init_authenticate_lastfm = function() {
-    return window.location.href = 'http://www.last.fm/api/auth/' + '?api_key=' + this.lastfm_api_key + '&cb=' + window.location.href;
+    return window.location.href = 'http://www.last.fm/api/auth/' + '?api_key=' + this.config.lastfm_api_key + '&cb=' + window.location.href;
   };
 
   SomaPlayerOptions.prototype.authenticate_lastfm = function() {
@@ -82,12 +81,7 @@ SomaPlayerOptions = (function() {
       return;
     }
     console.debug('authenticating with Last.fm token...');
-    lastfm = new LastFM({
-      apiKey: this.lastfm_api_key,
-      apiSecret: this.lastfm_api_secret,
-      apiUrl: 'https://ws.audioscrobbler.com/2.0/',
-      cache: new LastFMCache()
-    });
+    lastfm = SomaPlayerUtil.get_lastfm_connection();
     return lastfm.auth.getSession({
       token: this.lastfm_token
     }, {
