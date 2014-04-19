@@ -1,3 +1,13 @@
+.alert {
+  color: #468847;
+  background-color: #dff0d8;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  margin: 14px 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+}
 body {
   background-color: #f8f8f8;
   color: #373737;
@@ -22,6 +32,14 @@ body.options a:hover,
 body.options a:focus {
   color: #EE662B;
   text-decoration: none;
+}
+body.options .container {
+  margin: 2em 20%;
+  position: relative;
+}
+body.options h1 {
+  font-size: 32px;
+  font-weight: 300;
 }
 body.popup {
   min-width: 19em;
@@ -70,10 +88,20 @@ button[disabled] {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+fieldset legend {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #999;
+  font-style: italic;
+}
 footer {
   margin-top: 40px;
-  padding-top: 40px;
-  border-top: 1px solid #ddd;
   font-size: 12px;
 }
 footer a,
@@ -97,12 +125,36 @@ h1 {
   margin-top: 0;
   margin-bottom: 10px;
 }
+header {
+  margin-bottom: 40px;
+}
+header img {
+  display: block;
+}
+header img.pull-left {
+  margin-right: 20px;
+}
 .hidden {
   display: none;
+}
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #fff;
+  margin: 10px 0;
 }
 label {
   display: inline-block;
   vertical-align: middle;
+}
+p {
+  margin: 0 0 14px 0;
+}
+p.help-block {
+  font-size: 14px;
+}
+.pull-left {
+  float: left;
 }
 select {
   font-family: inherit;
@@ -136,4 +188,7 @@ select[disabled] {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+strong {
+  font-weight: 700;
 }

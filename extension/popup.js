@@ -82,7 +82,10 @@ SomaPlayerPopup = (function() {
         console.debug('finished telling station to pause');
         _this.pause_button.addClass('hidden');
         _this.play_button.removeClass('hidden');
-        return _this.station_select.removeAttr('disabled');
+        _this.station_select.removeAttr('disabled');
+        _this.current_info_el.addClass('hidden');
+        _this.title_el.text('');
+        return _this.artist_el.text('');
       };
     })(this));
   };

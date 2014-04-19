@@ -6,23 +6,42 @@
     <link href='style.css' media='screen' rel='stylesheet' type='text/css'>
   </head>
   <body class='options'>
-    <h1>SomaPlayer Options</h1>
-    <section>
-      <h2>Last.fm Authentication</h2>
-      <p>
-        <button id='lastfm-auth'>
-          Authenticate with Last.fm
-        </button>
-      </p>
-    </section>
-    <footer>
-      &copy; 2014 Sarah Vessels
-      &middot;
-      <a href='https://github.com/moneypenny/soma-chrome'>
-        View source code
-      </a>
-    </footer>
+    <div class='container'>
+      <header>
+        <img alt='SomaPlayer logo' class='pull-left' height='48' src='icon48.png' width='48'>
+        <h1>SomaPlayer Options</h1>
+        <hr>
+      </header>
+      <p class='hidden alert' id='status-message'></p>
+      <fieldset>
+        <legend>Last.fm Authentication</legend>
+        <div class='hidden' id='lastfm-is-authenticated'>
+          <p class='help-block'>
+            Connected as
+            <strong id='lastfm-user'></strong>
+          </p>
+          <p class='help-block'>
+            You can re-authenticate if scrobbling isn't working:
+          </p>
+        </div>
+        <p>
+          <button class='hidden' id='lastfm-auth'>
+            Authenticate with Last.fm
+          </button>
+        </p>
+      </fieldset>
+      <hr>
+      <footer>
+        &copy; 2014 Sarah Vessels
+        &middot;
+        <a href='https://github.com/moneypenny/soma-chrome'>
+          View source code
+        </a>
+      </footer>
+    </div>
     <script src='jquery-2.1.0.min.js'></script>
+    <script src='lastfm.min.js'></script>
+    <script src='util.js'></script>
     <script src='options.js'></script>
   </body>
 </html>

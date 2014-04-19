@@ -12,3 +12,12 @@ class SomaPlayerUtil
     console.log 'setting up message receiver'
     runtime_or_extension = @get_chrome_runtime_or_extension()
     chrome[runtime_or_extension].onMessage.addListener(handler)
+
+  @get_url_param: (name) ->
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]")
+    regex = new RegExp("[\\?&]" + name + "=([^&#]*)")
+    results = regex.exec(location.search)
+    if results == null
+      ""
+    else
+      decodeURIComponent(results[1].replace(/\+/g, " "))

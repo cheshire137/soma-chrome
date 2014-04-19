@@ -38,7 +38,6 @@ class SomaPlayerPopup
     console.debug 'play button clicked, station', station
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
       console.debug 'finishing telling station to play'
-
       @station_is_playing()
 
   pause: ->
@@ -49,6 +48,9 @@ class SomaPlayerPopup
       @pause_button.addClass('hidden')
       @play_button.removeClass('hidden')
       @station_select.removeAttr('disabled')
+      @current_info_el.addClass 'hidden'
+      @title_el.text ''
+      @artist_el.text ''
 
   station_changed: ->
     station = @station_select.val()

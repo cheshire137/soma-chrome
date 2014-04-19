@@ -24,6 +24,18 @@ SomaPlayerUtil = (function() {
     return chrome[runtime_or_extension].onMessage.addListener(handler);
   };
 
+  SomaPlayerUtil.get_url_param = function(name) {
+    var regex, results;
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+    results = regex.exec(location.search);
+    if (results === null) {
+      return "";
+    } else {
+      return decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+  };
+
   return SomaPlayerUtil;
 
 })();
