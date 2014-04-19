@@ -20,3 +20,10 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 1. Scrobble to Last.fm
 1. Add option to disable notifications of new tracks.
 1. Some magic to get Mac media keys to work?
+
+## Thanks
+
+- [SomaFM](http://somafm.com/)
+- [SomaScrobbler API](http://api.somascrobbler.com/)
+- [Last.fm Web Services](http://www.last.fm/api)
+- [example-lastfm-api](https://github.com/soundsuggest/example-lastfm-api)
