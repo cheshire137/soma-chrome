@@ -4,16 +4,25 @@ SomaPlayerOptions = (function() {
   function SomaPlayerOptions() {
     this.status_area = $('#status-message');
     this.lastfm_button = $('button#lastfm-auth');
+    this.disable_scrobbling = $('#disable_scrobbling');
+    this.enable_scrobbling = $('#enable_scrobbling');
     this.lastfm_connected_message = $('#lastfm-is-authenticated');
     this.lastfm_user = $('#lastfm-user');
     this.lastfm_api_key = 'cbf33bb9eef14a25b0e08cd47530706c';
     this.lastfm_api_secret = '797d623a73501d358f6ca0e5f8fd3cf0';
     this.lastfm_token = SomaPlayerUtil.get_url_param('token');
-    this.options = {};
+    this.options = {
+      scrobbling: false
+    };
     console.debug('Last.fm token:', this.lastfm_token);
     this.lastfm_button.click((function(_this) {
       return function() {
         return _this.init_authenticate_lastfm();
+      };
+    })(this));
+    $('input[name="scrobbling"]').change((function(_this) {
+      return function() {
+        return _this.save_options();
       };
     })(this));
     this.restore_options();
@@ -27,9 +36,16 @@ SomaPlayerOptions = (function() {
         opts = opts.somaplayer_options || {};
         if (opts.lastfm_session_key) {
           _this.lastfm_connected_message.removeClass('hidden');
+          _this.enable_scrobbling.removeAttr('disabled');
+          _this.options.lastfm_session_key = opts.lastfm_session_key;
         }
         if (opts.lastfm_user) {
           _this.lastfm_user.text(opts.lastfm_user);
+          _this.options.lastfm_user = opts.lastfm_user;
+        }
+        if (opts.scrobbling) {
+          _this.enable_scrobbling.attr('checked', 'checked');
+          _this.options.scrobbling = true;
         }
         for (key in opts) {
           value = opts[key];
@@ -37,6 +53,21 @@ SomaPlayerOptions = (function() {
         }
         console.log('SomaPlayer options:', _this.options);
         return _this.lastfm_button.removeClass('hidden');
+      };
+    })(this));
+  };
+
+  SomaPlayerOptions.prototype.save_options = function() {
+    this.options.scrobbling = $('input[name="scrobbling"]:checked').val() === 'enabled';
+    return chrome.storage.sync.set({
+      'somaplayer_options': this.options
+    }, (function(_this) {
+      return function() {
+        return _this.status_area.text('Saved your options!').fadeIn(function() {
+          return setTimeout((function() {
+            return _this.status_area.fadeOut();
+          }), 2000);
+        });
       };
     })(this));
   };
@@ -73,7 +104,8 @@ SomaPlayerOptions = (function() {
               }), 2000);
             });
             _this.lastfm_user.text(_this.options.lastfm_user);
-            return _this.lastfm_connected_message.removeClass('hidden');
+            _this.lastfm_connected_message.removeClass('hidden');
+            return _this.enable_scrobbling.removeAttr('disabled');
           });
         };
       })(this),

@@ -23,6 +23,18 @@
           %button#lastfm-auth.hidden
             Authenticate with Last.fm
       %hr
+      %fieldset
+        %legend Track Scrobbling
+        .controls
+          %label{for: 'enable_scrobbling'}
+            %input#enable_scrobbling{type: 'radio', name: 'scrobbling', value: 'enabled', disabled: 'disabled'}
+            Enable scrobbling
+          %label{for: 'disable_scrobbling'}
+            %input#disable_scrobbling{type: 'radio', name: 'scrobbling', value: 'disabled', checked: 'checked'}
+            Disable scrobbling
+        %p.help-block
+          Requires Last.fm authentication.
+      %hr
       %footer
         &copy; 2014 Sarah Vessels
         &middot;

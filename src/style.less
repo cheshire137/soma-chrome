@@ -95,6 +95,10 @@ button {
   }
 }
 
+.controls {
+  margin-bottom: 14px;
+}
+
 fieldset {
   border: none;
   padding: 0;
@@ -163,6 +167,15 @@ hr {
 label {
   display: inline-block;
   vertical-align: middle;
+
+  input[type="radio"] {
+    vertical-align: middle;
+    margin-top: -1px;
+  }
+
+  & + label {
+    margin-left: 1.5em;
+  }
 }
 
 p {

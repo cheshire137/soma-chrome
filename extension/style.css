@@ -88,6 +88,9 @@ button[disabled] {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+.controls {
+  margin-bottom: 14px;
+}
 fieldset {
   border: none;
   padding: 0;
@@ -146,6 +149,13 @@ hr {
 label {
   display: inline-block;
   vertical-align: middle;
+}
+label input[type="radio"] {
+  vertical-align: middle;
+  margin-top: -1px;
+}
+label + label {
+  margin-left: 1.5em;
 }
 p {
   margin: 0 0 14px 0;
