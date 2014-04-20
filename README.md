@@ -12,6 +12,10 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 
 ![Screenshot of extension options page](http://github.com/moneypenny/soma-chrome/raw/master/screenshot2.png)
 
+*Desktop notification of track:*
+
+![Screenshot of extension track notification](http://github.com/moneypenny/soma-chrome/raw/master/screenshot3.png)
+
 ## How to Build
 
 1. `npm install -g gulp` to globally install Gulp
