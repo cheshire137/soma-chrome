@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
   "name": "SomaPlayer",
-  "description": "Listen to SomaFM stations and scrobble to your Last.fm account.",
+  "short_name": "SomaPlayer",
+  "description": "Listen to SomaFM web radio stations from your browser and scrobble tracks to your Last.fm account.",
   "version": "0.0.0.1",
   "permissions": [
     "storage", "notifications"
@@ -15,7 +16,7 @@
   "browser_action": {
     "default_icon": "icon48.png",
     "default_popup": "popup.html",
-    "default_title": "Play/Pause SomaFM and scrobbling"
+    "default_title": "Play/pause SomaFM station"
   },
   "icons": {
     "48": "icon48.png",
