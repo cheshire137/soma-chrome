@@ -1,7 +1,7 @@
 var SomaPlayerBackground;
 
 SomaPlayerBackground = (function() {
-  function SomaPlayerBackground(station) {
+  function SomaPlayerBackground(station, should_connect) {
     this.lastfm = SomaPlayerUtil.get_lastfm_connection();
     this.station = station;
     this.audio = $('audio');
@@ -18,9 +18,11 @@ SomaPlayerBackground = (function() {
     if (this.station) {
       this.playlist_url = "http://somafm.com/" + this.station + ".pls";
       this.stream_url = "http://ice.somafm.com/" + this.station;
-      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
-      this.subscribe();
-      this.listen_for_track_changes();
+      if (should_connect) {
+        this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
+        this.subscribe();
+        this.listen_for_track_changes();
+      }
     }
   }
 
@@ -52,45 +54,44 @@ SomaPlayerBackground = (function() {
     })(this));
   };
 
-  SomaPlayerBackground.prototype.scrobble_track = function(track) {
-    return chrome.storage.sync.get('somaplayer_options', (function(_this) {
-      return function(opts) {
-        var scrobble_data;
-        opts = opts.somaplayer_options || {};
-        if (opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling) {
-          console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
-          scrobble_data = {
-            artist: (track.artist || '').replace(/"/g, "'"),
-            track: (track.title || '').replace(/"/g, "'"),
-            user: opts.lastfm_user,
-            timestamp: Math.round((new Date()).getTime() / 1000)
-          };
-          return _this.lastfm.track.scrobble(scrobble_data, {
-            key: opts.lastfm_session_key
-          }, {
-            success: function() {
-              var e;
-              try {
-                $('iframe').contents().find('form').submit();
-                return console.debug('scrobbled track');
-              } catch (_error) {
-                e = _error;
-                if (e.name !== 'SecurityError') {
-                  throw e;
-                }
-              }
-            },
-            error: function(data) {
-              return console.error('failed to scrobble track; response:', data);
-            }
-          });
+  SomaPlayerBackground.prototype.scrobble_track = function(track, opts) {
+    var scrobble_data;
+    if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
+      return;
+    }
+    console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
+    scrobble_data = {
+      artist: (track.artist || '').replace(/"/g, "'"),
+      track: (track.title || '').replace(/"/g, "'"),
+      user: opts.lastfm_user,
+      timestamp: Math.round((new Date()).getTime() / 1000)
+    };
+    return this.lastfm.track.scrobble(scrobble_data, {
+      key: opts.lastfm_session_key
+    }, {
+      success: function() {
+        var e;
+        try {
+          $('iframe').contents().find('form').submit();
+          return console.debug('scrobbled track');
+        } catch (_error) {
+          e = _error;
+          if (e.name !== 'SecurityError') {
+            throw e;
+          }
         }
-      };
-    })(this));
+      },
+      error: function(data) {
+        return console.error('failed to scrobble track; response:', data);
+      }
+    });
   };
 
-  SomaPlayerBackground.prototype.notify_of_track = function(track) {
+  SomaPlayerBackground.prototype.notify_of_track = function(track, opts) {
     var notice;
+    if (opts.notifications === false) {
+      return;
+    }
     notice = webkitNotifications.createNotification('icon48.png', track.title, track.artist);
     notice.show();
     return setTimeout((function() {
@@ -104,8 +105,11 @@ SomaPlayerBackground = (function() {
         console.debug('new track:', track);
         _this.title_el.text(track.title);
         _this.artist_el.text(track.artist);
-        _this.notify_of_track(track);
-        return _this.scrobble_track(track);
+        return chrome.storage.sync.get('somaplayer_options', function(opts) {
+          opts = opts.somaplayer_options || {};
+          _this.notify_of_track(track, opts);
+          return _this.scrobble_track(track, opts);
+        });
       };
     })(this));
   };
@@ -139,12 +143,12 @@ SomaPlayerUtil.receive_message(function(request, sender, send_response) {
   var bg, info;
   console.debug('received message in background:', request);
   if (request.action === 'play') {
-    bg = new SomaPlayerBackground(request.station);
+    bg = new SomaPlayerBackground(request.station, true);
     bg.play();
     send_response();
     return true;
   } else if (request.action === 'pause') {
-    bg = new SomaPlayerBackground(request.station);
+    bg = new SomaPlayerBackground(request.station, false);
     bg.pause();
     send_response();
     return true;

@@ -17,10 +17,9 @@
         <legend>Last.fm Authentication</legend>
         <div class='hidden' id='lastfm-is-authenticated'>
           <p class='help-block'>
-            Connected as
+            Connected as:
             <strong id='lastfm-user'></strong>
-          </p>
-          <p class='help-block'>
+            <br>
             You can re-authenticate if scrobbling isn't working:
           </p>
         </div>
@@ -33,7 +32,7 @@
       <hr>
       <fieldset>
         <legend>Track Scrobbling</legend>
-        <div class='controls'>
+        <div class='controls hidden'>
           <label for='enable_scrobbling'>
             <input disabled='disabled' id='enable_scrobbling' name='scrobbling' type='radio' value='enabled'>
             Enable scrobbling
@@ -48,10 +47,33 @@
         </p>
       </fieldset>
       <hr>
-      <p class='help-block'>
-        This is an unofficial extension, unendorsed by SomaFM and Last.fm. I
-        just love both services and hope you find this useful. :)
-      </p>
+      <fieldset>
+        <legend>Desktop Notifications</legend>
+        <div class='controls hidden'>
+          <label for='enable_notifications'>
+            <input checked='checked' id='enable_notifications' name='notifications' type='radio' value='enabled'>
+            Enable desktop notifications
+          </label>
+          <label for='disable_notifications'>
+            <input id='disable_notifications' name='notifications' type='radio' value='disabled'>
+            Disable desktop notifications
+          </label>
+        </div>
+        <p class='help-block'>
+          Notifications when the track changes.
+        </p>
+      </fieldset>
+      <hr>
+      <fieldset>
+        <legend>About</legend>
+        <p class='help-block'>
+          This is an unofficial extension, endorsed by neither
+          <a href='http://somafm.com' target='_blank'>SomaFM</a>
+          nor
+          <a href='http://last.fm' target='_blank'>Last.fm.</a>
+          I just love both services and hope you find this useful. :)
+        </p>
+      </fieldset>
       <hr>
       <footer>
         <ul class='list-inline'>

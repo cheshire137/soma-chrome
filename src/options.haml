@@ -15,9 +15,9 @@
         %legend Last.fm Authentication
         #lastfm-is-authenticated.hidden
           %p.help-block
-            Connected as
+            Connected as:
             %strong#lastfm-user
-          %p.help-block
+            %br
             You can re-authenticate if scrobbling isn't working:
         %p
           %button#lastfm-auth.hidden
@@ -25,7 +25,7 @@
       %hr
       %fieldset
         %legend Track Scrobbling
-        .controls
+        .controls.hidden
           %label{for: 'enable_scrobbling'}
             %input#enable_scrobbling{type: 'radio', name: 'scrobbling', value: 'enabled', disabled: 'disabled'}
             Enable scrobbling
@@ -35,9 +35,26 @@
         %p.help-block
           Requires Last.fm authentication.
       %hr
-      %p.help-block
-        This is an unofficial extension, unendorsed by SomaFM and Last.fm. I
-        just love both services and hope you find this useful. :)
+      %fieldset
+        %legend Desktop Notifications
+        .controls.hidden
+          %label{for: 'enable_notifications'}
+            %input#enable_notifications{type: 'radio', name: 'notifications', value: 'enabled', checked: 'checked'}
+            Enable desktop notifications
+          %label{for: 'disable_notifications'}
+            %input#disable_notifications{type: 'radio', name: 'notifications', value: 'disabled'}
+            Disable desktop notifications
+        %p.help-block
+          Notifications when the track changes.
+      %hr
+      %fieldset
+        %legend About
+        %p.help-block
+          This is an unofficial extension, endorsed by neither
+          %a{href: 'http://somafm.com', target: '_blank'} SomaFM
+          nor
+          %a{href: 'http://last.fm', target: '_blank'} Last.fm.
+          I just love both services and hope you find this useful. :)
       %hr
       %footer
         %ul.list-inline

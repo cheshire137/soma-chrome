@@ -6,19 +6,26 @@ SomaPlayerOptions = (function() {
     this.lastfm_button = $('button#lastfm-auth');
     this.disable_scrobbling = $('#disable_scrobbling');
     this.enable_scrobbling = $('#enable_scrobbling');
+    this.disable_notifications = $('#disable_notifications');
+    this.enable_notifications = $('#enable_notifications');
     this.lastfm_connected_message = $('#lastfm-is-authenticated');
     this.lastfm_user = $('#lastfm-user');
     this.lastfm_token = SomaPlayerUtil.get_url_param('token');
     this.options = {
-      scrobbling: false
+      scrobbling: false,
+      notifications: true
     };
-    console.debug('Last.fm token:', this.lastfm_token);
     this.lastfm_button.click((function(_this) {
       return function() {
         return _this.init_authenticate_lastfm();
       };
     })(this));
     $('input[name="scrobbling"]').change((function(_this) {
+      return function() {
+        return _this.save_options();
+      };
+    })(this));
+    $('input[name="notifications"]').change((function(_this) {
       return function() {
         return _this.save_options();
       };
@@ -35,21 +42,22 @@ SomaPlayerOptions = (function() {
         if (opts.lastfm_session_key) {
           _this.lastfm_connected_message.removeClass('hidden');
           _this.enable_scrobbling.removeAttr('disabled');
-          _this.options.lastfm_session_key = opts.lastfm_session_key;
         }
         if (opts.lastfm_user) {
           _this.lastfm_user.text(opts.lastfm_user);
-          _this.options.lastfm_user = opts.lastfm_user;
         }
         if (opts.scrobbling) {
           _this.enable_scrobbling.attr('checked', 'checked');
-          _this.options.scrobbling = true;
+        }
+        if (opts.notifications === false) {
+          _this.disable_notifications.attr('checked', 'checked');
         }
         for (key in opts) {
           value = opts[key];
           _this.options[key] = value;
         }
-        console.log('SomaPlayer options:', _this.options);
+        $('.controls.hidden').removeClass('hidden');
+        console.debug('SomaPlayer options:', _this.options);
         return _this.lastfm_button.removeClass('hidden');
       };
     })(this));
@@ -57,6 +65,7 @@ SomaPlayerOptions = (function() {
 
   SomaPlayerOptions.prototype.save_options = function() {
     this.options.scrobbling = $('input[name="scrobbling"]:checked').val() === 'enabled';
+    this.options.notifications = $('input[name="notifications"]:checked').val() === 'enabled';
     return chrome.storage.sync.set({
       'somaplayer_options': this.options
     }, (function(_this) {
