@@ -1,7 +1,7 @@
 var SomaPlayerBackground;
 
 SomaPlayerBackground = (function() {
-  function SomaPlayerBackground(station, should_connect) {
+  function SomaPlayerBackground(station) {
     this.lastfm = SomaPlayerUtil.get_lastfm_connection();
     this.station = station;
     this.audio = $('audio');
@@ -19,10 +19,6 @@ SomaPlayerBackground = (function() {
       this.playlist_url = "http://somafm.com/" + this.station + ".pls";
       this.stream_url = "http://ice.somafm.com/" + this.station;
       this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
-      if (should_connect) {
-        this.subscribe();
-        this.listen_for_track_changes();
-      }
     }
   }
 
@@ -116,6 +112,8 @@ SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.play = function() {
     console.debug('playing station', this.station);
+    this.subscribe();
+    this.listen_for_track_changes();
     return $('body').append($("<audio src='" + this.stream_url + "' autoplay='true' data-station='" + this.station + "'></audio>"));
   };
 
@@ -143,12 +141,12 @@ SomaPlayerUtil.receive_message(function(request, sender, send_response) {
   var bg, info;
   console.debug('received message in background:', request);
   if (request.action === 'play') {
-    bg = new SomaPlayerBackground(request.station, true);
+    bg = new SomaPlayerBackground(request.station);
     bg.play();
     send_response();
     return true;
   } else if (request.action === 'pause') {
-    bg = new SomaPlayerBackground(request.station, false);
+    bg = new SomaPlayerBackground(request.station);
     bg.pause();
     send_response();
     return true;

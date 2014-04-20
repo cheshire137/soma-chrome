@@ -1,5 +1,5 @@
 class SomaPlayerBackground
-  constructor: (station, should_connect) ->
+  constructor: (station) ->
     @lastfm = SomaPlayerUtil.get_lastfm_connection()
     @station = station
     @audio = $('audio')
@@ -16,9 +16,6 @@ class SomaPlayerBackground
       # TODO: download playlist and read stream URL from it
       @stream_url = "http://ice.somafm.com/#{@station}"
       @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
-      if should_connect
-        @subscribe()
-        @listen_for_track_changes()
 
   subscribe: ->
     @socket.on 'connect', =>
@@ -80,6 +77,8 @@ class SomaPlayerBackground
 
   play: ->
     console.debug 'playing station', @station
+    @subscribe()
+    @listen_for_track_changes()
     $('body').append $("<audio src='#{@stream_url}' autoplay='true' data-station='#{@station}'></audio>")
 
   pause: ->
@@ -97,12 +96,12 @@ class SomaPlayerBackground
 SomaPlayerUtil.receive_message (request, sender, send_response) ->
   console.debug 'received message in background:', request
   if request.action == 'play'
-    bg = new SomaPlayerBackground(request.station, true)
+    bg = new SomaPlayerBackground(request.station)
     bg.play()
     send_response()
     return true
   else if request.action == 'pause'
-    bg = new SomaPlayerBackground(request.station, false)
+    bg = new SomaPlayerBackground(request.station)
     bg.pause()
     send_response()
     return true
