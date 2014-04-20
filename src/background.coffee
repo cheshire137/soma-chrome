@@ -50,13 +50,13 @@ class SomaPlayerBackground
           success: ->
             try
               $('iframe').contents().find('form').submit()
+              console.debug 'scrobbled track'
             catch e
               # Mysterious second submit after scrobble form has already POSTed
               # to Last.fm and the iframe has its origin changed to
               # ws.audioscrobbler.com, which can't be touched by the extension.
               unless e.name == 'SecurityError'
                 throw e
-            console.debug 'scrobbled track'
           error: (data) ->
             console.error 'failed to scrobble track; response:', data
 

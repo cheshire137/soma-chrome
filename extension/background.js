@@ -72,13 +72,13 @@ SomaPlayerBackground = (function() {
               var e;
               try {
                 $('iframe').contents().find('form').submit();
+                return console.debug('scrobbled track');
               } catch (_error) {
                 e = _error;
                 if (e.name !== 'SecurityError') {
                   throw e;
                 }
               }
-              return console.debug('scrobbled track');
             },
             error: function(data) {
               return console.error('failed to scrobble track; response:', data);
