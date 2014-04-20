@@ -15,8 +15,8 @@ class SomaPlayerBackground
       @playlist_url = "http://somafm.com/#{@station}.pls"
       # TODO: download playlist and read stream URL from it
       @stream_url = "http://ice.somafm.com/#{@station}"
+      @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
       if should_connect
-        @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
         @subscribe()
         @listen_for_track_changes()
 

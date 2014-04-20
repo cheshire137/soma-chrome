@@ -18,8 +18,8 @@ SomaPlayerBackground = (function() {
     if (this.station) {
       this.playlist_url = "http://somafm.com/" + this.station + ".pls";
       this.stream_url = "http://ice.somafm.com/" + this.station;
+      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
       if (should_connect) {
-        this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
         this.subscribe();
         this.listen_for_track_changes();
       }
