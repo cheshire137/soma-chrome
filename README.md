@@ -30,6 +30,8 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 
 1. Some magic to get Mac media keys to work?
 2. Remove unused plugins from gulpfile.js.
+3. Tests!
+4. Add license.
 
 ## Thanks
 
