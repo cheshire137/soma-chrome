@@ -20,8 +20,7 @@ class SomaPlayerOptions
     @authenticate_lastfm()
 
   restore_options: ->
-    chrome.storage.sync.get 'somaplayer_options', (opts) =>
-      opts = opts.somaplayer_options || {}
+    SomaPlayerUtil.get_options (opts) =>
       if opts.lastfm_session_key
         @lastfm_connected_message.removeClass 'hidden'
         @enable_scrobbling.removeAttr 'disabled'
@@ -40,7 +39,7 @@ class SomaPlayerOptions
   save_options: ->
     @options.scrobbling = $('input[name="scrobbling"]:checked').val() == 'enabled'
     @options.notifications = $('input[name="notifications"]:checked').val() == 'enabled'
-    chrome.storage.sync.set {'somaplayer_options': @options}, =>
+    SomaPlayerUtil.set_options @options, =>
       @status_area.text('Saved your options!').fadeIn =>
         setTimeout (=> @status_area.fadeOut()), 2000
 
@@ -57,7 +56,7 @@ class SomaPlayerOptions
       success: (data) =>
         @options.lastfm_session_key = data.session.key
         @options.lastfm_user = data.session.name
-        chrome.storage.sync.set {'somaplayer_options': @options}, =>
+        SomaPlayerUtil.set_options @options, =>
           @status_area.text('Connected to Last.fm!').fadeIn =>
             setTimeout (=> @status_area.fadeOut()), 2000
           @lastfm_user.text @options.lastfm_user
@@ -67,7 +66,7 @@ class SomaPlayerOptions
         console.error 'Last.fm error:', data.error, ',', data.message
         delete @options['lastfm_session_key']
         delete @options['lastfm_user']
-        chrome.storage.sync.set {'somaplayer_options': @options}, =>
+        SomaPlayerUtil.set_options @options, =>
           @status_area.text('Error authenticating with Last.fm.').fadeIn =>
             setTimeout (=> @status_area.fadeOut()), 2000
 

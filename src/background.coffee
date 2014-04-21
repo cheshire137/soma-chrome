@@ -52,8 +52,7 @@ class SomaPlayerBackground
       console.debug 'new track:', track
       @title_el.text track.title
       @artist_el.text track.artist
-      chrome.storage.sync.get 'somaplayer_options', (opts) =>
-        opts = opts.somaplayer_options || {}
+      SomaPlayerUtil.get_options (opts) =>
         @notify_of_track(track, opts)
         @scrobble_track(track, opts)
 

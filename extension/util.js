@@ -45,6 +45,23 @@ SomaPlayerUtil = (function() {
     }
   };
 
+  SomaPlayerUtil.get_options = function(callback) {
+    return chrome.storage.sync.get('somaplayer_options', function(opts) {
+      opts = opts.somaplayer_options || {};
+      return callback(opts);
+    });
+  };
+
+  SomaPlayerUtil.set_options = function(opts, callback) {
+    return chrome.storage.sync.set({
+      'somaplayer_options': opts
+    }, function() {
+      if (callback) {
+        return callback();
+      }
+    });
+  };
+
   return SomaPlayerUtil;
 
 })();

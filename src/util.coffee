@@ -28,3 +28,12 @@ class SomaPlayerUtil
       ""
     else
       decodeURIComponent(results[1].replace(/\+/g, " "))
+
+  @get_options: (callback) ->
+    chrome.storage.sync.get 'somaplayer_options', (opts) ->
+      opts = opts.somaplayer_options || {}
+      callback(opts)
+
+  @set_options: (opts, callback) ->
+    chrome.storage.sync.set {'somaplayer_options': opts}, ->
+      callback() if callback

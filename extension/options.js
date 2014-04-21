@@ -35,10 +35,9 @@ SomaPlayerOptions = (function() {
   }
 
   SomaPlayerOptions.prototype.restore_options = function() {
-    return chrome.storage.sync.get('somaplayer_options', (function(_this) {
+    return SomaPlayerUtil.get_options((function(_this) {
       return function(opts) {
         var key, value;
-        opts = opts.somaplayer_options || {};
         if (opts.lastfm_session_key) {
           _this.lastfm_connected_message.removeClass('hidden');
           _this.enable_scrobbling.removeAttr('disabled');
@@ -66,9 +65,7 @@ SomaPlayerOptions = (function() {
   SomaPlayerOptions.prototype.save_options = function() {
     this.options.scrobbling = $('input[name="scrobbling"]:checked').val() === 'enabled';
     this.options.notifications = $('input[name="notifications"]:checked').val() === 'enabled';
-    return chrome.storage.sync.set({
-      'somaplayer_options': this.options
-    }, (function(_this) {
+    return SomaPlayerUtil.set_options(this.options, (function(_this) {
       return function() {
         return _this.status_area.text('Saved your options!').fadeIn(function() {
           return setTimeout((function() {
@@ -97,9 +94,7 @@ SomaPlayerOptions = (function() {
         return function(data) {
           _this.options.lastfm_session_key = data.session.key;
           _this.options.lastfm_user = data.session.name;
-          return chrome.storage.sync.set({
-            'somaplayer_options': _this.options
-          }, function() {
+          return SomaPlayerUtil.set_options(_this.options, function() {
             _this.status_area.text('Connected to Last.fm!').fadeIn(function() {
               return setTimeout((function() {
                 return _this.status_area.fadeOut();
@@ -116,9 +111,7 @@ SomaPlayerOptions = (function() {
           console.error('Last.fm error:', data.error, ',', data.message);
           delete _this.options['lastfm_session_key'];
           delete _this.options['lastfm_user'];
-          return chrome.storage.sync.set({
-            'somaplayer_options': _this.options
-          }, function() {
+          return SomaPlayerUtil.set_options(_this.options, function() {
             return _this.status_area.text('Error authenticating with Last.fm.').fadeIn(function() {
               return setTimeout((function() {
                 return _this.status_area.fadeOut();

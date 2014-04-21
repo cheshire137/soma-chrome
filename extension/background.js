@@ -71,8 +71,7 @@ SomaPlayerBackground = (function() {
         console.debug('new track:', track);
         _this.title_el.text(track.title);
         _this.artist_el.text(track.artist);
-        return chrome.storage.sync.get('somaplayer_options', function(opts) {
-          opts = opts.somaplayer_options || {};
+        return SomaPlayerUtil.get_options(function(opts) {
           _this.notify_of_track(track, opts);
           return _this.scrobble_track(track, opts);
         });
