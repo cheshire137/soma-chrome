@@ -7,6 +7,8 @@ class SomaPlayerPopup
     @current_info_el = $('#currently-playing')
     @title_el = $('span#title')
     @artist_el = $('span#artist')
+    @load_current_info()
+    @handle_links()
     @station_select.change =>
       @station_changed()
     @play_button.click =>
@@ -15,23 +17,24 @@ class SomaPlayerPopup
       @pause()
     @station_select.keypress (e) =>
       if e.keyCode == 13 # Enter
+        return if @station_select.val() == ''
         unless @play_button.is(':disabled') || @play_button.hasClass('hidden')
           console.debug 'pressing play button'
           @play_button.click()
         unless @pause_button.is(':disabled') || @pause_button.hasClass('hidden')
           console.debug 'pressing pause button'
           @pause_button.click()
-    @load_current_info()
-    @handle_links()
 
   load_current_info: ->
-    @station_select.attr('disabled', 'disabled')
+    @station_select.attr 'disabled', 'disabled'
     SomaPlayerUtil.send_message {action: 'info'}, (info) =>
       console.debug 'finished info request, info', info
       @station_select.val(info.station)
-      @station_select.removeAttr('disabled')
       @station_select.trigger('change')
-      @station_is_playing() unless info.station == ''
+      if info.is_paused
+        @station_is_paused()
+      else
+        @station_is_playing()
       if info.artist || info.title
         @title_el.text info.title
         @artist_el.text info.artist
@@ -40,6 +43,10 @@ class SomaPlayerPopup
   station_is_playing: ->
     @pause_button.removeClass('hidden')
     @play_button.addClass('hidden')
+    @station_select.attr 'disabled', 'disabled'
+
+  station_is_paused: ->
+    @station_select.removeAttr 'disabled'
 
   play: ->
     @station_select.attr('disabled', 'disabled')

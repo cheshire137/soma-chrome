@@ -9,6 +9,8 @@ SomaPlayerPopup = (function() {
     this.current_info_el = $('#currently-playing');
     this.title_el = $('span#title');
     this.artist_el = $('span#artist');
+    this.load_current_info();
+    this.handle_links();
     this.station_select.change((function(_this) {
       return function() {
         return _this.station_changed();
@@ -27,6 +29,9 @@ SomaPlayerPopup = (function() {
     this.station_select.keypress((function(_this) {
       return function(e) {
         if (e.keyCode === 13) {
+          if (_this.station_select.val() === '') {
+            return;
+          }
           if (!(_this.play_button.is(':disabled') || _this.play_button.hasClass('hidden'))) {
             console.debug('pressing play button');
             _this.play_button.click();
@@ -38,8 +43,6 @@ SomaPlayerPopup = (function() {
         }
       };
     })(this));
-    this.load_current_info();
-    this.handle_links();
   }
 
   SomaPlayerPopup.prototype.load_current_info = function() {
@@ -50,9 +53,10 @@ SomaPlayerPopup = (function() {
       return function(info) {
         console.debug('finished info request, info', info);
         _this.station_select.val(info.station);
-        _this.station_select.removeAttr('disabled');
         _this.station_select.trigger('change');
-        if (info.station !== '') {
+        if (info.is_paused) {
+          _this.station_is_paused();
+        } else {
           _this.station_is_playing();
         }
         if (info.artist || info.title) {
@@ -66,7 +70,12 @@ SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.station_is_playing = function() {
     this.pause_button.removeClass('hidden');
-    return this.play_button.addClass('hidden');
+    this.play_button.addClass('hidden');
+    return this.station_select.attr('disabled', 'disabled');
+  };
+
+  SomaPlayerPopup.prototype.station_is_paused = function() {
+    return this.station_select.removeAttr('disabled');
   };
 
   SomaPlayerPopup.prototype.play = function() {

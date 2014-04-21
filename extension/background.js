@@ -1,12 +1,17 @@
-var SomaPlayerBackground;
+var SomaPlayerBackground, soma_player_bg,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+soma_player_bg = void 0;
 
 SomaPlayerBackground = (function() {
   function SomaPlayerBackground() {
+    this.on_track = __bind(this.on_track, this);
+    console.debug('initializing SomaPlayer background script');
     this.lastfm = SomaPlayerUtil.get_lastfm_connection();
     this.audio = $('audio');
     if (this.audio.length < 1) {
       console.debug('adding new audio tag');
-      $('body').append($('<audio autoplay="true"></audio>'));
+      $('body').append($('<audio autoplay="true" data-station=""></audio>'));
       this.audio = $('audio');
     }
     this.title_el = $('div#title');
@@ -19,23 +24,25 @@ SomaPlayerBackground = (function() {
       $('body').append($('<div id="artist"></div>'));
       this.artist_el = $('div#artist');
     }
+    this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
   }
 
   SomaPlayerBackground.prototype.play = function(station) {
     console.debug('playing station', station);
-    this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
     this.reset_track_info_if_necessary(station);
     this.subscribe(station);
-    this.listen_for_track_changes();
+    console.debug('adding track listener');
+    this.socket.on('track', this.on_track);
     this.audio.attr('src', "http://ice.somafm.com/" + station);
-    return this.audio.data('station', station);
+    this.audio.attr('data-station', station);
+    return this.audio.removeAttr('data-paused');
   };
 
   SomaPlayerBackground.prototype.reset_track_info_if_necessary = function(station) {
-    if (this.audio.data('station') === station) {
+    if (this.audio.attr('data-station') === station) {
       return;
     }
-    console.debug('changed station from', this.audio.data('station'), 'to', station, ', clearing current track info');
+    console.debug('changed station from', this.audio.attr('data-station'), 'to', station, ', clearing current track info');
     this.title_el.text('');
     return this.artist_el.text('');
   };
@@ -65,16 +72,14 @@ SomaPlayerBackground = (function() {
     }
   };
 
-  SomaPlayerBackground.prototype.listen_for_track_changes = function() {
-    return this.socket.on('track', (function(_this) {
-      return function(track) {
-        console.debug('new track:', track);
-        _this.title_el.text(track.title);
-        _this.artist_el.text(track.artist);
-        return SomaPlayerUtil.get_options(function(opts) {
-          _this.notify_of_track(track, opts);
-          return _this.scrobble_track(track, opts);
-        });
+  SomaPlayerBackground.prototype.on_track = function(track) {
+    console.debug('new track:', track);
+    this.title_el.text(track.title);
+    this.artist_el.text(track.artist);
+    return SomaPlayerUtil.get_options((function(_this) {
+      return function(opts) {
+        _this.notify_of_track(track, opts);
+        return _this.scrobble_track(track, opts);
       };
     })(this));
   };
@@ -130,12 +135,13 @@ SomaPlayerBackground = (function() {
     this.unsubscribe(station);
     audio_tag = this.audio[0];
     audio_tag.pause();
-    return audio_tag.currentTime = 0;
+    audio_tag.currentTime = 0;
+    return this.audio.attr('data-paused', 'true');
   };
 
   SomaPlayerBackground.prototype.unsubscribe = function(station) {
     console.debug('unsubscribing from', station, '...');
-    return this.socket.emit('unsubscribe', station, (function(_this) {
+    this.socket.emit('unsubscribe', station, (function(_this) {
       return function(response) {
         if (response.unsubscribed) {
           return console.debug('unsubscribed from', station);
@@ -144,13 +150,18 @@ SomaPlayerBackground = (function() {
         }
       };
     })(this));
+    console.debug('removing track listener');
+    return this.socket.removeListener('track', this.on_track);
   };
 
   SomaPlayerBackground.prototype.get_info = function() {
+    var station;
+    station = this.audio.length < 1 ? '' : this.audio.attr('data-station') || '';
     return {
-      station: this.audio.length < 1 ? '' : this.audio.data('station'),
+      station: station,
       artist: this.artist_el.text(),
-      title: this.title_el.text()
+      title: this.title_el.text(),
+      is_paused: this.audio.is('[data-paused]') || station === ''
     };
   };
 
@@ -158,22 +169,23 @@ SomaPlayerBackground = (function() {
 
 })();
 
+$(function() {
+  return soma_player_bg = new SomaPlayerBackground();
+});
+
 SomaPlayerUtil.receive_message(function(request, sender, send_response) {
-  var bg, info;
+  var info;
   console.debug('received message in background:', request);
   if (request.action === 'play') {
-    bg = new SomaPlayerBackground();
-    bg.play(request.station);
+    soma_player_bg.play(request.station);
     send_response();
     return true;
   } else if (request.action === 'pause') {
-    bg = new SomaPlayerBackground();
-    bg.pause(request.station);
+    soma_player_bg.pause(request.station);
     send_response();
     return true;
   } else if (request.action === 'info') {
-    bg = new SomaPlayerBackground();
-    info = bg.get_info();
+    info = soma_player_bg.get_info();
     console.debug('info:', info);
     send_response(info);
     return true;

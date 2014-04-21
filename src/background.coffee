@@ -1,10 +1,13 @@
+soma_player_bg = undefined
+
 class SomaPlayerBackground
   constructor: ->
+    console.debug 'initializing SomaPlayer background script'
     @lastfm = SomaPlayerUtil.get_lastfm_connection()
     @audio = $('audio')
     if @audio.length < 1
       console.debug 'adding new audio tag'
-      $('body').append $('<audio autoplay="true"></audio>')
+      $('body').append $('<audio autoplay="true" data-station=""></audio>')
       @audio = $('audio')
     @title_el = $('div#title')
     if @title_el.length < 1
@@ -14,21 +17,23 @@ class SomaPlayerBackground
     if @artist_el.length < 1
       $('body').append($('<div id="artist"></div>'))
       @artist_el = $('div#artist')
+    @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
 
   play: (station) ->
     console.debug 'playing station', station
-    @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
     @reset_track_info_if_necessary(station)
     @subscribe(station)
-    @listen_for_track_changes()
+    console.debug 'adding track listener'
+    @socket.on 'track', @on_track
     # playlist_url = "http://somafm.com/#{station}.pls"
     # TODO: download playlist and read stream URL from it
     @audio.attr 'src', "http://ice.somafm.com/#{station}"
-    @audio.data 'station', station
+    @audio.attr 'data-station', station
+    @audio.removeAttr 'data-paused'
 
   reset_track_info_if_necessary: (station) ->
-    return if @audio.data('station') == station
-    console.debug 'changed station from', @audio.data('station'), 'to',
+    return if @audio.attr('data-station') == station
+    console.debug 'changed station from', @audio.attr('data-station'), 'to',
                   station, ', clearing current track info'
     @title_el.text ''
     @artist_el.text ''
@@ -47,14 +52,13 @@ class SomaPlayerBackground
       @socket.on 'connect', =>
         emit_subscribe()
 
-  listen_for_track_changes: ->
-    @socket.on 'track', (track) =>
-      console.debug 'new track:', track
-      @title_el.text track.title
-      @artist_el.text track.artist
-      SomaPlayerUtil.get_options (opts) =>
-        @notify_of_track(track, opts)
-        @scrobble_track(track, opts)
+  on_track: (track) =>
+    console.debug 'new track:', track
+    @title_el.text track.title
+    @artist_el.text track.artist
+    SomaPlayerUtil.get_options (opts) =>
+      @notify_of_track(track, opts)
+      @scrobble_track(track, opts)
 
   notify_of_track: (track, opts) ->
     # Default to showing notifications, so if user has not saved preferences,
@@ -93,6 +97,7 @@ class SomaPlayerBackground
     audio_tag = @audio[0]
     audio_tag.pause()
     audio_tag.currentTime = 0
+    @audio.attr 'data-paused', 'true'
 
   unsubscribe: (station) ->
     console.debug 'unsubscribing from', station, '...'
@@ -101,27 +106,31 @@ class SomaPlayerBackground
         console.debug 'unsubscribed from', station
       else
         console.error 'failed to unsubscribe from', station
+    console.debug 'removing track listener'
+    @socket.removeListener 'track', @on_track
 
   get_info: ->
-    station: if @audio.length < 1 then '' else @audio.data('station')
+    station = if @audio.length < 1 then '' else @audio.attr('data-station') || ''
+    station: station
     artist: @artist_el.text()
     title: @title_el.text()
+    is_paused: @audio.is('[data-paused]') || station == ''
+
+$ ->
+  soma_player_bg = new SomaPlayerBackground()
 
 SomaPlayerUtil.receive_message (request, sender, send_response) ->
   console.debug 'received message in background:', request
   if request.action == 'play'
-    bg = new SomaPlayerBackground()
-    bg.play(request.station)
+    soma_player_bg.play(request.station)
     send_response()
     return true
   else if request.action == 'pause'
-    bg = new SomaPlayerBackground()
-    bg.pause(request.station)
+    soma_player_bg.pause(request.station)
     send_response()
     return true
   else if request.action == 'info'
-    bg = new SomaPlayerBackground()
-    info = bg.get_info()
+    info = soma_player_bg.get_info()
     console.debug 'info:', info
     send_response(info)
     return true
