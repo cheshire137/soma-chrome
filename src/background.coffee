@@ -1,8 +1,11 @@
 class SomaPlayerBackground
-  constructor: (station) ->
+  constructor: ->
     @lastfm = SomaPlayerUtil.get_lastfm_connection()
-    @station = station
     @audio = $('audio')
+    if @audio.length < 1
+      console.debug 'adding new audio tag'
+      $('body').append $('<audio autoplay="true"></audio>')
+      @audio = $('audio')
     @title_el = $('div#title')
     if @title_el.length < 1
       $('body').append($('<div id="title"></div>'))
@@ -11,28 +14,57 @@ class SomaPlayerBackground
     if @artist_el.length < 1
       $('body').append($('<div id="artist"></div>'))
       @artist_el = $('div#artist')
-    if @station
-      @playlist_url = "http://somafm.com/#{@station}.pls"
-      # TODO: download playlist and read stream URL from it
-      @stream_url = "http://ice.somafm.com/#{@station}"
-      @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
 
-  subscribe: ->
-    @socket.on 'connect', =>
-      console.debug 'subscribing to', @station, '...'
-      @socket.emit 'subscribe', @station, (response) =>
+  play: (station) ->
+    console.debug 'playing station', station
+    @socket = io.connect(SomaPlayerConfig.scrobbler_api_url)
+    @reset_track_info_if_necessary(station)
+    @subscribe(station)
+    @listen_for_track_changes()
+    # playlist_url = "http://somafm.com/#{station}.pls"
+    # TODO: download playlist and read stream URL from it
+    @audio.attr 'src', "http://ice.somafm.com/#{station}"
+    @audio.data 'station', station
+
+  reset_track_info_if_necessary: (station) ->
+    return if @audio.data('station') == station
+    console.debug 'changed station from', @audio.data('station'), 'to',
+                  station, ', clearing current track info'
+    @title_el.text ''
+    @artist_el.text ''
+
+  subscribe: (station) ->
+    emit_subscribe = =>
+      console.debug 'subscribing to', station, '...'
+      @socket.emit 'subscribe', station, (response) =>
         if response.subscribed
-          console.debug 'subscribed to', @station
+          console.debug 'subscribed to', station
         else
-          console.error 'failed to subscribe to', @station
+          console.error 'failed to subscribe to', station
+    if @socket.socket.connected
+      emit_subscribe()
+    else
+      @socket.on 'connect', =>
+        emit_subscribe()
 
-  unsubscribe: ->
-    console.debug 'unsubscribing from', @station, '...'
-    @socket.emit 'unsubscribe', @station, (response) =>
-      if response.unsubscribed
-        console.debug 'unsubscribed from', @station
-      else
-        console.error 'failed to unsubscribe from', @station
+  listen_for_track_changes: ->
+    @socket.on 'track', (track) =>
+      console.debug 'new track:', track
+      @title_el.text track.title
+      @artist_el.text track.artist
+      chrome.storage.sync.get 'somaplayer_options', (opts) =>
+        opts = opts.somaplayer_options || {}
+        @notify_of_track(track, opts)
+        @scrobble_track(track, opts)
+
+  notify_of_track: (track, opts) ->
+    # Default to showing notifications, so if user has not saved preferences,
+    # assume they want notifications.
+    return if opts.notifications == false
+    notice = webkitNotifications.createNotification('icon48.png', track.title,
+                                                    track.artist)
+    notice.show()
+    setTimeout (-> notice.cancel()), 3000
 
   scrobble_track: (track, opts) ->
     return unless opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling
@@ -56,37 +88,20 @@ class SomaPlayerBackground
       error: (data) ->
         console.error 'failed to scrobble track; response:', data
 
-  notify_of_track: (track, opts) ->
-    # Default to showing notifications, so if user has not saved preferences,
-    # assume they want notifications.
-    return if opts.notifications == false
-    notice = webkitNotifications.createNotification('icon48.png', track.title,
-                                                    track.artist)
-    notice.show()
-    setTimeout (-> notice.cancel()), 3000
+  pause: (station) ->
+    console.debug 'pausing station', station
+    @unsubscribe(station)
+    audio_tag = @audio[0]
+    audio_tag.pause()
+    audio_tag.currentTime = 0
 
-  listen_for_track_changes: ->
-    @socket.on 'track', (track) =>
-      console.debug 'new track:', track
-      @title_el.text track.title
-      @artist_el.text track.artist
-      chrome.storage.sync.get 'somaplayer_options', (opts) =>
-        opts = opts.somaplayer_options || {}
-        @notify_of_track(track, opts)
-        @scrobble_track(track, opts)
-
-  play: ->
-    console.debug 'playing station', @station
-    @subscribe()
-    @listen_for_track_changes()
-    $('body').append $("<audio src='#{@stream_url}' autoplay='true' data-station='#{@station}'></audio>")
-
-  pause: ->
-    console.debug 'pausing station', @station
-    @unsubscribe()
-    @audio.remove()
-    @title_el.text ''
-    @artist_el.text ''
+  unsubscribe: (station) ->
+    console.debug 'unsubscribing from', station, '...'
+    @socket.emit 'unsubscribe', station, (response) =>
+      if response.unsubscribed
+        console.debug 'unsubscribed from', station
+      else
+        console.error 'failed to unsubscribe from', station
 
   get_info: ->
     station: if @audio.length < 1 then '' else @audio.data('station')
@@ -96,13 +111,13 @@ class SomaPlayerBackground
 SomaPlayerUtil.receive_message (request, sender, send_response) ->
   console.debug 'received message in background:', request
   if request.action == 'play'
-    bg = new SomaPlayerBackground(request.station)
-    bg.play()
+    bg = new SomaPlayerBackground()
+    bg.play(request.station)
     send_response()
     return true
   else if request.action == 'pause'
-    bg = new SomaPlayerBackground(request.station)
-    bg.pause()
+    bg = new SomaPlayerBackground()
+    bg.pause(request.station)
     send_response()
     return true
   else if request.action == 'info'

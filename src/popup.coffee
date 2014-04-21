@@ -13,6 +13,14 @@ class SomaPlayerPopup
       @play()
     @pause_button.click =>
       @pause()
+    @station_select.keypress (e) =>
+      if e.keyCode == 13 # Enter
+        unless @play_button.is(':disabled') || @play_button.hasClass('hidden')
+          console.debug 'pressing play button'
+          @play_button.click()
+        unless @pause_button.is(':disabled') || @pause_button.hasClass('hidden')
+          console.debug 'pressing pause button'
+          @pause_button.click()
     @load_current_info()
     @handle_links()
 

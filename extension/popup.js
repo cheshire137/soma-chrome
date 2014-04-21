@@ -24,6 +24,20 @@ SomaPlayerPopup = (function() {
         return _this.pause();
       };
     })(this));
+    this.station_select.keypress((function(_this) {
+      return function(e) {
+        if (e.keyCode === 13) {
+          if (!(_this.play_button.is(':disabled') || _this.play_button.hasClass('hidden'))) {
+            console.debug('pressing play button');
+            _this.play_button.click();
+          }
+          if (!(_this.pause_button.is(':disabled') || _this.pause_button.hasClass('hidden'))) {
+            console.debug('pressing pause button');
+            return _this.pause_button.click();
+          }
+        }
+      };
+    })(this));
     this.load_current_info();
     this.handle_links();
   }
