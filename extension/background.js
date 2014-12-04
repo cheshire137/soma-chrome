@@ -85,19 +85,17 @@ SomaPlayerBackground = (function() {
   };
 
   SomaPlayerBackground.prototype.notify_of_track = function(track, opts) {
-    var notice;
+    var notification_opt;
     if (opts.notifications === false) {
       return;
     }
-    var opt = {
-     type: "basic",
-     title: track.artist,
-     message: track.title,
-     iconUrl: 'icon48.png'
+    notification_opt = {
+      type: 'basic',
+      title: track.artist,
+      message: track.title,
+      iconUrl: 'icon48.png'
     };
-   chrome.notifications.create("", opt, function(id) {
-     console.error(chrome.runtime.lastError);
-   });
+    return chrome.notifications.create('', notification_opt, function(notification_id) {});
   };
 
   SomaPlayerBackground.prototype.scrobble_track = function(track, opts) {

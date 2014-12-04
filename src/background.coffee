@@ -64,10 +64,12 @@ class SomaPlayerBackground
     # Default to showing notifications, so if user has not saved preferences,
     # assume they want notifications.
     return if opts.notifications == false
-    notice = webkitNotifications.createNotification('icon48.png', track.title,
-                                                    track.artist)
-    notice.show()
-    setTimeout (-> notice.cancel()), 3000
+    notification_opt =
+      type: 'basic'
+      title: track.artist
+      message: track.title
+      iconUrl: 'icon48.png'
+    chrome.notifications.create '', notification_opt, (notification_id) ->
 
   scrobble_track: (track, opts) ->
     return unless opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling
