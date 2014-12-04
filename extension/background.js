@@ -91,8 +91,8 @@ SomaPlayerBackground = (function() {
     }
     var opt = {
      type: "basic",
-     title: track.title,
-     message: track.artist,
+     title: track.artist,
+     message: track.title,
      iconUrl: 'icon48.png'
     };
    chrome.notifications.create("", opt, function(id) {
