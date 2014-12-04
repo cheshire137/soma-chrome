@@ -89,11 +89,15 @@ SomaPlayerBackground = (function() {
     if (opts.notifications === false) {
       return;
     }
-    notice = webkitNotifications.createNotification('icon48.png', track.title, track.artist);
-    notice.show();
-    return setTimeout((function() {
-      return notice.cancel();
-    }), 3000);
+    var opt = {
+     type: "basic",
+     title: track.title,
+     message: track.artist,
+     iconUrl: 'icon48.png'
+    };
+   chrome.notifications.create("", opt, function(id) {
+     console.error(chrome.runtime.lastError);
+   });
   };
 
   SomaPlayerBackground.prototype.scrobble_track = function(track, opts) {
