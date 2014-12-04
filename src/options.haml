@@ -33,7 +33,9 @@
             %input#disable_scrobbling{type: 'radio', name: 'scrobbling', value: 'disabled', checked: 'checked'}
             Disable scrobbling
         %p.help-block
-          Requires Last.fm authentication.
+          Requires Last.fm authentication. Only stations supported by the
+          %a{href: 'http://api.somascrobbler.com/'} SomaScrobbler
+          will get notifications/scrobbling.
       %hr
       %fieldset
         %legend Desktop Notifications
