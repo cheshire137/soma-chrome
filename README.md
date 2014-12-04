@@ -18,6 +18,8 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 
 ## How to Build
 
+Pull requests welcome! If you're making a change to the JavaScript, HTML, or CSS, you want to edit the CoffeeScript, Haml, and LESS files in src/, because the stuff in extension/ is generated.
+
 1. `npm install -g gulp` to globally install Gulp
 1. `npm install` to install necessary Gulp modules
 1. `bundle` to install necessary gems
@@ -29,9 +31,9 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 ## To Do
 
 1. Some magic to get Mac media keys to work?
-2. Remove unused plugins from gulpfile.js.
-3. Tests!
-4. Add license.
+1. New icon.
+1. Remove unused plugins from gulpfile.js.
+1. Tests!
 
 ## Thanks
 
