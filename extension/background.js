@@ -61,7 +61,7 @@ SomaPlayerBackground = (function() {
         });
       };
     })(this);
-    if (this.socket.socket.connected) {
+    if (this.socket.connected) {
       return emit_subscribe();
     } else {
       return this.socket.on('connect', (function(_this) {
