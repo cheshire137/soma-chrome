@@ -45,6 +45,20 @@ SomaPlayerPopup = (function() {
     })(this));
   }
 
+  SomaPlayerPopup.prototype.display_track_info = function(info) {
+    if (info.artist || info.title) {
+      this.title_el.text(info.title);
+      this.artist_el.text(info.artist);
+      return this.current_info_el.removeClass('hidden');
+    }
+  };
+
+  SomaPlayerPopup.prototype.hide_track_info = function() {
+    this.title_el.text('');
+    this.artist_el.text('');
+    return this.current_info_el.addClass('hidden');
+  };
+
   SomaPlayerPopup.prototype.load_current_info = function() {
     this.station_select.attr('disabled', 'disabled');
     return SomaPlayerUtil.send_message({
@@ -59,11 +73,7 @@ SomaPlayerPopup = (function() {
         } else {
           _this.station_is_playing();
         }
-        if (info.artist || info.title) {
-          _this.title_el.text(info.title);
-          _this.artist_el.text(info.artist);
-          return _this.current_info_el.removeClass('hidden');
-        }
+        return _this.display_track_info(info);
       };
     })(this));
   };
@@ -71,11 +81,15 @@ SomaPlayerPopup = (function() {
   SomaPlayerPopup.prototype.station_is_playing = function() {
     this.pause_button.removeClass('hidden');
     this.play_button.addClass('hidden');
-    return this.station_select.attr('disabled', 'disabled');
+    this.station_select.attr('disabled', 'disabled');
+    return this.pause_button.focus();
   };
 
   SomaPlayerPopup.prototype.station_is_paused = function() {
-    return this.station_select.removeAttr('disabled');
+    this.pause_button.addClass('hidden');
+    this.play_button.removeClass('hidden');
+    this.station_select.removeAttr('disabled');
+    return this.play_button.focus();
   };
 
   SomaPlayerPopup.prototype.play = function() {
@@ -89,7 +103,18 @@ SomaPlayerPopup = (function() {
     }, (function(_this) {
       return function() {
         console.debug('finishing telling station to play');
-        return _this.station_is_playing();
+        _this.station_is_playing();
+        return SomaPlayerUtil.send_message({
+          action: 'info'
+        }, function(info) {
+          if (info.artist !== '' || info.title !== '') {
+            return _this.display_track_info(info);
+          } else {
+            return SomaPlayerUtil.get_current_track_info(station, function(info) {
+              return _this.display_track_info(info);
+            });
+          }
+        });
       };
     })(this));
   };
@@ -104,9 +129,9 @@ SomaPlayerPopup = (function() {
     }, (function(_this) {
       return function() {
         console.debug('finished telling station to pause');
-        _this.pause_button.addClass('hidden');
-        _this.play_button.removeClass('hidden');
-        return _this.station_select.removeAttr('disabled');
+        _this.station_is_paused();
+        _this.hide_track_info();
+        return _this.station_select.focus();
       };
     })(this));
   };

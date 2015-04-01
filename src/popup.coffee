@@ -25,6 +25,17 @@ class SomaPlayerPopup
           console.debug 'pressing pause button'
           @pause_button.click()
 
+  display_track_info: (info) ->
+    if info.artist || info.title
+      @title_el.text info.title
+      @artist_el.text info.artist
+      @current_info_el.removeClass('hidden')
+
+  hide_track_info: ->
+    @title_el.text ''
+    @artist_el.text ''
+    @current_info_el.addClass('hidden')
+
   load_current_info: ->
     @station_select.attr 'disabled', 'disabled'
     SomaPlayerUtil.send_message {action: 'info'}, (info) =>
@@ -35,18 +46,19 @@ class SomaPlayerPopup
         @station_is_paused()
       else
         @station_is_playing()
-      if info.artist || info.title
-        @title_el.text info.title
-        @artist_el.text info.artist
-        @current_info_el.removeClass('hidden')
+      @display_track_info info
 
   station_is_playing: ->
     @pause_button.removeClass('hidden')
     @play_button.addClass('hidden')
     @station_select.attr 'disabled', 'disabled'
+    @pause_button.focus()
 
   station_is_paused: ->
+    @pause_button.addClass('hidden')
+    @play_button.removeClass('hidden')
     @station_select.removeAttr 'disabled'
+    @play_button.focus()
 
   play: ->
     @station_select.attr('disabled', 'disabled')
@@ -55,15 +67,21 @@ class SomaPlayerPopup
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
       console.debug 'finishing telling station to play'
       @station_is_playing()
+      SomaPlayerUtil.send_message {action: 'info'}, (info) =>
+        if info.artist != '' || info.title != ''
+          @display_track_info info
+        else
+          SomaPlayerUtil.get_current_track_info station, (info) =>
+            @display_track_info info
 
   pause: ->
     station = @station_select.val()
     console.debug 'pause button clicked, station', station
     SomaPlayerUtil.send_message {action: 'pause', station: station}, =>
       console.debug 'finished telling station to pause'
-      @pause_button.addClass('hidden')
-      @play_button.removeClass('hidden')
-      @station_select.removeAttr('disabled')
+      @station_is_paused()
+      @hide_track_info()
+      @station_select.focus()
 
   station_changed: ->
     station = @station_select.val()
