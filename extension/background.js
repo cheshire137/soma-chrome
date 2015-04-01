@@ -56,12 +56,12 @@ SomaPlayerBackground = (function() {
           if (response.subscribed) {
             return console.debug('subscribed to', station);
           } else {
-            return console.error('failed to subscribe to', station);
+            return console.error('failed to subscribe to', station, response);
           }
         });
       };
     })(this);
-    if (this.socket.socket.connected) {
+    if (this.socket.connected) {
       return emit_subscribe();
     } else {
       return this.socket.on('connect', (function(_this) {

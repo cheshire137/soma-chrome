@@ -45,8 +45,8 @@ class SomaPlayerBackground
         if response.subscribed
           console.debug 'subscribed to', station
         else
-          console.error 'failed to subscribe to', station
-    if @socket.socket.connected
+          console.error 'failed to subscribe to', station, response
+    if @socket.connected
       emit_subscribe()
     else
       @socket.on 'connect', =>
