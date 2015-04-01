@@ -47,6 +47,15 @@ SomaPlayerBackground = (function() {
     return this.artist_el.text('');
   };
 
+  SomaPlayerBackground.prototype.get_current_track_info = function(station) {
+    return SomaPlayerUtil.get_current_track_info(station, (function(_this) {
+      return function(track) {
+        _this.title_el.text(track.title);
+        return _this.artist_el.text(track.artist);
+      };
+    })(this));
+  };
+
   SomaPlayerBackground.prototype.subscribe = function(station) {
     var emit_subscribe;
     emit_subscribe = (function(_this) {
@@ -54,7 +63,8 @@ SomaPlayerBackground = (function() {
         console.debug('subscribing to', station, '...');
         return _this.socket.emit('subscribe', station, function(response) {
           if (response.subscribed) {
-            return console.debug('subscribed to', station);
+            console.debug('subscribed to', station);
+            return _this.get_current_track_info(station);
           } else {
             return console.error('failed to subscribe to', station, response);
           }

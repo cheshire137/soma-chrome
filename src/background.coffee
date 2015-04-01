@@ -38,12 +38,18 @@ class SomaPlayerBackground
     @title_el.text ''
     @artist_el.text ''
 
+  get_current_track_info: (station) ->
+    SomaPlayerUtil.get_current_track_info station, (track) =>
+      @title_el.text track.title
+      @artist_el.text track.artist
+
   subscribe: (station) ->
     emit_subscribe = =>
       console.debug 'subscribing to', station, '...'
       @socket.emit 'subscribe', station, (response) =>
         if response.subscribed
           console.debug 'subscribed to', station
+          @get_current_track_info station
         else
           console.error 'failed to subscribe to', station, response
     if @socket.connected
