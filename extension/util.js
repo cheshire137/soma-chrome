@@ -12,25 +12,26 @@ SomaPlayerUtil = (function() {
     });
   };
 
-  SomaPlayerUtil.get_chrome_runtime_or_extension = function() {
-    if (chrome.runtime && chrome.runtime.sendMessage) {
-      return 'runtime';
-    }
-    return 'extension';
-  };
-
   SomaPlayerUtil.send_message = function(message, on_response) {
-    var runtime_or_extension;
     console.debug('sending message:', message);
-    runtime_or_extension = this.get_chrome_runtime_or_extension();
-    return chrome[runtime_or_extension].sendMessage(message, on_response);
+    return chrome.runtime.sendMessage(message, on_response);
   };
 
   SomaPlayerUtil.receive_message = function(handler) {
-    var runtime_or_extension;
     console.log('setting up message receiver');
-    runtime_or_extension = this.get_chrome_runtime_or_extension();
-    return chrome[runtime_or_extension].onMessage.addListener(handler);
+    return chrome.runtime.onMessage.addListener(handler);
+  };
+
+  SomaPlayerUtil.get_current_track_info = function(station, callback) {
+    var url;
+    url = SomaPlayerConfig.scrobbler_api_url + '/api/v1/nowplaying/' + station;
+    console.debug('getting current track info from', url);
+    return $.getJSON(url, (function(_this) {
+      return function(track) {
+        console.debug('got track info', track);
+        return callback(track);
+      };
+    })(this));
   };
 
   SomaPlayerUtil.get_url_param = function(name) {
