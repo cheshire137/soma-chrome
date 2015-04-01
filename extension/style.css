@@ -54,6 +54,17 @@ body.popup footer {
 body.popup #title {
   font-weight: 700;
 }
+body.popup #artist {
+  display: block;
+}
+body.popup #artist:before {
+  content: "by ";
+}
+body.popup #last-known-header {
+  display: block;
+  text-transform: uppercase;
+  font-size: 12px;
+}
 button {
   color: #333;
   background-color: #fff;
