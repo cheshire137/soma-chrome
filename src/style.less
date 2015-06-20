@@ -204,6 +204,15 @@ p {
   }
 }
 
+.help-inline {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  padding-left: 5px;
+  color: #595959;
+  font-size: 12px;
+}
+
 .pull-left {
   float: left;
 }
@@ -257,5 +266,18 @@ ul.list-inline {
     display: inline-block;
     padding-left: 5px;
     padding-right: 5px;
+  }
+}
+
+@lastfm-red: #c91e24;
+.btn-lastfm {
+  background-color: @lastfm-red;
+  border-color: darken(@lastfm-red, 5%);
+  color: white;
+
+  &:hover, &:focus {
+    color: white;
+    background-color: darken(@lastfm-red, 10%);
+    border-color: darken(@lastfm-red, 15%);
   }
 }

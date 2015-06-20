@@ -2,6 +2,7 @@
 %html
   %head
     %title SomaPlayer Options
+    %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'}
     %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'reset.css'}
     %link{rel: 'stylesheet', type: 'text/css', media: 'screen', href: 'style.css'}
   %body.options
@@ -16,11 +17,19 @@
         #lastfm-is-authenticated.hidden
           %p.help-block
             Connected as:
-            %strong#lastfm-user
-            %br
-            You can re-authenticate if scrobbling isn't working:
-        %p
-          %button#lastfm-auth.hidden
+            %a#lastfm-user{target: '_blank'}
+            &mdash;
+            %a#lastfm-disconnect{href: '#'}
+              Disconnect
+          %p
+            %button.lastfm-auth.hidden
+              %i.fa.fa-lastfm
+              Authenticate with Last.fm
+            %span.help-inline
+              You can re-authenticate if scrobbling isn't working
+        #lastfm-is-not-authenticated.hidden
+          %button.lastfm-auth.hidden.btn-lastfm
+            %i.fa.fa-lastfm
             Authenticate with Last.fm
       %hr
       %fieldset

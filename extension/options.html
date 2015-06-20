@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>SomaPlayer Options</title>
+    <link href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' media='screen' rel='stylesheet' type='text/css'>
     <link href='reset.css' media='screen' rel='stylesheet' type='text/css'>
     <link href='style.css' media='screen' rel='stylesheet' type='text/css'>
   </head>
@@ -18,16 +19,28 @@
         <div class='hidden' id='lastfm-is-authenticated'>
           <p class='help-block'>
             Connected as:
-            <strong id='lastfm-user'></strong>
-            <br>
-            You can re-authenticate if scrobbling isn't working:
+            <a id='lastfm-user' target='_blank'></a>
+            &mdash;
+            <a href='#' id='lastfm-disconnect'>
+              Disconnect
+            </a>
+          </p>
+          <p>
+            <button class='lastfm-auth hidden'>
+              <i class='fa fa-lastfm'></i>
+              Authenticate with Last.fm
+            </button>
+            <span class='help-inline'>
+              You can re-authenticate if scrobbling isn't working
+            </span>
           </p>
         </div>
-        <p>
-          <button class='hidden' id='lastfm-auth'>
+        <div class='hidden' id='lastfm-is-not-authenticated'>
+          <button class='lastfm-auth hidden btn-lastfm'>
+            <i class='fa fa-lastfm'></i>
             Authenticate with Last.fm
           </button>
-        </p>
+        </div>
       </fieldset>
       <hr>
       <fieldset>

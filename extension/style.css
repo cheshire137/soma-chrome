@@ -177,6 +177,14 @@ p {
 p.help-block {
   font-size: 14px;
 }
+.help-inline {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  padding-left: 5px;
+  color: #595959;
+  font-size: 12px;
+}
 .pull-left {
   float: left;
 }
@@ -225,4 +233,15 @@ ul.list-inline li {
   display: inline-block;
   padding-left: 5px;
   padding-right: 5px;
+}
+.btn-lastfm {
+  background-color: #c91e24;
+  border-color: #b31b20;
+  color: white;
+}
+.btn-lastfm:hover,
+.btn-lastfm:focus {
+  color: white;
+  background-color: #9d171c;
+  border-color: #861418;
 }
