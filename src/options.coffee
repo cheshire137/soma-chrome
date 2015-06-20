@@ -56,12 +56,14 @@ class SomaPlayerOptions
       success: (data) =>
         @options.lastfm_session_key = data.session.key
         @options.lastfm_user = data.session.name
+        @options.scrobbling = true
         SomaPlayerUtil.set_options @options, =>
           @status_area.text('Connected to Last.fm!').fadeIn =>
             setTimeout (=> @status_area.fadeOut()), 2000
           @lastfm_user.text @options.lastfm_user
           @lastfm_connected_message.removeClass 'hidden'
           @enable_scrobbling.removeAttr 'disabled'
+          @enable_scrobbling.attr 'checked', 'checked'
       error: (data) =>
         console.error 'Last.fm error:', data.error, ',', data.message
         delete @options['lastfm_session_key']

@@ -94,6 +94,7 @@ SomaPlayerOptions = (function() {
         return function(data) {
           _this.options.lastfm_session_key = data.session.key;
           _this.options.lastfm_user = data.session.name;
+          _this.options.scrobbling = true;
           return SomaPlayerUtil.set_options(_this.options, function() {
             _this.status_area.text('Connected to Last.fm!').fadeIn(function() {
               return setTimeout((function() {
@@ -102,7 +103,8 @@ SomaPlayerOptions = (function() {
             });
             _this.lastfm_user.text(_this.options.lastfm_user);
             _this.lastfm_connected_message.removeClass('hidden');
-            return _this.enable_scrobbling.removeAttr('disabled');
+            _this.enable_scrobbling.removeAttr('disabled');
+            return _this.enable_scrobbling.attr('checked', 'checked');
           });
         };
       })(this),
