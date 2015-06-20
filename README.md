@@ -20,14 +20,12 @@ Pull requests welcome! If you're making a change to the JavaScript, HTML, or CSS
 
 ## To Do
 
-1. Some magic to get Mac media keys to work?
-1. New icon.
 1. Remove unused plugins from gulpfile.js.
 1. Tests!
 
 ## Thanks
 
-- [SomaFM](http://somafm.com/)
-- [SomaScrobbler API](http://api.somascrobbler.com/)
+- [SomaFM](http://somafm.com/) - where all the music comes from!
+- [SomaScrobbler API](http://api.somascrobbler.com/) - for information about current tracks, used for knowing what to scrobble to Last.fm.
 - [Last.fm Web Services](http://www.last.fm/api)
 - [example-lastfm-api](https://github.com/soundsuggest/example-lastfm-api)

@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 0.0.0.5:
+
+- Added stations ThistleRadio, SomaFM Live, and Earwaves.
+- Enable scrobbling as soon as you authenticate with Last.fm.
+
 ## Version 0.0.0.4:
 
 - Added stations Deep Space One, Folk Forward, Seven Inch Soul, and South by Soma thanks to Steve Millet.
