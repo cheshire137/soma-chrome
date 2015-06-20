@@ -45,6 +45,23 @@ SomaPlayerPopup = (function() {
     })(this));
   }
 
+  SomaPlayerPopup.prototype.fetch_soma_channels = function() {
+    var on_error, on_success, url;
+    url = 'http://api.somafm.com/channels.xml';
+    on_success = function(data) {
+      return console.log(data);
+    };
+    on_error = function(jq_xhr, status, error) {
+      return console.error('failed to fetch Soma.fm channels', error);
+    };
+    $.ajax({
+      url: url,
+      success: on_success,
+      error: on_error
+    });
+    return $.get(url).done(on_success).fail(on_error);
+  };
+
   SomaPlayerPopup.prototype.display_track_info = function(info) {
     if (info.artist || info.title) {
       this.title_el.text(info.title);

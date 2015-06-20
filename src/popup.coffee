@@ -25,6 +25,19 @@ class SomaPlayerPopup
           console.debug 'pressing pause button'
           @pause_button.click()
 
+  fetch_soma_channels: ->
+    # Currently doesn't set CORS headers, can't fetch via AJAX
+    url = 'http://api.somafm.com/channels.xml'
+    on_success = (data) ->
+      console.log data
+    on_error = (jq_xhr, status, error) ->
+      console.error 'failed to fetch Soma.fm channels', error
+    $.ajax
+      url: url
+      success: on_success
+      error: on_error
+    $.get(url).done(on_success).fail(on_error)
+
   display_track_info: (info) ->
     if info.artist || info.title
       @title_el.text info.title
