@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.0.6:
+
+- New icon thanks to @rustyhodge at SomaFM.
+
 ## Version 0.0.0.5:
 
 - Added stations ThistleRadio, SomaFM Live, and Earwaves.
