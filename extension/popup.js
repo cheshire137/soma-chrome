@@ -47,7 +47,8 @@ SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.fetch_soma_channels = function() {
     var on_error, on_success, url;
-    url = 'http://api.somafm.com/channels.xml';
+    console.log('testing testing ....');
+    url = 'http://api.somafm.com/channels.json';
     on_success = function(data) {
       return console.log(data);
     };

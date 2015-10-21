@@ -26,8 +26,11 @@ class SomaPlayerPopup
           @pause_button.click()
 
   fetch_soma_channels: ->
-    # Currently doesn't set CORS headers, can't fetch via AJAX
-    url = 'http://api.somafm.com/channels.xml'
+    # Github Issue #5 fix by code-for-coffee
+    # Fetching from the soma.fm channels JSON now that CORS is enabled
+    console.log 'testing testing ....'
+    url = 'http://api.somafm.com/channels.json'
+    # end Github Issue #5 fix
     on_success = (data) ->
       console.log data
     on_error = (jq_xhr, status, error) ->
