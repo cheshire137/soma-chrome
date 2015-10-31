@@ -51,17 +51,14 @@ SomaPlayerPopup = (function() {
     console.log('Fetching channels.json...');
     url = 'http://api.somafm.com/channels.json';
     on_success = function(data) {
-      var station, _i, _len, _results;
+      var station, _i, _len, _ref, _results;
       console.log('Retrieved channels.json successfully!');
-      console.log(data);
+      console.log(data.channels);
+      _ref = data.channels;
       _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        station = data[_i];
-        this.station_option = $('option');
-        this.station_option.prop({
-          'value': station.id
-        });
-        _results.push(console.log(this.station_option));
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        station = _ref[_i];
+        _results.push(console.log(station));
       }
       return _results;
     };

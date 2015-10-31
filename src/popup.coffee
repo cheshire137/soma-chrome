@@ -34,11 +34,25 @@ class SomaPlayerPopup
     url = 'http://api.somafm.com/channels.json'
     on_success = (data) ->
       console.log 'Retrieved channels.json successfully!'
-      console.log data
-      for station in data
-        @station_option = $('option')
-        @station_option.prop 'value': station.id
-        console.log @station_option
+      console.log data.channels
+
+      for station in data.channels
+        console.log station
+      # iterate through return object
+      # for k, v of data
+      #   @temp_accessor = ''
+      #   console.log k
+      #   console.log v
+      #   consoe.log
+      #   # now iteratethrough array of channels
+
+        # #console.log data[station]
+        # for item of station
+        #   console.log station[item]
+
+      # @station_option = $('option')
+      # @station_option.prop 'value': station.id
+      # console.log @station_option
         #append to @station_select.append('<option value="test">hi</option>')
 
 
