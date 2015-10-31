@@ -11,10 +11,11 @@ class SomaPlayerPopup
     @artist_el = $('span#artist')
     @load_current_info()
     @handle_links()
+    @fetch_soma_channels()
     @station_select.change =>
       @station_changed()
     @play_button.click =>
-      @fetch_soma_channels() #play
+      @play()
     @pause_button.click =>
       @pause()
     @station_select.keypress (e) =>
@@ -27,27 +28,23 @@ class SomaPlayerPopup
           console.debug 'pressing pause button'
           @pause_button.click()
 
+
   fetch_soma_channels: ->
     # Github Issue #5 fix by code-for-coffee
     # Fetching from the soma.fm channels JSON now that CORS is enabled
     console.log 'Fetching channels.json...'
     url = 'http://api.somafm.com/channels.json'
     on_success = (data) ->
-      console.log 'Retrieved channels.json successfully!'
-      console.log data.channels
-
+      @station_select_list = $('#station')
+      #console.log 'Retrieved channels.json successfully!'
       for station in data.channels
         console.log station
-
-      # @station_option = $('option')
-      # @station_option.prop 'value': station.id
-      # console.log @station_option
-        #append to @station_select.append('<option value="test">hi</option>')
-
-
+        @station_select_list.append('<option value="' + station.id + '">' + station.title + '</option>')
+        #@fetch_soma_channels()
     on_error = (jq_xhr, status, error) ->
       console.error 'failed to fetch Soma.fm channels', error
-      alert 'failed to fetch Soma.fm channels'
+      #alert 'failed to fetch Soma.fm channels'
+      @station_select_list.append('<option value="sadness :(">Failed to retreive channel listing.</option>')
     $.ajax
       dataType: 'json'
       url: url
