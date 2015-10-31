@@ -38,17 +38,6 @@ class SomaPlayerPopup
 
       for station in data.channels
         console.log station
-      # iterate through return object
-      # for k, v of data
-      #   @temp_accessor = ''
-      #   console.log k
-      #   console.log v
-      #   consoe.log
-      #   # now iteratethrough array of channels
-
-        # #console.log data[station]
-        # for item of station
-        #   console.log station[item]
 
       # @station_option = $('option')
       # @station_option.prop 'value': station.id
