@@ -2,7 +2,6 @@ class SomaPlayerPopup
 
   constructor: ->
     @base = this
-    @station_list = @fetch_soma_channels
     @station_select = $('#station')
     @play_button = $('#play')
     @pause_button = $('#pause')
@@ -28,28 +27,61 @@ class SomaPlayerPopup
           console.debug 'pressing pause button'
           @pause_button.click()
 
+  insert_station_options: (channels) ->
+    for station in channels
+      @station_select.append('<option value="' + station.id + '">' +
+                             station.title + '</option>')
+
+  on_channels_fetched: (data) ->
+    console.log 'stations', data
+    @insert_station_options data.channels
+
+  on_channel_fetch_error: (jq_xhr, status, error) ->
+    console.error 'failed to fetch Soma.fm channels', error
+    default_stations = [
+      {id: 'bagel', title: 'BAGeL Radio'}
+      {id: 'beatblender', title: 'Beat Blender'}
+      {id: 'bootliquor', title: 'Boot Liquor'}
+      {id: 'brfm', title: 'Black Rock FM'}
+      {id: 'christmas', title: 'Christmas Lounge'}
+      {id: 'xmasrocks', title: 'Christmas Rocks!'}
+      {id: 'cliqhop', title: 'cliqhop idm'}
+      {id: 'covers', title: 'Covers'}
+      {id: 'events', title: 'DEF CON Radio'}
+      {id: 'deepspaceone', title: 'Deep Space One'}
+      {id: 'digitalis', title: 'Digitalis'}
+      {id: 'doomed', title: 'Doomed'}
+      {id: 'dronezone', title: 'Drone Zone'}
+      {id: 'dubstep', title: 'Dub Step Beyond'}
+      {id: 'earwaves', title: 'Earwaves'}
+      {id: 'folkfwd', title: 'Folk Forward'}
+      {id: 'groovesalad', title: 'Groove Salad'}
+      {id: 'illstreet', title: 'Illinois Street Lounge'}
+      {id: 'indiepop', title: 'Indie Pop Rocks!'}
+      {id: 'jollysoul', title: "Jolly Ol' Soul"}
+      {id: 'lush', title: 'Lush'}
+      {id: 'missioncontrol', title: 'Mission Control'}
+      {id: 'poptron', title: 'PopTron'}
+      {id: 'secretagent', title: 'Secret Agent'}
+      {id: '7soul', title: 'Seven Inch Soul'}
+      {id: 'sf1033', title: 'SF 10-33'}
+      {id: 'live', title: 'SomaFM Live'}
+      {id: 'sonicuniverse', title: 'Sonic Universe'}
+      {id: 'sxfm', title: 'South by Soma'}
+      {id: 'spacestation', title: 'Space Station Soma'}
+      {id: 'suburbsofgoa', title: 'Suburbs of Goa'}
+      {id: 'thetrip', title: 'The Trip'}
+      {id: 'thistle', title: 'ThistleRadio'}
+      {id: 'u80s', title: 'Underground 80s'}
+      {id: 'xmasinfrisko', title: 'Xmas in Frisko'}
+    ]
+    @insert_station_options default_stations
 
   fetch_soma_channels: ->
-    # Github Issue #5 fix by code-for-coffee
-    # Fetching from the soma.fm channels JSON now that CORS is enabled
-    console.log 'Fetching channels.json...'
     url = 'http://api.somafm.com/channels.json'
-    on_success = (data) ->
-      @station_select_list = $('#station')
-      #console.log 'Retrieved channels.json successfully!'
-      for station in data.channels
-        console.log station
-        @station_select_list.append('<option value="' + station.id + '">' + station.title + '</option>')
-        #@fetch_soma_channels()
-    on_error = (jq_xhr, status, error) ->
-      console.error 'failed to fetch Soma.fm channels', error
-      #alert 'failed to fetch Soma.fm channels'
-      @station_select_list.append('<option value="sadness :(">Failed to retreive channel listing.</option>')
-    $.ajax
-      dataType: 'json'
-      url: url
-      success: on_success
-      error: on_error
+    console.debug 'Fetching channels list from ' + url
+    $.getJSON(url).done(@on_channels_fetched.bind(@)).
+                   fail(@on_channel_fetch_error.bind(@))
 
   display_track_info: (info) ->
     if info.artist || info.title

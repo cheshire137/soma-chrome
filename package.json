@@ -3,6 +3,7 @@
     "type": "git",
     "url": "https://github.com/moneypenny/soma-chrome.git"
   },
+  "license": "MIT",
   "devDependencies": {
     "gulp": "~3.5.2",
     "gulp-util": "~2.2.14",

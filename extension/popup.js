@@ -3,7 +3,6 @@ var SomaPlayerPopup;
 SomaPlayerPopup = (function() {
   function SomaPlayerPopup() {
     this.base = this;
-    this.station_list = this.fetch_soma_channels;
     this.station_select = $('#station');
     this.play_button = $('#play');
     this.pause_button = $('#pause');
@@ -47,32 +46,140 @@ SomaPlayerPopup = (function() {
     })(this));
   }
 
-  SomaPlayerPopup.prototype.fetch_soma_channels = function() {
-    var on_error, on_success, url;
-    console.log('Fetching channels.json...');
-    url = 'http://api.somafm.com/channels.json';
-    on_success = function(data) {
-      var station, _i, _len, _ref, _results;
-      this.station_select_list = $('#station');
-      _ref = data.channels;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        station = _ref[_i];
-        console.log(station);
-        _results.push(this.station_select_list.append('<option value="' + station.id + '">' + station.title + '</option>'));
+  SomaPlayerPopup.prototype.insert_station_options = function(channels) {
+    var station, _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = channels.length; _i < _len; _i++) {
+      station = channels[_i];
+      _results.push(this.station_select.append('<option value="' + station.id + '">' + station.title + '</option>'));
+    }
+    return _results;
+  };
+
+  SomaPlayerPopup.prototype.on_channels_fetched = function(data) {
+    console.log('stations', data);
+    return this.insert_station_options(data.channels);
+  };
+
+  SomaPlayerPopup.prototype.on_channel_fetch_error = function(jq_xhr, status, error) {
+    var default_stations;
+    console.error('failed to fetch Soma.fm channels', error);
+    default_stations = [
+      {
+        id: 'bagel',
+        title: 'BAGeL Radio'
+      }, {
+        id: 'beatblender',
+        title: 'Beat Blender'
+      }, {
+        id: 'bootliquor',
+        title: 'Boot Liquor'
+      }, {
+        id: 'brfm',
+        title: 'Black Rock FM'
+      }, {
+        id: 'christmas',
+        title: 'Christmas Lounge'
+      }, {
+        id: 'xmasrocks',
+        title: 'Christmas Rocks!'
+      }, {
+        id: 'cliqhop',
+        title: 'cliqhop idm'
+      }, {
+        id: 'covers',
+        title: 'Covers'
+      }, {
+        id: 'events',
+        title: 'DEF CON Radio'
+      }, {
+        id: 'deepspaceone',
+        title: 'Deep Space One'
+      }, {
+        id: 'digitalis',
+        title: 'Digitalis'
+      }, {
+        id: 'doomed',
+        title: 'Doomed'
+      }, {
+        id: 'dronezone',
+        title: 'Drone Zone'
+      }, {
+        id: 'dubstep',
+        title: 'Dub Step Beyond'
+      }, {
+        id: 'earwaves',
+        title: 'Earwaves'
+      }, {
+        id: 'folkfwd',
+        title: 'Folk Forward'
+      }, {
+        id: 'groovesalad',
+        title: 'Groove Salad'
+      }, {
+        id: 'illstreet',
+        title: 'Illinois Street Lounge'
+      }, {
+        id: 'indiepop',
+        title: 'Indie Pop Rocks!'
+      }, {
+        id: 'jollysoul',
+        title: "Jolly Ol' Soul"
+      }, {
+        id: 'lush',
+        title: 'Lush'
+      }, {
+        id: 'missioncontrol',
+        title: 'Mission Control'
+      }, {
+        id: 'poptron',
+        title: 'PopTron'
+      }, {
+        id: 'secretagent',
+        title: 'Secret Agent'
+      }, {
+        id: '7soul',
+        title: 'Seven Inch Soul'
+      }, {
+        id: 'sf1033',
+        title: 'SF 10-33'
+      }, {
+        id: 'live',
+        title: 'SomaFM Live'
+      }, {
+        id: 'sonicuniverse',
+        title: 'Sonic Universe'
+      }, {
+        id: 'sxfm',
+        title: 'South by Soma'
+      }, {
+        id: 'spacestation',
+        title: 'Space Station Soma'
+      }, {
+        id: 'suburbsofgoa',
+        title: 'Suburbs of Goa'
+      }, {
+        id: 'thetrip',
+        title: 'The Trip'
+      }, {
+        id: 'thistle',
+        title: 'ThistleRadio'
+      }, {
+        id: 'u80s',
+        title: 'Underground 80s'
+      }, {
+        id: 'xmasinfrisko',
+        title: 'Xmas in Frisko'
       }
-      return _results;
-    };
-    on_error = function(jq_xhr, status, error) {
-      console.error('failed to fetch Soma.fm channels', error);
-      return this.station_select_list.append('<option value="sadness :(">Failed to retreive channel listing.</option>');
-    };
-    return $.ajax({
-      dataType: 'json',
-      url: url,
-      success: on_success,
-      error: on_error
-    });
+    ];
+    return this.insert_station_options(default_stations);
+  };
+
+  SomaPlayerPopup.prototype.fetch_soma_channels = function() {
+    var url;
+    url = 'http://api.somafm.com/channels.json';
+    console.debug('Fetching channels list from ' + url);
+    return $.getJSON(url).done(this.on_channels_fetched.bind(this)).fail(this.on_channel_fetch_error.bind(this));
   };
 
   SomaPlayerPopup.prototype.display_track_info = function(info) {
