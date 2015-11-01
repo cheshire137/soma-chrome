@@ -12,6 +12,11 @@ SomaPlayerOptions = (function() {
     this.lastfm_not_connected_message = $('#lastfm-is-not-authenticated');
     this.lastfm_user = $('#lastfm-user');
     this.lastfm_disconnect = $('#lastfm-disconnect');
+    this.stations_divider = $('.stations-divider');
+    this.stations_options = $('.stations-options');
+    this.station_count = $('.station-count');
+    this.stations_list = $('.stations-list');
+    this.refresh_stations_button = $('button.refresh-stations');
     this.lastfm_token = SomaPlayerUtil.get_url_param('token');
     this.options = {
       scrobbling: false,
@@ -38,6 +43,11 @@ SomaPlayerOptions = (function() {
         return _this.save_options();
       };
     })(this));
+    this.refresh_stations_button.click((function(_this) {
+      return function() {
+        return _this.refresh_stations();
+      };
+    })(this));
     this.restore_options();
     this.authenticate_lastfm();
   }
@@ -62,6 +72,9 @@ SomaPlayerOptions = (function() {
         if (opts.notifications === false) {
           _this.disable_notifications.attr('checked', 'checked');
         }
+        if (opts.stations !== null && opts.stations.length > 0) {
+          _this.show_cached_stations(opts.stations);
+        }
         for (key in opts) {
           value = opts[key];
           _this.options[key] = value;
@@ -69,6 +82,47 @@ SomaPlayerOptions = (function() {
         $('.controls.hidden').removeClass('hidden');
         console.debug('SomaPlayer options:', _this.options);
         return _this.lastfm_button.removeClass('hidden');
+      };
+    })(this));
+  };
+
+  SomaPlayerOptions.prototype.show_cached_stations = function(stations) {
+    var s, text_list, titles;
+    this.stations_divider.show();
+    this.stations_options.show();
+    this.station_count.text(stations.length);
+    titles = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = stations.length; _i < _len; _i++) {
+        s = stations[_i];
+        _results.push(s.title);
+      }
+      return _results;
+    })();
+    titles.sort();
+    text_list = titles.slice(0, titles.length - 1).join(', ');
+    text_list += ', and ' + titles[titles.length - 1] + '.';
+    return this.stations_list.text(text_list);
+  };
+
+  SomaPlayerOptions.prototype.refresh_stations = function() {
+    var msg;
+    console.debug('refreshing stations list');
+    this.stations_list.text('');
+    this.refresh_stations_button.prop('disabled', true);
+    msg = {
+      action: 'fetch_stations'
+    };
+    return SomaPlayerUtil.send_message(msg, (function(_this) {
+      return function(stations, error) {
+        if (error) {
+          _this.stations_list.text('Could not fetch station list. :(');
+        } else {
+          _this.show_cached_stations(stations);
+        }
+        _this.options.stations = stations;
+        return _this.refresh_stations_button.prop('disabled', false);
       };
     })(this));
   };

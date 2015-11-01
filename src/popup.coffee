@@ -33,21 +33,8 @@ class SomaPlayerPopup
     @station_select.prop 'disabled', false
     @load_current_info()
 
-  on_channels_fetched: (data) ->
-    console.log 'stations', data
-    stations = data.channels
-    @insert_station_options stations
-    simple_stations = []
-    for station in stations
-      simple_stations.push
-        id: station.id
-        title: station.title
-    SomaPlayerUtil.send_message
-      action: 'set_stations'
-      stations: simple_stations
-
-  on_channel_fetch_error: (jq_xhr, status, error) ->
-    console.error 'failed to fetch Soma.fm channels', error
+  load_default_stations: ->
+    console.debug 'loading default station list'
     default_stations = [
       {id: 'bagel', title: 'BAGeL Radio'}
       {id: 'beatblender', title: 'Beat Blender'}
@@ -88,15 +75,17 @@ class SomaPlayerPopup
     @insert_station_options default_stations
 
   fetch_soma_channels: ->
-    SomaPlayerUtil.send_message {action: 'get_stations'}, (stations) =>
-      console.log 'stations already stored', stations
-      if stations == null || stations.length < 1
-        url = 'http://api.somafm.com/channels.json'
-        console.debug 'Fetching channels list from ' + url
-        $.getJSON(url).done(@on_channels_fetched.bind(@)).
-                       fail(@on_channel_fetch_error.bind(@))
+    SomaPlayerUtil.send_message {action: 'get_stations'}, (cached_list) =>
+      console.log 'stations already stored', cached_list
+      if cached_list == null || cached_list.length < 1
+        msg = {action: 'fetch_stations'}
+        SomaPlayerUtil.send_message msg, (stations, error) =>
+          if error
+            @load_default_stations()
+          else
+            @insert_station_options stations
       else
-        @insert_station_options stations
+        @insert_station_options cached_list
 
   display_track_info: (info) ->
     if info.artist || info.title

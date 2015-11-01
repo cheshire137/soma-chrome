@@ -42,6 +42,18 @@ body.options a:focus {
   color: #EE662B;
   text-decoration: none;
 }
+body.options .station-count:before {
+  content: "(";
+}
+body.options .station-count:after {
+  content: ")";
+}
+body.options .refresh-stations {
+  margin-bottom: 14px;
+}
+body.options .stations-list {
+  margin-bottom: 0;
+}
 body.options .container {
   margin: 2em 20%;
   position: relative;

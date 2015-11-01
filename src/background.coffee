@@ -134,6 +134,27 @@ class SomaPlayerBackground
     SomaPlayerUtil.get_options (opts) =>
       callback opts.stations
 
+  fetch_stations: (callback) ->
+    url = 'http://api.somafm.com/channels.json'
+    console.debug 'fetching channels list from ' + url
+    $.getJSON(url).done(@on_stations_fetched.bind(@, callback)).
+                   fail(@on_station_fetch_error.bind(@, callback))
+
+  on_stations_fetched: (callback, data) ->
+    console.debug 'fetched stations list', data
+    stations = data.channels
+    simple_stations = []
+    for station in stations
+      simple_stations.push
+        id: station.id
+        title: station.title
+    @set_stations simple_stations
+    callback simple_stations
+
+  on_station_fetch_error: (callback, xhr, status, error) ->
+    console.error 'failed to fetch stations list', error
+    callback null, true
+
 $ ->
   soma_player_bg = new SomaPlayerBackground()
 
@@ -152,9 +173,9 @@ SomaPlayerUtil.receive_message (request, sender, send_response) ->
     console.debug 'info:', info
     send_response(info)
     return true
-  else if request.action == 'set_stations'
-    soma_player_bg.set_stations request.stations
-    send_response()
+  else if request.action == 'fetch_stations'
+    soma_player_bg.fetch_stations (stations, error) ->
+      send_response stations, error
     return true
   else if request.action == 'get_stations'
     soma_player_bg.get_stations (stations) ->

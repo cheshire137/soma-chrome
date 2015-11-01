@@ -55,28 +55,9 @@ SomaPlayerPopup = (function() {
     return this.load_current_info();
   };
 
-  SomaPlayerPopup.prototype.on_channels_fetched = function(data) {
-    var simple_stations, station, stations, _i, _len;
-    console.log('stations', data);
-    stations = data.channels;
-    this.insert_station_options(stations);
-    simple_stations = [];
-    for (_i = 0, _len = stations.length; _i < _len; _i++) {
-      station = stations[_i];
-      simple_stations.push({
-        id: station.id,
-        title: station.title
-      });
-    }
-    return SomaPlayerUtil.send_message({
-      action: 'set_stations',
-      stations: simple_stations
-    });
-  };
-
-  SomaPlayerPopup.prototype.on_channel_fetch_error = function(jq_xhr, status, error) {
+  SomaPlayerPopup.prototype.load_default_stations = function() {
     var default_stations;
-    console.error('failed to fetch Soma.fm channels', error);
+    console.debug('loading default station list');
     default_stations = [
       {
         id: 'bagel',
@@ -192,15 +173,22 @@ SomaPlayerPopup = (function() {
     return SomaPlayerUtil.send_message({
       action: 'get_stations'
     }, (function(_this) {
-      return function(stations) {
-        var url;
-        console.log('stations already stored', stations);
-        if (stations === null || stations.length < 1) {
-          url = 'http://api.somafm.com/channels.json';
-          console.debug('Fetching channels list from ' + url);
-          return $.getJSON(url).done(_this.on_channels_fetched.bind(_this)).fail(_this.on_channel_fetch_error.bind(_this));
+      return function(cached_list) {
+        var msg;
+        console.log('stations already stored', cached_list);
+        if (cached_list === null || cached_list.length < 1) {
+          msg = {
+            action: 'fetch_stations'
+          };
+          return SomaPlayerUtil.send_message(msg, function(stations, error) {
+            if (error) {
+              return _this.load_default_stations();
+            } else {
+              return _this.insert_station_options(stations);
+            }
+          });
         } else {
-          return _this.insert_station_options(stations);
+          return _this.insert_station_options(cached_list);
         }
       };
     })(this));

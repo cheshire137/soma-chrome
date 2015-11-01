@@ -195,6 +195,34 @@ SomaPlayerBackground = (function() {
     })(this));
   };
 
+  SomaPlayerBackground.prototype.fetch_stations = function(callback) {
+    var url;
+    url = 'http://api.somafm.com/channels.json';
+    console.debug('fetching channels list from ' + url);
+    return $.getJSON(url).done(this.on_stations_fetched.bind(this, callback)).fail(this.on_station_fetch_error.bind(this, callback));
+  };
+
+  SomaPlayerBackground.prototype.on_stations_fetched = function(callback, data) {
+    var simple_stations, station, stations, _i, _len;
+    console.debug('fetched stations list', data);
+    stations = data.channels;
+    simple_stations = [];
+    for (_i = 0, _len = stations.length; _i < _len; _i++) {
+      station = stations[_i];
+      simple_stations.push({
+        id: station.id,
+        title: station.title
+      });
+    }
+    this.set_stations(simple_stations);
+    return callback(simple_stations);
+  };
+
+  SomaPlayerBackground.prototype.on_station_fetch_error = function(callback, xhr, status, error) {
+    console.error('failed to fetch stations list', error);
+    return callback(null, true);
+  };
+
   return SomaPlayerBackground;
 
 })();
@@ -219,9 +247,10 @@ SomaPlayerUtil.receive_message(function(request, sender, send_response) {
     console.debug('info:', info);
     send_response(info);
     return true;
-  } else if (request.action === 'set_stations') {
-    soma_player_bg.set_stations(request.stations);
-    send_response();
+  } else if (request.action === 'fetch_stations') {
+    soma_player_bg.fetch_stations(function(stations, error) {
+      return send_response(stations, error);
+    });
     return true;
   } else if (request.action === 'get_stations') {
     soma_player_bg.get_stations(function(stations) {

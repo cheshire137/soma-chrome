@@ -10,6 +10,11 @@ class SomaPlayerOptions
     @lastfm_not_connected_message = $('#lastfm-is-not-authenticated')
     @lastfm_user = $('#lastfm-user')
     @lastfm_disconnect = $('#lastfm-disconnect')
+    @stations_divider = $('.stations-divider')
+    @stations_options = $('.stations-options')
+    @station_count = $('.station-count')
+    @stations_list = $('.stations-list')
+    @refresh_stations_button = $('button.refresh-stations')
     @lastfm_token = SomaPlayerUtil.get_url_param('token')
     @options = {scrobbling: false, notifications: true}
     @lastfm_button.click =>
@@ -21,6 +26,8 @@ class SomaPlayerOptions
       @save_options()
     $('input[name="notifications"]').change =>
       @save_options()
+    @refresh_stations_button.click =>
+      @refresh_stations()
     @restore_options()
     @authenticate_lastfm()
 
@@ -38,11 +45,36 @@ class SomaPlayerOptions
         @enable_scrobbling.attr 'checked', 'checked'
       if opts.notifications == false
         @disable_notifications.attr 'checked', 'checked'
+      if opts.stations != null && opts.stations.length > 0
+        @show_cached_stations opts.stations
       for key, value of opts
         @options[key] = value
       $('.controls.hidden').removeClass 'hidden'
       console.debug 'SomaPlayer options:', @options
       @lastfm_button.removeClass 'hidden'
+
+  show_cached_stations: (stations) ->
+    @stations_divider.show()
+    @stations_options.show()
+    @station_count.text stations.length
+    titles = (s.title for s in stations)
+    titles.sort()
+    text_list = titles.slice(0, titles.length - 1).join(', ')
+    text_list += ', and ' + titles[titles.length - 1] + '.'
+    @stations_list.text text_list
+
+  refresh_stations: ->
+    console.debug 'refreshing stations list'
+    @stations_list.text ''
+    @refresh_stations_button.prop 'disabled', true
+    msg = {action: 'fetch_stations'}
+    SomaPlayerUtil.send_message msg, (stations, error) =>
+      if error
+        @stations_list.text 'Could not fetch station list. :('
+      else
+        @show_cached_stations stations
+      @options.stations = stations
+      @refresh_stations_button.prop 'disabled', false
 
   disconnect_from_lastfm: ->
     console.debug 'disconnecting from Last.fm...'
