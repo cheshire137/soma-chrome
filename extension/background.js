@@ -74,11 +74,9 @@ SomaPlayerBackground = (function() {
     if (this.socket.connected) {
       return emit_subscribe();
     } else {
-      return this.socket.on('connect', (function(_this) {
-        return function() {
-          return emit_subscribe();
-        };
-      })(this));
+      return this.socket.on('connect', function() {
+        return emit_subscribe();
+      });
     }
   };
 
@@ -153,22 +151,23 @@ SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.unsubscribe = function(station) {
     console.debug('unsubscribing from', station, '...');
-    this.socket.emit('unsubscribe', station, (function(_this) {
-      return function(response) {
-        if (response.unsubscribed) {
-          return console.debug('unsubscribed from', station);
-        } else {
-          return console.error('failed to unsubscribe from', station);
-        }
-      };
-    })(this));
+    this.socket.emit('unsubscribe', station, function(response) {
+      if (response.unsubscribed) {
+        return console.debug('unsubscribed from', station);
+      } else {
+        return console.error('failed to unsubscribe from', station);
+      }
+    });
     console.debug('removing track listener');
     return this.socket.removeListener('track', this.on_track);
   };
 
   SomaPlayerBackground.prototype.get_info = function() {
     var station;
-    station = this.audio.length < 1 ? '' : this.audio.attr('data-station') || '';
+    station = '';
+    if (this.audio.length >= 1) {
+      station = this.audio.attr('data-station') || '';
+    }
     return {
       station: station,
       artist: this.artist_el.text(),
@@ -179,20 +178,16 @@ SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.set_stations = function(stations) {
     console.debug('set stations', stations);
-    return SomaPlayerUtil.get_options((function(_this) {
-      return function(opts) {
-        opts.stations = stations;
-        return SomaPlayerUtil.set_options(opts);
-      };
-    })(this));
+    return SomaPlayerUtil.get_options(function(opts) {
+      opts.stations = stations;
+      return SomaPlayerUtil.set_options(opts);
+    });
   };
 
   SomaPlayerBackground.prototype.get_stations = function(callback) {
-    return SomaPlayerUtil.get_options((function(_this) {
-      return function(opts) {
-        return callback(opts.stations);
-      };
-    })(this));
+    return SomaPlayerUtil.get_options(function(opts) {
+      return callback(opts.stations);
+    });
   };
 
   SomaPlayerBackground.prototype.fetch_stations = function(callback) {

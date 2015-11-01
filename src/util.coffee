@@ -17,7 +17,7 @@ class SomaPlayerUtil
   @get_current_track_info: (station, callback) ->
     url = SomaPlayerConfig.scrobbler_api_url + '/api/v1/nowplaying/' + station
     console.debug 'getting current track info from', url
-    $.getJSON url, (track) =>
+    $.getJSON url, (track) ->
       console.debug 'got track info', track
       callback track
 

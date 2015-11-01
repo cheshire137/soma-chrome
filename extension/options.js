@@ -150,8 +150,11 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.save_options = function() {
-    this.options.scrobbling = $('input[name="scrobbling"]:checked').val() === 'enabled';
-    this.options.notifications = $('input[name="notifications"]:checked').val() === 'enabled';
+    var checked_notifications, checked_scrobbling;
+    checked_scrobbling = $('input[name="scrobbling"]:checked');
+    this.options.scrobbling = checked_scrobbling.val() === 'enabled';
+    checked_notifications = $('input[name="notifications"]:checked');
+    this.options.notifications = checked_notifications.val() === 'enabled';
     return SomaPlayerUtil.set_options(this.options, (function(_this) {
       return function() {
         return _this.status_area.text('Saved your options!').fadeIn(function() {

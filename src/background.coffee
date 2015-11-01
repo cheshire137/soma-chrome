@@ -55,7 +55,7 @@ class SomaPlayerBackground
     if @socket.connected
       emit_subscribe()
     else
-      @socket.on 'connect', =>
+      @socket.on 'connect', ->
         emit_subscribe()
 
   on_track: (track) =>
@@ -109,7 +109,7 @@ class SomaPlayerBackground
 
   unsubscribe: (station) ->
     console.debug 'unsubscribing from', station, '...'
-    @socket.emit 'unsubscribe', station, (response) =>
+    @socket.emit 'unsubscribe', station, (response) ->
       if response.unsubscribed
         console.debug 'unsubscribed from', station
       else
@@ -118,7 +118,9 @@ class SomaPlayerBackground
     @socket.removeListener 'track', @on_track
 
   get_info: ->
-    station = if @audio.length < 1 then '' else @audio.attr('data-station') || ''
+    station = ''
+    if @audio.length >= 1
+      station = @audio.attr('data-station') || ''
     station: station
     artist: @artist_el.text()
     title: @title_el.text()
@@ -126,12 +128,12 @@ class SomaPlayerBackground
 
   set_stations: (stations) ->
     console.debug 'set stations', stations
-    SomaPlayerUtil.get_options (opts) =>
+    SomaPlayerUtil.get_options (opts) ->
       opts.stations = stations
       SomaPlayerUtil.set_options opts
 
   get_stations: (callback) ->
-    SomaPlayerUtil.get_options (opts) =>
+    SomaPlayerUtil.get_options (opts) ->
       callback opts.stations
 
   fetch_stations: (callback) ->

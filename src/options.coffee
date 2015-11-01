@@ -92,8 +92,10 @@ class SomaPlayerOptions
       @disable_scrobbling.attr 'checked', 'checked'
 
   save_options: ->
-    @options.scrobbling = $('input[name="scrobbling"]:checked').val() == 'enabled'
-    @options.notifications = $('input[name="notifications"]:checked').val() == 'enabled'
+    checked_scrobbling = $('input[name="scrobbling"]:checked')
+    @options.scrobbling = checked_scrobbling.val() == 'enabled'
+    checked_notifications = $('input[name="notifications"]:checked')
+    @options.notifications = checked_notifications.val() == 'enabled'
     SomaPlayerUtil.set_options @options, =>
       @status_area.text('Saved your options!').fadeIn =>
         setTimeout (=> @status_area.fadeOut()), 2000

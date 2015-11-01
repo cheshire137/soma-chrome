@@ -26,12 +26,10 @@ SomaPlayerUtil = (function() {
     var url;
     url = SomaPlayerConfig.scrobbler_api_url + '/api/v1/nowplaying/' + station;
     console.debug('getting current track info from', url);
-    return $.getJSON(url, (function(_this) {
-      return function(track) {
-        console.debug('got track info', track);
-        return callback(track);
-      };
-    })(this));
+    return $.getJSON(url, function(track) {
+      console.debug('got track info', track);
+      return callback(track);
+    });
   };
 
   SomaPlayerUtil.get_url_param = function(name) {
