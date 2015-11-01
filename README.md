@@ -1,5 +1,7 @@
 # SomaPlayer for Chrome
 
+[![Build Status](https://semaphoreci.com/api/v1/projects/3ba07567-4856-4cbe-893a-93cec069e7af/588455/badge.svg)](https://semaphoreci.com/cheshire137/soma-chrome)
+
 SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaFM](http://somafm.com).
 
 **[Install from the Chrome Web Store](https://chrome.google.com/webstore/detail/somaplayer/dpcghdgbhjkihgnnbojldhjmcbieofgo?hl=en&gl=US&authuser=1)**
