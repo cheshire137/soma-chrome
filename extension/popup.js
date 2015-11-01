@@ -2,7 +2,8 @@ var SomaPlayerPopup;
 
 SomaPlayerPopup = (function() {
   function SomaPlayerPopup() {
-    console.debug('popup opened');
+    this.base = this;
+    this.station_list = this.fetch_soma_channels;
     this.station_select = $('#station');
     this.play_button = $('#play');
     this.pause_button = $('#pause');
@@ -11,6 +12,7 @@ SomaPlayerPopup = (function() {
     this.artist_el = $('span#artist');
     this.load_current_info();
     this.handle_links();
+    this.fetch_soma_channels();
     this.station_select.change((function(_this) {
       return function() {
         return _this.station_changed();
@@ -47,19 +49,30 @@ SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.fetch_soma_channels = function() {
     var on_error, on_success, url;
-    url = 'http://api.somafm.com/channels.xml';
+    console.log('Fetching channels.json...');
+    url = 'http://api.somafm.com/channels.json';
     on_success = function(data) {
-      return console.log(data);
+      var station, _i, _len, _ref, _results;
+      this.station_select_list = $('#station');
+      _ref = data.channels;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        station = _ref[_i];
+        console.log(station);
+        _results.push(this.station_select_list.append('<option value="' + station.id + '">' + station.title + '</option>'));
+      }
+      return _results;
     };
     on_error = function(jq_xhr, status, error) {
-      return console.error('failed to fetch Soma.fm channels', error);
+      console.error('failed to fetch Soma.fm channels', error);
+      return this.station_select_list.append('<option value="sadness :(">Failed to retreive channel listing.</option>');
     };
-    $.ajax({
+    return $.ajax({
+      dataType: 'json',
       url: url,
       success: on_success,
       error: on_error
     });
-    return $.get(url).done(on_success).fail(on_error);
   };
 
   SomaPlayerPopup.prototype.display_track_info = function(info) {
