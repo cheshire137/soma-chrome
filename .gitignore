@@ -1,5 +1,5 @@
 node_modules/*
-extension/config.js
+config.js
 extension.zip
 extension.pem
 extension.crx
