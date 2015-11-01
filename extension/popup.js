@@ -9,7 +9,6 @@ SomaPlayerPopup = (function() {
     this.current_info_el = $('#currently-playing');
     this.title_el = $('span#title');
     this.artist_el = $('span#artist');
-    this.load_current_info();
     this.handle_links();
     this.fetch_soma_channels();
     this.station_select.change((function(_this) {
@@ -46,19 +45,33 @@ SomaPlayerPopup = (function() {
     })(this));
   }
 
-  SomaPlayerPopup.prototype.insert_station_options = function(channels) {
-    var station, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = channels.length; _i < _len; _i++) {
-      station = channels[_i];
-      _results.push(this.station_select.append('<option value="' + station.id + '">' + station.title + '</option>'));
+  SomaPlayerPopup.prototype.insert_station_options = function(stations) {
+    var station, _i, _len;
+    for (_i = 0, _len = stations.length; _i < _len; _i++) {
+      station = stations[_i];
+      this.station_select.append('<option value="' + station.id + '">' + station.title + '</option>');
     }
-    return _results;
+    this.station_select.prop('disabled', false);
+    return this.load_current_info();
   };
 
   SomaPlayerPopup.prototype.on_channels_fetched = function(data) {
+    var simple_stations, station, stations, _i, _len;
     console.log('stations', data);
-    return this.insert_station_options(data.channels);
+    stations = data.channels;
+    this.insert_station_options(stations);
+    simple_stations = [];
+    for (_i = 0, _len = stations.length; _i < _len; _i++) {
+      station = stations[_i];
+      simple_stations.push({
+        id: station.id,
+        title: station.title
+      });
+    }
+    return SomaPlayerUtil.send_message({
+      action: 'set_stations',
+      stations: simple_stations
+    });
   };
 
   SomaPlayerPopup.prototype.on_channel_fetch_error = function(jq_xhr, status, error) {
@@ -176,10 +189,21 @@ SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.fetch_soma_channels = function() {
-    var url;
-    url = 'http://api.somafm.com/channels.json';
-    console.debug('Fetching channels list from ' + url);
-    return $.getJSON(url).done(this.on_channels_fetched.bind(this)).fail(this.on_channel_fetch_error.bind(this));
+    return SomaPlayerUtil.send_message({
+      action: 'get_stations'
+    }, (function(_this) {
+      return function(stations) {
+        var url;
+        console.log('stations already stored', stations);
+        if (stations === null || stations.length < 1) {
+          url = 'http://api.somafm.com/channels.json';
+          console.debug('Fetching channels list from ' + url);
+          return $.getJSON(url).done(_this.on_channels_fetched.bind(_this)).fail(_this.on_channel_fetch_error.bind(_this));
+        } else {
+          return _this.insert_station_options(stations);
+        }
+      };
+    })(this));
   };
 
   SomaPlayerPopup.prototype.display_track_info = function(info) {
@@ -197,7 +221,7 @@ SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.load_current_info = function() {
-    this.station_select.attr('disabled', 'disabled');
+    this.station_select.prop('disabled', true);
     return SomaPlayerUtil.send_message({
       action: 'info'
     }, (function(_this) {
@@ -218,20 +242,20 @@ SomaPlayerPopup = (function() {
   SomaPlayerPopup.prototype.station_is_playing = function() {
     this.pause_button.removeClass('hidden');
     this.play_button.addClass('hidden');
-    this.station_select.attr('disabled', 'disabled');
+    this.station_select.prop('disabled', true);
     return this.pause_button.focus();
   };
 
   SomaPlayerPopup.prototype.station_is_paused = function() {
     this.pause_button.addClass('hidden');
     this.play_button.removeClass('hidden');
-    this.station_select.removeAttr('disabled');
+    this.station_select.prop('disabled', false);
     return this.play_button.focus();
   };
 
   SomaPlayerPopup.prototype.play = function() {
     var station;
-    this.station_select.attr('disabled', 'disabled');
+    this.station_select.prop('disabled', true);
     station = this.station_select.val();
     console.debug('play button clicked, station', station);
     return SomaPlayerUtil.send_message({
@@ -276,11 +300,12 @@ SomaPlayerPopup = (function() {
   SomaPlayerPopup.prototype.station_changed = function() {
     var station;
     station = this.station_select.val();
-    console.debug('station changed to', station);
     if (station === '') {
-      return this.play_button.attr('disabled', 'disabled');
+      console.debug('station cleared');
+      return this.play_button.prop('disabled', true);
     } else {
-      return this.play_button.removeAttr('disabled');
+      console.debug('station changed to ' + station);
+      return this.play_button.prop('disabled', false);
     }
   };
 

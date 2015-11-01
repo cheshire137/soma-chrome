@@ -124,6 +124,16 @@ class SomaPlayerBackground
     title: @title_el.text()
     is_paused: @audio.is('[data-paused]') || station == ''
 
+  set_stations: (stations) ->
+    console.debug 'set stations', stations
+    SomaPlayerUtil.get_options (opts) =>
+      opts.stations = stations
+      SomaPlayerUtil.set_options opts
+
+  get_stations: (callback) ->
+    SomaPlayerUtil.get_options (opts) =>
+      callback opts.stations
+
 $ ->
   soma_player_bg = new SomaPlayerBackground()
 
@@ -141,4 +151,13 @@ SomaPlayerUtil.receive_message (request, sender, send_response) ->
     info = soma_player_bg.get_info()
     console.debug 'info:', info
     send_response(info)
+    return true
+  else if request.action == 'set_stations'
+    soma_player_bg.set_stations request.stations
+    send_response()
+    return true
+  else if request.action == 'get_stations'
+    soma_player_bg.get_stations (stations) ->
+      console.debug 'got saved list of stations:', stations
+      send_response stations
     return true

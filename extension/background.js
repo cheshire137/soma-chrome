@@ -177,6 +177,24 @@ SomaPlayerBackground = (function() {
     };
   };
 
+  SomaPlayerBackground.prototype.set_stations = function(stations) {
+    console.debug('set stations', stations);
+    return SomaPlayerUtil.get_options((function(_this) {
+      return function(opts) {
+        opts.stations = stations;
+        return SomaPlayerUtil.set_options(opts);
+      };
+    })(this));
+  };
+
+  SomaPlayerBackground.prototype.get_stations = function(callback) {
+    return SomaPlayerUtil.get_options((function(_this) {
+      return function(opts) {
+        return callback(opts.stations);
+      };
+    })(this));
+  };
+
   return SomaPlayerBackground;
 
 })();
@@ -200,6 +218,16 @@ SomaPlayerUtil.receive_message(function(request, sender, send_response) {
     info = soma_player_bg.get_info();
     console.debug('info:', info);
     send_response(info);
+    return true;
+  } else if (request.action === 'set_stations') {
+    soma_player_bg.set_stations(request.stations);
+    send_response();
+    return true;
+  } else if (request.action === 'get_stations') {
+    soma_player_bg.get_stations(function(stations) {
+      console.debug('got saved list of stations:', stations);
+      return send_response(stations);
+    });
     return true;
   }
 });

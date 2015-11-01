@@ -8,7 +8,6 @@ class SomaPlayerPopup
     @current_info_el = $('#currently-playing')
     @title_el = $('span#title')
     @artist_el = $('span#artist')
-    @load_current_info()
     @handle_links()
     @fetch_soma_channels()
     @station_select.change =>
@@ -27,14 +26,25 @@ class SomaPlayerPopup
           console.debug 'pressing pause button'
           @pause_button.click()
 
-  insert_station_options: (channels) ->
-    for station in channels
+  insert_station_options: (stations) ->
+    for station in stations
       @station_select.append('<option value="' + station.id + '">' +
                              station.title + '</option>')
+    @station_select.prop 'disabled', false
+    @load_current_info()
 
   on_channels_fetched: (data) ->
     console.log 'stations', data
-    @insert_station_options data.channels
+    stations = data.channels
+    @insert_station_options stations
+    simple_stations = []
+    for station in stations
+      simple_stations.push
+        id: station.id
+        title: station.title
+    SomaPlayerUtil.send_message
+      action: 'set_stations'
+      stations: simple_stations
 
   on_channel_fetch_error: (jq_xhr, status, error) ->
     console.error 'failed to fetch Soma.fm channels', error
@@ -78,10 +88,15 @@ class SomaPlayerPopup
     @insert_station_options default_stations
 
   fetch_soma_channels: ->
-    url = 'http://api.somafm.com/channels.json'
-    console.debug 'Fetching channels list from ' + url
-    $.getJSON(url).done(@on_channels_fetched.bind(@)).
-                   fail(@on_channel_fetch_error.bind(@))
+    SomaPlayerUtil.send_message {action: 'get_stations'}, (stations) =>
+      console.log 'stations already stored', stations
+      if stations == null || stations.length < 1
+        url = 'http://api.somafm.com/channels.json'
+        console.debug 'Fetching channels list from ' + url
+        $.getJSON(url).done(@on_channels_fetched.bind(@)).
+                       fail(@on_channel_fetch_error.bind(@))
+      else
+        @insert_station_options stations
 
   display_track_info: (info) ->
     if info.artist || info.title
@@ -95,7 +110,7 @@ class SomaPlayerPopup
     @current_info_el.addClass('hidden')
 
   load_current_info: ->
-    @station_select.attr 'disabled', 'disabled'
+    @station_select.prop 'disabled', true
     SomaPlayerUtil.send_message {action: 'info'}, (info) =>
       console.debug 'finished info request, info', info
       @station_select.val(info.station)
@@ -109,17 +124,17 @@ class SomaPlayerPopup
   station_is_playing: ->
     @pause_button.removeClass('hidden')
     @play_button.addClass('hidden')
-    @station_select.attr 'disabled', 'disabled'
+    @station_select.prop 'disabled', true
     @pause_button.focus()
 
   station_is_paused: ->
     @pause_button.addClass('hidden')
     @play_button.removeClass('hidden')
-    @station_select.removeAttr 'disabled'
+    @station_select.prop 'disabled', false
     @play_button.focus()
 
   play: ->
-    @station_select.attr('disabled', 'disabled')
+    @station_select.prop 'disabled', true
     station = @station_select.val()
     console.debug 'play button clicked, station', station
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
@@ -143,11 +158,12 @@ class SomaPlayerPopup
 
   station_changed: ->
     station = @station_select.val()
-    console.debug 'station changed to', station
     if station == ''
-      @play_button.attr('disabled', 'disabled')
+      console.debug 'station cleared'
+      @play_button.prop 'disabled', true
     else
-      @play_button.removeAttr('disabled')
+      console.debug 'station changed to ' + station
+      @play_button.prop 'disabled', false
 
   handle_links: ->
     $('a').click (e) ->
