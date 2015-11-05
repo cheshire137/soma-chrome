@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.0.7:
+
+- Dynamically pull stations from Soma so you always see the latest available stations.
+
 ## Version 0.0.0.6:
 
 - New icon thanks to @rustyhodge at SomaFM.
