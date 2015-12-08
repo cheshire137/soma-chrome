@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.0.8:
+
+- Update GitHub link.
+
 ## Version 0.0.0.7:
 
 - Dynamically pull stations from Soma so you always see the latest available stations.
