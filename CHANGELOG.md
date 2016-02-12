@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 0.0.0.9:
+
+- Change stations while playing without having to hit Pause first.
+- Keep station menu selected. Hitting Enter will play/pause current station. Use arrow keys or start typing a station name to change to that station.
+
 ## Version 0.0.0.8:
 
 - Update GitHub link.
