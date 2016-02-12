@@ -149,7 +149,21 @@ SomaPlayerBackground = (function() {
     return this.audio.attr('data-paused', 'true');
   };
 
+  SomaPlayerBackground.prototype.clear = function() {
+    var audio_tag, info;
+    info = this.get_info();
+    this.unsubscribe(info.station);
+    audio_tag = this.audio[0];
+    audio_tag.pause();
+    audio_tag.currentTime = 0;
+    this.audio.attr('data-station', '');
+    return this.audio.removeAttr('data-paused');
+  };
+
   SomaPlayerBackground.prototype.unsubscribe = function(station) {
+    if (!(typeof station === 'string' && station.length > 0)) {
+      return;
+    }
     console.debug('unsubscribing from', station, '...');
     this.socket.emit('unsubscribe', station, function(response) {
       if (response.unsubscribed) {
@@ -241,6 +255,10 @@ SomaPlayerUtil.receive_message(function(request, sender, send_response) {
     info = soma_player_bg.get_info();
     console.debug('info:', info);
     send_response(info);
+    return true;
+  } else if (request.action === 'clear') {
+    soma_player_bg.clear();
+    send_response();
     return true;
   } else if (request.action === 'fetch_stations') {
     soma_player_bg.fetch_stations(function(stations, error) {

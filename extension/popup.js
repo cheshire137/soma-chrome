@@ -28,22 +28,27 @@ SomaPlayerPopup = (function() {
     })(this));
     this.station_select.keypress((function(_this) {
       return function(e) {
-        if (e.keyCode === 13) {
-          if (_this.station_select.val() === '') {
-            return;
-          }
-          if (!(_this.play_button.is(':disabled') || _this.play_button.hasClass('hidden'))) {
-            console.debug('pressing play button');
-            _this.play_button.click();
-          }
-          if (!(_this.pause_button.is(':disabled') || _this.pause_button.hasClass('hidden'))) {
-            console.debug('pressing pause button');
-            return _this.pause_button.click();
-          }
-        }
+        return _this.on_station_keypress(e.keyCode);
       };
     })(this));
   }
+
+  SomaPlayerPopup.prototype.on_station_keypress = function(keyCode) {
+    if (keyCode !== 13) {
+      return;
+    }
+    if (this.station_select.val() === '') {
+      return;
+    }
+    if (!(this.play_button.is(':disabled') || this.play_button.hasClass('hidden'))) {
+      console.debug('pressing play button');
+      this.play();
+    }
+    if (!(this.pause_button.is(':disabled') || this.pause_button.hasClass('hidden'))) {
+      console.debug('pressing pause button');
+      return this.pause();
+    }
+  };
 
   SomaPlayerPopup.prototype.insert_station_options = function(stations) {
     var station, _i, _len;
@@ -222,6 +227,7 @@ SomaPlayerPopup = (function() {
         } else {
           _this.station_is_playing();
         }
+        _this.station_select.prop('disabled', false);
         return _this.display_track_info(info);
       };
     })(this));
@@ -230,20 +236,17 @@ SomaPlayerPopup = (function() {
   SomaPlayerPopup.prototype.station_is_playing = function() {
     this.pause_button.removeClass('hidden');
     this.play_button.addClass('hidden');
-    this.station_select.prop('disabled', true);
-    return this.pause_button.focus();
+    return this.station_select.focus();
   };
 
   SomaPlayerPopup.prototype.station_is_paused = function() {
     this.pause_button.addClass('hidden');
-    this.play_button.removeClass('hidden');
-    this.station_select.prop('disabled', false);
-    return this.play_button.focus();
+    this.play_button.removeClass('hidden').prop('disabled', false);
+    return this.station_select.focus();
   };
 
   SomaPlayerPopup.prototype.play = function() {
     var station;
-    this.station_select.prop('disabled', true);
     station = this.station_select.val();
     console.debug('play button clicked, station', station);
     return SomaPlayerUtil.send_message({
@@ -268,7 +271,7 @@ SomaPlayerPopup = (function() {
     })(this));
   };
 
-  SomaPlayerPopup.prototype.pause = function() {
+  SomaPlayerPopup.prototype.pause = function(callback) {
     var station;
     station = this.station_select.val();
     console.debug('pause button clicked, station', station);
@@ -279,21 +282,44 @@ SomaPlayerPopup = (function() {
       return function() {
         console.debug('finished telling station to pause');
         _this.station_is_paused();
-        _this.hide_track_info();
-        return _this.station_select.focus();
+        _this.station_select.focus();
+        if (typeof callback === 'function') {
+          return callback();
+        }
       };
     })(this));
   };
 
   SomaPlayerPopup.prototype.station_changed = function() {
-    var station;
-    station = this.station_select.val();
-    if (station === '') {
-      console.debug('station cleared');
-      return this.play_button.prop('disabled', true);
+    var new_station;
+    new_station = this.station_select.val();
+    if (new_station === '') {
+      return SomaPlayerUtil.send_message({
+        action: 'clear'
+      }, (function(_this) {
+        return function() {
+          console.debug('station cleared');
+          _this.play_button.prop('disabled', true);
+          _this.hide_track_info();
+          return _this.pause();
+        };
+      })(this));
     } else {
-      console.debug('station changed to ' + station);
-      return this.play_button.prop('disabled', false);
+      return SomaPlayerUtil.send_message({
+        action: 'info'
+      }, (function(_this) {
+        return function(info) {
+          var current_station;
+          current_station = info.station;
+          if (new_station !== '' && new_station !== current_station) {
+            console.debug('station changed to ' + new_station);
+            _this.play_button.prop('disabled', false);
+            return _this.pause(function() {
+              return _this.play();
+            });
+          }
+        };
+      })(this));
     }
   };
 

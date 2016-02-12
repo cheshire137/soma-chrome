@@ -1,5 +1,4 @@
 class SomaPlayerPopup
-
   constructor: ->
     @base = this
     @station_select = $('#station')
@@ -17,14 +16,17 @@ class SomaPlayerPopup
     @pause_button.click =>
       @pause()
     @station_select.keypress (e) =>
-      if e.keyCode == 13 # Enter
-        return if @station_select.val() == ''
-        unless @play_button.is(':disabled') || @play_button.hasClass('hidden')
-          console.debug 'pressing play button'
-          @play_button.click()
-        unless @pause_button.is(':disabled') || @pause_button.hasClass('hidden')
-          console.debug 'pressing pause button'
-          @pause_button.click()
+      @on_station_keypress e.keyCode
+
+  on_station_keypress: (keyCode) ->
+    return unless keyCode == 13 # Enter
+    return if @station_select.val() == ''
+    unless @play_button.is(':disabled') || @play_button.hasClass('hidden')
+      console.debug 'pressing play button'
+      @play()
+    unless @pause_button.is(':disabled') || @pause_button.hasClass('hidden')
+      console.debug 'pressing pause button'
+      @pause()
 
   insert_station_options: (stations) ->
     for station in stations
@@ -108,22 +110,20 @@ class SomaPlayerPopup
         @station_is_paused()
       else
         @station_is_playing()
+      @station_select.prop 'disabled', false
       @display_track_info info
 
   station_is_playing: ->
     @pause_button.removeClass('hidden')
     @play_button.addClass('hidden')
-    @station_select.prop 'disabled', true
-    @pause_button.focus()
+    @station_select.focus()
 
   station_is_paused: ->
     @pause_button.addClass('hidden')
-    @play_button.removeClass('hidden')
-    @station_select.prop 'disabled', false
-    @play_button.focus()
+    @play_button.removeClass('hidden').prop 'disabled', false
+    @station_select.focus()
 
   play: ->
-    @station_select.prop 'disabled', true
     station = @station_select.val()
     console.debug 'play button clicked, station', station
     SomaPlayerUtil.send_message {action: 'play', station: station}, =>
@@ -136,23 +136,32 @@ class SomaPlayerPopup
           SomaPlayerUtil.get_current_track_info station, (info) =>
             @display_track_info info
 
-  pause: ->
+  pause: (callback) ->
     station = @station_select.val()
     console.debug 'pause button clicked, station', station
     SomaPlayerUtil.send_message {action: 'pause', station: station}, =>
       console.debug 'finished telling station to pause'
       @station_is_paused()
-      @hide_track_info()
       @station_select.focus()
+      if typeof callback == 'function'
+        callback()
 
   station_changed: ->
-    station = @station_select.val()
-    if station == ''
-      console.debug 'station cleared'
-      @play_button.prop 'disabled', true
+    new_station = @station_select.val()
+    if new_station == ''
+      SomaPlayerUtil.send_message {action: 'clear'}, =>
+        console.debug 'station cleared'
+        @play_button.prop 'disabled', true
+        @hide_track_info()
+        @pause()
     else
-      console.debug 'station changed to ' + station
-      @play_button.prop 'disabled', false
+      SomaPlayerUtil.send_message {action: 'info'}, (info) =>
+        current_station = info.station
+        if new_station != '' && new_station != current_station
+          console.debug 'station changed to ' + new_station
+          @play_button.prop 'disabled', false
+          @pause =>
+            @play()
 
   handle_links: ->
     $('a').click (e) ->

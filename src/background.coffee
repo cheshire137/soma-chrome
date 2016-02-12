@@ -107,7 +107,17 @@ class SomaPlayerBackground
     audio_tag.currentTime = 0
     @audio.attr 'data-paused', 'true'
 
+  clear: ->
+    info = @get_info()
+    @unsubscribe info.station
+    audio_tag = @audio[0]
+    audio_tag.pause()
+    audio_tag.currentTime = 0
+    @audio.attr 'data-station', ''
+    @audio.removeAttr 'data-paused'
+
   unsubscribe: (station) ->
+    return unless typeof station == 'string' && station.length > 0
     console.debug 'unsubscribing from', station, '...'
     @socket.emit 'unsubscribe', station, (response) ->
       if response.unsubscribed
@@ -174,6 +184,10 @@ SomaPlayerUtil.receive_message (request, sender, send_response) ->
     info = soma_player_bg.get_info()
     console.debug 'info:', info
     send_response(info)
+    return true
+  else if request.action == 'clear'
+    soma_player_bg.clear()
+    send_response()
     return true
   else if request.action == 'fetch_stations'
     soma_player_bg.fetch_stations (stations, error) ->
