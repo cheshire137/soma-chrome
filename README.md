@@ -12,7 +12,6 @@ Pull requests welcome! If you're making a change to the JavaScript, HTML, or CSS
 
 1. `npm install -g gulp` to globally install Gulp
 1. `npm install` to install necessary Gulp modules
-1. `bundle` to install necessary gems
 1. `cp config.js.example extension/config.js`
 1. Customize extension/config.js by filling in [your Last.fm API key and secret](http://www.last.fm/api/accounts).
 1. `gulp` to watch CoffeeScript, LESS, and Haml files for changes

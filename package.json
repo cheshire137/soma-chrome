@@ -5,7 +5,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "style": "node_modules/.bin/coffeelint src/*.coffee"
+    "style": "node_modules/.bin/coffeelint src/*.coffee",
+    "postinstall": "bundle install"
   },
   "devDependencies": {
     "coffeelint": "^1.13.1",
