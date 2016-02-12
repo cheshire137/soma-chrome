@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "style": "node_modules/.bin/coffeelint src/*.coffee",
-    "postinstall": "bundle install"
+    "postinstall": "bundle install; if [ ! -f extension/config.js ]; then echo \"Copying config.js.example to extension/config.js\"; cp config.js.example extension/config.js; fi"
   },
   "devDependencies": {
     "coffeelint": "^1.13.1",
