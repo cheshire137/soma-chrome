@@ -6,7 +6,9 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 
 See also the [change log](CHANGELOG.md).
 
-![Screenshot](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/promo-assets/1280x800.png)
+![Screenshot 1 of the popup](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot.png)
+
+![Screenshot 2 of the options](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot2.png)
 
 ## How to Build
 
