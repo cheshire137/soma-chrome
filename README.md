@@ -10,7 +10,11 @@ See also the [change log](CHANGELOG.md).
 
 The popup using the dark theme:
 
-![Screenshot 1 - the popup](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot.png)
+![Screenshot 1 - the popup dark](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot.png)
+
+The popup using the light theme with a song playing:
+
+![Screenshot 4 - the popup light](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot4.png)
 
 The options page using the dark theme:
 
