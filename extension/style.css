@@ -18,7 +18,7 @@ button {
   border-radius: 4px;
 }
 body {
-  background-color: #f8f8f8;
+  background-color: #8D8D8D;
   color: #373737;
   font-family: 'Helvetica', 'Arial', sans-serif;
   font-weight: 300;
@@ -27,6 +27,9 @@ body {
   text-shadow: 0 1px 1px #fff;
   padding: 10px;
 }
+body.theme-light {
+  background-color: #f8f8f8;
+}
 body.theme-dark {
   background-color: #222;
   color: #EEE;
@@ -34,6 +37,17 @@ body.theme-dark {
 }
 body.theme-dark footer {
   color: #999;
+}
+body.theme-dark footer a,
+body.theme-dark footer a:link,
+body.theme-dark footer a:visited,
+body.theme-dark footer a:active {
+  color: #aaa;
+  text-decoration: none;
+}
+body.theme-dark footer a:hover,
+body.theme-dark footer a:focus {
+  color: #D8A24D;
 }
 body.theme-dark button {
   color: #eee;
@@ -50,6 +64,20 @@ body.theme-dark button:active {
 body.theme-dark button[disabled] {
   background-color: #333;
   color: #444;
+}
+body.theme-dark select {
+  color: #eee;
+  background-color: #484848;
+  border-color: #444;
+}
+body.theme-dark select[disabled] {
+  background-color: #333;
+  color: #444;
+}
+body.theme-dark select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(216, 162, 77, 0.75);
+  border: 1px solid rgba(216, 162, 77, 0.5);
 }
 body.theme-dark hr {
   border-top-color: #444;
@@ -79,17 +107,6 @@ body.options.theme-dark .icon-dark {
 }
 body.options.theme-dark .help-block {
   color: #999;
-}
-body.options.theme-dark footer a,
-body.options.theme-dark footer a:link,
-body.options.theme-dark footer a:visited,
-body.options.theme-dark footer a:active {
-  color: #aaa;
-  text-decoration: none;
-}
-body.options.theme-dark footer a:hover,
-body.options.theme-dark footer a:focus {
-  color: #D8A24D;
 }
 body.options a,
 body.options a:link,
@@ -137,6 +154,9 @@ body.options p {
 body.popup {
   min-width: 19em;
   text-align: center;
+}
+body.popup.theme-dark h1 {
+  color: #999;
 }
 body.popup #currently-playing {
   margin-bottom: 10px;

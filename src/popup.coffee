@@ -8,6 +8,7 @@ class SomaPlayerPopup
     @title_el = $('span#title')
     @artist_el = $('span#artist')
     @handle_links()
+    @apply_theme()
     @fetch_soma_channels()
     @station_select.change =>
       @station_changed()
@@ -173,6 +174,11 @@ class SomaPlayerPopup
         url = link.attr('href')
       chrome.tabs.create({url: url})
       false
+
+  apply_theme: ->
+    SomaPlayerUtil.get_options (opts) =>
+      theme = opts.theme || 'light'
+      document.body.classList.add 'theme-' + theme
 
 document.addEventListener 'DOMContentLoaded', ->
   new SomaPlayerPopup()

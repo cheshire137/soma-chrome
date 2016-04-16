@@ -10,6 +10,7 @@ SomaPlayerPopup = (function() {
     this.title_el = $('span#title');
     this.artist_el = $('span#artist');
     this.handle_links();
+    this.apply_theme();
     this.fetch_soma_channels();
     this.station_select.change((function(_this) {
       return function() {
@@ -338,6 +339,16 @@ SomaPlayerPopup = (function() {
       });
       return false;
     });
+  };
+
+  SomaPlayerPopup.prototype.apply_theme = function() {
+    return SomaPlayerUtil.get_options((function(_this) {
+      return function(opts) {
+        var theme;
+        theme = opts.theme || 'light';
+        return document.body.classList.add('theme-' + theme);
+      };
+    })(this));
   };
 
   return SomaPlayerPopup;
