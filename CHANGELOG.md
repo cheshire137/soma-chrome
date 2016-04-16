@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.0:
+
+- Add dark theme option.
+
 ## Version 0.0.0.9:
 
 - Change stations while playing without having to hit Pause first.
