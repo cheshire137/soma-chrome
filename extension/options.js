@@ -83,9 +83,14 @@ SomaPlayerOptions = (function() {
         }
         $('.controls.hidden').removeClass('hidden');
         console.debug('SomaPlayer options:', _this.options);
-        return _this.lastfm_button.removeClass('hidden');
+        _this.lastfm_button.removeClass('hidden');
+        return _this.apply_theme();
       };
     })(this));
+  };
+
+  SomaPlayerOptions.prototype.apply_theme = function() {
+    return document.body.classList.add("theme-" + this.options.theme);
   };
 
   SomaPlayerOptions.prototype.show_cached_stations = function(stations) {

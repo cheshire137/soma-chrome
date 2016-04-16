@@ -56,6 +56,10 @@ class SomaPlayerOptions
       $('.controls.hidden').removeClass 'hidden'
       console.debug 'SomaPlayer options:', @options
       @lastfm_button.removeClass 'hidden'
+      @apply_theme()
+
+  apply_theme: ->
+    document.body.classList.add "theme-" + @options.theme
 
   show_cached_stations: (stations) ->
     @stations_divider.show()
