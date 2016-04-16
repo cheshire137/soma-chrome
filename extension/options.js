@@ -90,7 +90,14 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.apply_theme = function() {
-    return document.body.classList.add("theme-" + this.options.theme);
+    var theme;
+    theme = this.options.theme || 'light';
+    if (theme === 'light') {
+      document.body.classList.remove('theme-dark');
+    } else {
+      document.body.classList.remove('theme-light');
+    }
+    return document.body.classList.add('theme-' + theme);
   };
 
   SomaPlayerOptions.prototype.show_cached_stations = function(stations) {
@@ -168,9 +175,10 @@ SomaPlayerOptions = (function() {
       return function() {
         return _this.status_area.text('Saved your options!').fadeIn(function() {
           window.scrollTo(0, 0);
-          return setTimeout((function() {
+          setTimeout((function() {
             return _this.status_area.fadeOut();
           }), 2000);
+          return _this.apply_theme();
         });
       };
     })(this));

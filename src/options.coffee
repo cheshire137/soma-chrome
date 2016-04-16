@@ -59,7 +59,12 @@ class SomaPlayerOptions
       @apply_theme()
 
   apply_theme: ->
-    document.body.classList.add "theme-" + @options.theme
+    theme = @options.theme || 'light'
+    if theme == 'light'
+      document.body.classList.remove 'theme-dark'
+    else
+      document.body.classList.remove 'theme-light'
+    document.body.classList.add 'theme-' + theme
 
   show_cached_stations: (stations) ->
     @stations_divider.show()
@@ -110,6 +115,7 @@ class SomaPlayerOptions
       @status_area.text('Saved your options!').fadeIn =>
         window.scrollTo 0, 0
         setTimeout (=> @status_area.fadeOut()), 2000
+        @apply_theme()
 
   init_authenticate_lastfm: ->
     window.location.href = 'http://www.last.fm/api/auth/' +
