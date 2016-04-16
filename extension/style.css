@@ -35,6 +35,12 @@ body.theme-dark {
   color: #EEE;
   text-shadow: 0 1px 1px #111;
 }
+body.theme-dark .alert {
+  color: #dff0d8;
+  background-color: #468847;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  border-color: #2F7130;
+}
 body.theme-dark footer {
   color: #999;
 }
