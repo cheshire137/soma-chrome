@@ -35,6 +35,9 @@ body.theme-dark {
   color: #EEE;
   text-shadow: 0 1px 1px #111;
 }
+body.theme-dark h1 {
+  color: #999;
+}
 body.theme-dark .help-inline {
   color: #888;
 }
@@ -171,9 +174,6 @@ body.options #lastfm-is-authenticated p.help-block {
 body.popup {
   min-width: 19em;
   text-align: center;
-}
-body.popup.theme-dark h1 {
-  color: #999;
 }
 body.popup #currently-playing {
   margin-bottom: 10px;
