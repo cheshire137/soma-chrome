@@ -57,6 +57,18 @@
             Disable desktop notifications
         %p.help-block
           Notifications when the track changes.
+      %hr
+      %fieldset
+        %legend Theme
+        .controls.hidden
+          %label{for: 'light_theme'}
+            %input#light_theme{type: 'radio', name: 'theme', value: 'light', checked: 'checked'}
+            Light theme
+          %label{for: 'dark_theme'}
+            %input#dark_theme{type: 'radio', name: 'theme', value: 'dark'}
+            Dark theme
+        %p.help-block
+          The appearance of the popup.
       %hr.stations-divider.hidden
       %fieldset.stations-options.hidden
         %legend
@@ -78,7 +90,7 @@
       %footer
         %ul.list-inline
           %li
-            &copy; 2015
+            &copy; 2016
             %a{href: 'http://3till7.net/', target: '_blank'}
               Sarah Vessels
           %li &middot;

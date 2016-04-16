@@ -6,6 +6,8 @@ class SomaPlayerOptions
     @enable_scrobbling = $('#enable_scrobbling')
     @disable_notifications = $('#disable_notifications')
     @enable_notifications = $('#enable_notifications')
+    @light_theme = $('#light_theme')
+    @dark_theme = $('#dark_theme')
     @lastfm_connected_message = $('#lastfm-is-authenticated')
     @lastfm_not_connected_message = $('#lastfm-is-not-authenticated')
     @lastfm_user = $('#lastfm-user')
@@ -22,9 +24,9 @@ class SomaPlayerOptions
     @lastfm_disconnect.click (event) =>
       event.preventDefault()
       @disconnect_from_lastfm()
-    $('input[name="scrobbling"]').change =>
-      @save_options()
-    $('input[name="notifications"]').change =>
+    radio_selector = 'input[name="scrobbling"], input[name="notifications"], ' +
+                     'input[name="theme"]'
+    $(radio_selector).change =>
       @save_options()
     @refresh_stations_button.click =>
       @refresh_stations()
@@ -47,6 +49,8 @@ class SomaPlayerOptions
         @disable_notifications.attr 'checked', 'checked'
       if opts.stations != null && opts.stations.length > 0
         @show_cached_stations opts.stations
+      if opts.theme == 'dark'
+        @dark_theme.attr 'checked', 'checked'
       for key, value of opts
         @options[key] = value
       $('.controls.hidden').removeClass 'hidden'
@@ -96,8 +100,11 @@ class SomaPlayerOptions
     @options.scrobbling = checked_scrobbling.val() == 'enabled'
     checked_notifications = $('input[name="notifications"]:checked')
     @options.notifications = checked_notifications.val() == 'enabled'
+    checked_theme = $('input[name="theme"]:checked')
+    @options.theme = checked_theme.val()
     SomaPlayerUtil.set_options @options, =>
       @status_area.text('Saved your options!').fadeIn =>
+        window.scrollTo 0, 0
         setTimeout (=> @status_area.fadeOut()), 2000
 
   init_authenticate_lastfm: ->

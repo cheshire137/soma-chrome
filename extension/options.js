@@ -2,12 +2,15 @@ var SomaPlayerOptions;
 
 SomaPlayerOptions = (function() {
   function SomaPlayerOptions() {
+    var radio_selector;
     this.status_area = $('#status-message');
     this.lastfm_button = $('button.lastfm-auth');
     this.disable_scrobbling = $('#disable_scrobbling');
     this.enable_scrobbling = $('#enable_scrobbling');
     this.disable_notifications = $('#disable_notifications');
     this.enable_notifications = $('#enable_notifications');
+    this.light_theme = $('#light_theme');
+    this.dark_theme = $('#dark_theme');
     this.lastfm_connected_message = $('#lastfm-is-authenticated');
     this.lastfm_not_connected_message = $('#lastfm-is-not-authenticated');
     this.lastfm_user = $('#lastfm-user');
@@ -33,12 +36,8 @@ SomaPlayerOptions = (function() {
         return _this.disconnect_from_lastfm();
       };
     })(this));
-    $('input[name="scrobbling"]').change((function(_this) {
-      return function() {
-        return _this.save_options();
-      };
-    })(this));
-    $('input[name="notifications"]').change((function(_this) {
+    radio_selector = 'input[name="scrobbling"], input[name="notifications"], ' + 'input[name="theme"]';
+    $(radio_selector).change((function(_this) {
       return function() {
         return _this.save_options();
       };
@@ -74,6 +73,9 @@ SomaPlayerOptions = (function() {
         }
         if (opts.stations !== null && opts.stations.length > 0) {
           _this.show_cached_stations(opts.stations);
+        }
+        if (opts.theme === 'dark') {
+          _this.dark_theme.attr('checked', 'checked');
         }
         for (key in opts) {
           value = opts[key];
@@ -150,14 +152,17 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.save_options = function() {
-    var checked_notifications, checked_scrobbling;
+    var checked_notifications, checked_scrobbling, checked_theme;
     checked_scrobbling = $('input[name="scrobbling"]:checked');
     this.options.scrobbling = checked_scrobbling.val() === 'enabled';
     checked_notifications = $('input[name="notifications"]:checked');
     this.options.notifications = checked_notifications.val() === 'enabled';
+    checked_theme = $('input[name="theme"]:checked');
+    this.options.theme = checked_theme.val();
     return SomaPlayerUtil.set_options(this.options, (function(_this) {
       return function() {
         return _this.status_area.text('Saved your options!').fadeIn(function() {
+          window.scrollTo(0, 0);
           return setTimeout((function() {
             return _this.status_area.fadeOut();
           }), 2000);

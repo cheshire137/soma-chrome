@@ -16,7 +16,7 @@ Pull requests welcome! If you're making a change to the JavaScript, HTML, or CSS
 1. `npm install` to install necessary Gulp modules
 1. Customize extension/config.js by filling in [your Last.fm API key and secret](http://www.last.fm/api/accounts).
 1. `gulp` to watch CoffeeScript, LESS, and Haml files for changes
-1. In Chrome at `chrome://extensions/`, click 'Load unpacked extension...' and choose the extension directory.
+1. In Chrome at `chrome://extensions/`, click 'Load unpacked extension...' and choose the extension/ directory.
 
 ## How to Check Code Style
 
