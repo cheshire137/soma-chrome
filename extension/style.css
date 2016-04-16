@@ -49,7 +49,6 @@ body.theme-dark footer a:link,
 body.theme-dark footer a:visited,
 body.theme-dark footer a:active {
   color: #aaa;
-  text-decoration: none;
 }
 body.theme-dark footer a:hover,
 body.theme-dark footer a:focus {
@@ -118,12 +117,18 @@ body.options a,
 body.options a:link,
 body.options a:visited,
 body.options a:active {
-  color: #4554B5;
+  color: #D8A24D;
   text-decoration: underline;
 }
 body.options a:hover,
 body.options a:focus {
-  color: #EE662B;
+  color: #BA0005;
+  text-decoration: none;
+}
+body.options footer a,
+body.options footer a:link,
+body.options footer a:visited,
+body.options footer a:active {
   text-decoration: none;
 }
 body.options .station-count:before {
@@ -245,7 +250,7 @@ footer a:link,
 footer a:visited,
 footer a:active {
   color: #999;
-  text-decoration: underline;
+  text-decoration: none;
 }
 footer a:hover,
 footer a:focus {
