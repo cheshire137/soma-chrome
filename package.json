@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "coffeelint": "^1.13.1",
-    "gulp": "~3.5.2",
+    "gulp": "~3.9.1",
     "gulp-clean": "~0.2.4",
     "gulp-coffee": "~1.4.1",
     "gulp-concat": "~2.1.7",
