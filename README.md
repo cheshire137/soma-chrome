@@ -4,7 +4,7 @@ SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaF
 
 **[Install from the Chrome Web Store](https://chrome.google.com/webstore/detail/somaplayer/dpcghdgbhjkihgnnbojldhjmcbieofgo?hl=en&gl=US&authuser=1)**
 
-See also the [change log](CHANGELOG.md).
+See the [change log](CHANGELOG.md). You might also be interested in my [desktop app](https://github.com/cheshire137/huxleyfm) for OS X, Windows, and Linux.
 
 ## Screenshots
 
