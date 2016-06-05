@@ -1,7 +1,6 @@
 {
   "name": "soma-chrome",
   "productName": "SomaPlayer",
-  "version": "0.0.1.0",
   "description": "An unofficial SomaFM player with Last.fm scrobbling support.",
   "repository": {
     "type": "git",
