@@ -26,12 +26,10 @@ A song notification:
 
 ## How to Develop
 
-Pull requests welcome! You want to edit the CoffeeScript, Haml, and LESS files in src/, because most of the stuff in extension/ is generated.
+Pull requests welcome!
 
-1. `npm install -g gulp` to globally install Gulp.
-1. `npm install` to install necessary Gulp modules and get a config.js to customize.
+1. `npm install` to install necessary packages and get a config.js to customize.
 1. Customize extension/config.js by filling in [your Last.fm API key and secret](http://www.last.fm/api/accounts).
-1. `gulp` to watch CoffeeScript, LESS, and Haml files for changes.
 1. In Chrome at `chrome://extensions/`, click 'Load unpacked extension...' and choose the extension/ directory.
 
 ## How to Check Code Style
