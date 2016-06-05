@@ -47,7 +47,7 @@ class SomaPlayerOptions
         @enable_scrobbling.attr 'checked', 'checked'
       if opts.notifications == false
         @disable_notifications.attr 'checked', 'checked'
-      if opts.stations != null && opts.stations.length > 0
+      if opts.stations && opts.stations.length > 0
         @show_cached_stations opts.stations
       if opts.theme == 'dark'
         @dark_theme.attr 'checked', 'checked'
