@@ -1,7 +1,16 @@
 {
+  "name": "soma-chrome",
+  "productName": "SomaPlayer",
+  "version": "0.0.1.0",
+  "description": "An unofficial SomaFM player with Last.fm scrobbling support.",
   "repository": {
     "type": "git",
     "url": "https://github.com/cheshire137/soma-chrome.git"
+  },
+  "author": {
+    "name": "Sarah Vessels",
+    "email": "cheshire137@gmail.com",
+    "url": "http://3till7.net/"
   },
   "license": "MIT",
   "scripts": {
