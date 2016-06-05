@@ -118,7 +118,7 @@ class SomaPlayerOptions
         @apply_theme()
 
   init_authenticate_lastfm: ->
-    window.location.href = 'http://www.last.fm/api/auth/' +
+    window.location.href = SomaPlayerConfig.lastfm_auth_url +
                            '?api_key=' + SomaPlayerConfig.lastfm_api_key +
                            '&cb=' + window.location.href
 
