@@ -342,13 +342,11 @@ SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.apply_theme = function() {
-    return SomaPlayerUtil.get_options((function(_this) {
-      return function(opts) {
-        var theme;
-        theme = opts.theme || 'light';
-        return document.body.classList.add('theme-' + theme);
-      };
-    })(this));
+    return SomaPlayerUtil.get_options(function(opts) {
+      var theme;
+      theme = opts.theme || 'light';
+      return document.body.classList.add('theme-' + theme);
+    });
   };
 
   return SomaPlayerPopup;
