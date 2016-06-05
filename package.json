@@ -15,7 +15,7 @@
   "scripts": {
     "test": "npm run-script style",
     "style": "node_modules/.bin/coffeelint src/*.coffee",
-    "postinstall": "bundle install; if [ ! -f extension/config.js ]; then echo \"Copying config.js.example to extension/config.js\"; cp config.js.example extension/config.js; fi"
+    "postinstall": "if [ ! -f extension/config.js ]; then echo \"Copying config.js.example to extension/config.js\"; cp config.js.example extension/config.js; fi"
   },
   "devDependencies": {
   }
