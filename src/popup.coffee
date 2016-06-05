@@ -176,7 +176,7 @@ class SomaPlayerPopup
       false
 
   apply_theme: ->
-    SomaPlayerUtil.get_options (opts) =>
+    SomaPlayerUtil.get_options (opts) ->
       theme = opts.theme || 'light'
       document.body.classList.add 'theme-' + theme
 

@@ -37,7 +37,7 @@ Pull requests welcome! You want to edit the CoffeeScript, Haml, and LESS files i
 ## How to Check Code Style
 
     npm install
-    npm run-script style
+    npm test
 
 ## Thanks
 
