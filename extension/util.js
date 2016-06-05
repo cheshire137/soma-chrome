@@ -39,9 +39,8 @@ SomaPlayerUtil = (function() {
     results = regex.exec(location.search);
     if (results === null) {
       return "";
-    } else {
-      return decodeURIComponent(results[1].replace(/\+/g, " "));
     }
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
   };
 
   SomaPlayerUtil.get_options = function(callback) {

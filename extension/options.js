@@ -71,7 +71,7 @@ SomaPlayerOptions = (function() {
         if (opts.notifications === false) {
           _this.disable_notifications.attr('checked', 'checked');
         }
-        if (opts.stations !== null && opts.stations.length > 0) {
+        if (opts.stations && opts.stations.length > 0) {
           _this.show_cached_stations(opts.stations);
         }
         if (opts.theme === 'dark') {
@@ -185,7 +185,7 @@ SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.init_authenticate_lastfm = function() {
-    return window.location.href = 'http://www.last.fm/api/auth/' + '?api_key=' + SomaPlayerConfig.lastfm_api_key + '&cb=' + window.location.href;
+    return window.location.href = SomaPlayerConfig.lastfm_auth_url + '?api_key=' + SomaPlayerConfig.lastfm_api_key + '&cb=' + window.location.href;
   };
 
   SomaPlayerOptions.prototype.authenticate_lastfm = function() {

@@ -25,10 +25,8 @@ class SomaPlayerUtil
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]")
     regex = new RegExp("[\\?&]" + name + "=([^&#]*)")
     results = regex.exec(location.search)
-    if results == null
-      ""
-    else
-      decodeURIComponent(results[1].replace(/\+/g, " "))
+    return "" if results == null
+    decodeURIComponent(results[1].replace(/\+/g, " "))
 
   @get_options: (callback) ->
     chrome.storage.sync.get 'somaplayer_options', (opts) ->
