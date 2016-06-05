@@ -1,231 +1,237 @@
-var SomaPlayerOptions;
-
-SomaPlayerOptions = (function() {
+var SomaPlayerOptions = (function() {
   function SomaPlayerOptions() {
-    var radio_selector;
-    this.status_area = $('#status-message');
-    this.lastfm_button = $('button.lastfm-auth');
-    this.disable_scrobbling = $('#disable_scrobbling');
-    this.enable_scrobbling = $('#enable_scrobbling');
-    this.disable_notifications = $('#disable_notifications');
-    this.enable_notifications = $('#enable_notifications');
-    this.light_theme = $('#light_theme');
-    this.dark_theme = $('#dark_theme');
-    this.lastfm_connected_message = $('#lastfm-is-authenticated');
-    this.lastfm_not_connected_message = $('#lastfm-is-not-authenticated');
-    this.lastfm_user = $('#lastfm-user');
-    this.lastfm_disconnect = $('#lastfm-disconnect');
-    this.stations_divider = $('.stations-divider');
-    this.stations_options = $('.stations-options');
-    this.station_count = $('.station-count');
-    this.stations_list = $('.stations-list');
-    this.refresh_stations_button = $('button.refresh-stations');
-    this.lastfm_token = SomaPlayerUtil.get_url_param('token');
-    this.options = {
-      scrobbling: false,
-      notifications: true
-    };
-    this.lastfm_button.click((function(_this) {
-      return function() {
-        return _this.init_authenticate_lastfm();
-      };
-    })(this));
-    this.lastfm_disconnect.click((function(_this) {
-      return function(event) {
-        event.preventDefault();
-        return _this.disconnect_from_lastfm();
-      };
-    })(this));
-    radio_selector = 'input[name="scrobbling"], input[name="notifications"], ' + 'input[name="theme"]';
-    $(radio_selector).change((function(_this) {
-      return function() {
-        return _this.save_options();
-      };
-    })(this));
-    this.refresh_stations_button.click((function(_this) {
-      return function() {
-        return _this.refresh_stations();
-      };
-    })(this));
-    this.restore_options();
-    this.authenticate_lastfm();
+    this.findElements();
+    this.lastfmToken = SomaPlayerUtil.getUrlParam('token');
+    this.options = { scrobbling: false, notifications: true };
+    this.listenForLastfmClicks();
+    this.listenForChanges();
+    this.listenForRefresh();
+    this.restoreOptions();
+    this.authenticateLastfm();
   }
 
-  SomaPlayerOptions.prototype.restore_options = function() {
-    return SomaPlayerUtil.get_options((function(_this) {
-      return function(opts) {
-        var key, value;
-        if (opts.lastfm_session_key) {
-          _this.lastfm_connected_message.removeClass('hidden');
-          _this.enable_scrobbling.removeAttr('disabled');
-        } else {
-          _this.lastfm_not_connected_message.removeClass('hidden');
-        }
-        if (opts.lastfm_user) {
-          _this.lastfm_user.text(opts.lastfm_user);
-          _this.lastfm_user.attr('href', "http://last.fm/user/" + opts.lastfm_user);
-        }
-        if (opts.scrobbling) {
-          _this.enable_scrobbling.attr('checked', 'checked');
-        }
-        if (opts.notifications === false) {
-          _this.disable_notifications.attr('checked', 'checked');
-        }
-        if (opts.stations && opts.stations.length > 0) {
-          _this.show_cached_stations(opts.stations);
-        }
-        if (opts.theme === 'dark') {
-          _this.dark_theme.attr('checked', 'checked');
-        }
-        for (key in opts) {
-          value = opts[key];
-          _this.options[key] = value;
-        }
-        $('.controls.hidden').removeClass('hidden');
-        console.debug('SomaPlayer options:', _this.options);
-        _this.lastfm_button.removeClass('hidden');
-        return _this.apply_theme();
+  SomaPlayerOptions.prototype.listenForRefresh = function() {
+    this.refreshStationsButton.click((function(_this) {
+      return function() {
+        return _this.refreshStations();
       };
     })(this));
   };
 
-  SomaPlayerOptions.prototype.apply_theme = function() {
-    var theme;
-    theme = this.options.theme || 'light';
+  SomaPlayerOptions.prototype.listenForChanges = function() {
+    var radioSelector = 'input[name="scrobbling"], ' +
+                        'input[name="notifications"], ' +
+                        'input[name="theme"]';
+    $(radioSelector).change((function(_this) {
+      return function() {
+        return _this.saveOptions();
+      };
+    })(this));
+  };
+
+  SomaPlayerOptions.prototype.listenForLastfmClicks = function() {
+    this.lastfmAuthButtons.click((function(_this) {
+      return function() {
+        return _this.initAuthenticateLastfm();
+      };
+    })(this));
+    this.lastfmDisconnect.click((function(_this) {
+      return function(event) {
+        event.preventDefault();
+        return _this.disconnectFromLastfm();
+      };
+    })(this));
+  };
+
+  SomaPlayerOptions.prototype.findElements = function() {
+    this.statusArea = $('#status-message');
+    this.lastfmAuthButtons = $('button.lastfm-auth');
+    this.disableScrobbling = $('#disable_scrobbling');
+    this.enableScrobbling = $('#enable_scrobbling');
+    this.disableNotifications = $('#disable_notifications');
+    this.darkTheme = $('#dark_theme');
+    this.lastfmConnectedMessage = $('#lastfm-is-authenticated');
+    this.lastfmNotConnectedMessage = $('#lastfm-is-not-authenticated');
+    this.lastfmUser = $('#lastfm-user');
+    this.lastfmDisconnect = $('#lastfm-disconnect');
+    this.stationsDivider = $('.stations-divider');
+    this.stationsOptions = $('.stations-options');
+    this.stationCount = $('.station-count');
+    this.stationsList = $('.stations-list');
+    this.refreshStationsButton = $('button.refresh-stations');
+  };
+
+  SomaPlayerOptions.prototype.restoreOptions = function() {
+    return SomaPlayerUtil.getOptions((function(_this) {
+      return function(opts) {
+        if (opts.lastfm_session_key) {
+          _this.lastfmConnectedMessage.removeClass('hidden');
+          _this.enableScrobbling.removeAttr('disabled');
+        } else {
+          _this.lastfmNotConnectedMessage.removeClass('hidden');
+        }
+        if (opts.lastfmUser) {
+          _this.lastfmUser.text(opts.lastfmUser);
+          _this.lastfmUser.attr('href',
+                                'http://last.fm/user/' + opts.lastfmUser);
+        }
+        if (opts.scrobbling) {
+          _this.enableScrobbling.attr('checked', 'checked');
+        }
+        if (opts.notifications === false) {
+          _this.disableNotifications.attr('checked', 'checked');
+        }
+        if (opts.stations && opts.stations.length > 0) {
+          _this.showCachedStations(opts.stations);
+        }
+        if (opts.theme === 'dark') {
+          _this.darkTheme.attr('checked', 'checked');
+        }
+        for (var key in opts) {
+          if (opts.hasOwnProperty(key)) {
+            _this.options[key] = opts[key];
+          }
+        }
+        $('.controls.hidden').removeClass('hidden');
+        console.debug('SomaPlayer options:', _this.options);
+        _this.lastfmAuthButtons.removeClass('hidden');
+        _this.applyTheme();
+      };
+    })(this));
+  };
+
+  SomaPlayerOptions.prototype.applyTheme = function() {
+    var theme = this.options.theme || 'light';
     if (theme === 'light') {
       document.body.classList.remove('theme-dark');
     } else {
       document.body.classList.remove('theme-light');
     }
-    return document.body.classList.add('theme-' + theme);
+    document.body.classList.add('theme-' + theme);
   };
 
-  SomaPlayerOptions.prototype.show_cached_stations = function(stations) {
-    var s, text_list, titles;
-    this.stations_divider.show();
-    this.stations_options.show();
-    this.station_count.text(stations.length);
-    titles = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = stations.length; _i < _len; _i++) {
-        s = stations[_i];
-        _results.push(s.title);
+  SomaPlayerOptions.prototype.showCachedStations = function(stations) {
+    this.stationsDivider.show();
+    this.stationsOptions.show();
+    this.stationCount.text(stations.length);
+    var titles = (function() {
+      var _results = [];
+      for (var _i = 0; _i < stations.length; _i++) {
+        _results.push(stations[_i].title);
       }
       return _results;
     })();
     titles.sort();
-    text_list = titles.slice(0, titles.length - 1).join(', ');
-    text_list += ', and ' + titles[titles.length - 1] + '.';
-    return this.stations_list.text(text_list);
+    var textList = titles.slice(0, titles.length - 1).join(', ');
+    textList += ', and ' + titles[titles.length - 1] + '.';
+    return this.stationsList.text(textList);
   };
 
-  SomaPlayerOptions.prototype.refresh_stations = function() {
+  SomaPlayerOptions.prototype.refreshStations = function() {
     var msg;
     console.debug('refreshing stations list');
-    this.stations_list.text('');
-    this.refresh_stations_button.prop('disabled', true);
-    msg = {
-      action: 'fetch_stations'
-    };
-    return SomaPlayerUtil.send_message(msg, (function(_this) {
+    this.stationsList.text('');
+    this.refreshStationsButton.prop('disabled', true);
+    msg = { action: 'fetch_stations' };
+    return SomaPlayerUtil.sendMessage(msg, (function(_this) {
       return function(stations, error) {
         if (error) {
-          _this.stations_list.text('Could not fetch station list. :(');
+          _this.stationsList.text('Could not fetch station list. :(');
         } else {
-          _this.show_cached_stations(stations);
+          _this.showCachedStations(stations);
         }
         _this.options.stations = stations;
-        return _this.refresh_stations_button.prop('disabled', false);
+        return _this.refreshStationsButton.prop('disabled', false);
       };
     })(this));
   };
 
-  SomaPlayerOptions.prototype.disconnect_from_lastfm = function() {
+  SomaPlayerOptions.prototype.disconnectFromLastfm = function() {
     console.debug('disconnecting from Last.fm...');
     this.options.lastfm_session_key = null;
-    this.options.lastfm_user = null;
+    this.options.lastfmUser = null;
     this.options.scrobbling = false;
-    return SomaPlayerUtil.set_options(this.options, (function(_this) {
+    return SomaPlayerUtil.setOptions(this.options, (function(_this) {
       return function() {
-        _this.status_area.text('Disconnected from Last.fm!').fadeIn(function() {
+        _this.statusArea.text('Disconnected from Last.fm!').fadeIn(function() {
           return setTimeout((function() {
-            return _this.status_area.fadeOut();
+            return _this.statusArea.fadeOut();
           }), 2000);
         });
-        _this.lastfm_user.text('');
-        _this.lastfm_connected_message.addClass('hidden');
-        _this.lastfm_not_connected_message.removeClass('hidden');
-        _this.enable_scrobbling.attr('disabled', 'disabled');
-        _this.enable_scrobbling.removeAttr('checked');
-        return _this.disable_scrobbling.attr('checked', 'checked');
+        _this.lastfmUser.text('');
+        _this.lastfmConnectedMessage.addClass('hidden');
+        _this.lastfmNotConnectedMessage.removeClass('hidden');
+        _this.enableScrobbling.attr('disabled', 'disabled');
+        _this.enableScrobbling.removeAttr('checked');
+        return _this.disableScrobbling.attr('checked', 'checked');
       };
     })(this));
   };
 
-  SomaPlayerOptions.prototype.save_options = function() {
-    var checked_notifications, checked_scrobbling, checked_theme;
-    checked_scrobbling = $('input[name="scrobbling"]:checked');
-    this.options.scrobbling = checked_scrobbling.val() === 'enabled';
-    checked_notifications = $('input[name="notifications"]:checked');
-    this.options.notifications = checked_notifications.val() === 'enabled';
-    checked_theme = $('input[name="theme"]:checked');
-    this.options.theme = checked_theme.val();
-    return SomaPlayerUtil.set_options(this.options, (function(_this) {
+  SomaPlayerOptions.prototype.saveOptions = function() {
+    var checkedScrobbling = $('input[name="scrobbling"]:checked');
+    this.options.scrobbling = checkedScrobbling.val() === 'enabled';
+    var checkedNotifications = $('input[name="notifications"]:checked');
+    this.options.notifications = checkedNotifications.val() === 'enabled';
+    var checkedTheme = $('input[name="theme"]:checked');
+    this.options.theme = checkedTheme.val();
+    return SomaPlayerUtil.setOptions(this.options, (function(_this) {
       return function() {
-        return _this.status_area.text('Saved your options!').fadeIn(function() {
+        return _this.statusArea.text('Saved your options!').fadeIn(function() {
           window.scrollTo(0, 0);
           setTimeout((function() {
-            return _this.status_area.fadeOut();
+            return _this.statusArea.fadeOut();
           }), 2000);
-          return _this.apply_theme();
+          return _this.applyTheme();
         });
       };
     })(this));
   };
 
-  SomaPlayerOptions.prototype.init_authenticate_lastfm = function() {
-    return window.location.href = SomaPlayerConfig.lastfm_auth_url + '?api_key=' + SomaPlayerConfig.lastfm_api_key + '&cb=' + window.location.href;
+  SomaPlayerOptions.prototype.initAuthenticateLastfm = function() {
+    window.location.href = SomaPlayerConfig.lastfm_auth_url +
+                           '?api_key=' + SomaPlayerConfig.lastfm_api_key +
+                           '&cb=' + window.location.href;
   };
 
-  SomaPlayerOptions.prototype.authenticate_lastfm = function() {
+  SomaPlayerOptions.prototype.authenticateLastfm = function() {
     var lastfm;
-    if (this.lastfm_token === '') {
+    if (this.lastfmToken === '') {
       return;
     }
     console.debug('authenticating with Last.fm token...');
-    lastfm = SomaPlayerUtil.get_lastfm_connection();
+    lastfm = SomaPlayerUtil.getLastfmConnection();
     return lastfm.auth.getSession({
-      token: this.lastfm_token
+      token: this.lastfmToken
     }, {
       success: (function(_this) {
         return function(data) {
           _this.options.lastfm_session_key = data.session.key;
-          _this.options.lastfm_user = data.session.name;
+          _this.options.lastfmUser = data.session.name;
           _this.options.scrobbling = true;
-          return SomaPlayerUtil.set_options(_this.options, function() {
-            _this.status_area.text('Connected to Last.fm!').fadeIn(function() {
+          return SomaPlayerUtil.setOptions(_this.options, function() {
+            _this.statusArea.text('Connected to Last.fm!').fadeIn(function() {
               return setTimeout((function() {
-                return _this.status_area.fadeOut();
+                return _this.statusArea.fadeOut();
               }), 2000);
             });
-            _this.lastfm_user.text(_this.options.lastfm_user);
-            _this.lastfm_connected_message.removeClass('hidden');
-            _this.lastfm_not_connected_message.addClass('hidden');
-            _this.enable_scrobbling.removeAttr('disabled');
-            return _this.enable_scrobbling.attr('checked', 'checked');
+            _this.lastfmUser.text(_this.options.lastfmUser);
+            _this.lastfmConnectedMessage.removeClass('hidden');
+            _this.lastfmNotConnectedMessage.addClass('hidden');
+            _this.enableScrobbling.removeAttr('disabled');
+            return _this.enableScrobbling.attr('checked', 'checked');
           });
         };
       })(this),
       error: (function(_this) {
         return function(data) {
           console.error('Last.fm error:', data.error, ',', data.message);
-          delete _this.options['lastfm_session_key'];
-          delete _this.options['lastfm_user'];
-          return SomaPlayerUtil.set_options(_this.options, function() {
-            return _this.status_area.text('Error authenticating with Last.fm.').fadeIn(function() {
+          delete _this.options.lastfm_session_key;
+          delete _this.options.lastfm_user;
+          return SomaPlayerUtil.setOptions(_this.options, function() {
+            return _this.statusArea.text('Error authenticating with Last.fm.').fadeIn(function() {
               return setTimeout((function() {
-                return _this.status_area.fadeOut();
+                return _this.statusArea.fadeOut();
               }), 2000);
             });
           });
@@ -235,9 +241,8 @@ SomaPlayerOptions = (function() {
   };
 
   return SomaPlayerOptions;
-
 })();
 
 $(function() {
-  return new SomaPlayerOptions();
+  new SomaPlayerOptions();
 });

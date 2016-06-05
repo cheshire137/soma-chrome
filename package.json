@@ -21,10 +21,25 @@
     "xo": "^0.15.1"
   },
   "xo": {
-    "globals": ["document", "SomaPlayerUtil", "$", "SomaPlayerConfig", "io"],
+    "globals": [
+      "document",
+      "SomaPlayerUtil",
+      "$",
+      "SomaPlayerConfig",
+      "io",
+      "chrome",
+      "window",
+      "LastFM",
+      "LastFMCache"
+    ],
     "space": true,
     "rules": {
-      "space-before-function-paren": 0
+      "space-before-function-paren": 0,
+      "quotes": [2, "single", {"avoidEscape": true}],
+      "dot-location": [2, "object"],
+      "babel/object-curly-spacing": [2, "always"],
+      "camelcase": [2, {"properties": "never"}],
+      "no-new": 0
     }
   }
 }

@@ -1,70 +1,80 @@
-var SomaPlayerPopup;
-
-SomaPlayerPopup = (function() {
+var SomaPlayerPopup = (function() {
   function SomaPlayerPopup() {
     this.base = this;
-    this.station_select = $('#station');
-    this.play_button = $('#play');
-    this.pause_button = $('#pause');
-    this.current_info_el = $('#currently-playing');
-    this.title_el = $('span#title');
-    this.artist_el = $('span#artist');
-    this.handle_links();
-    this.apply_theme();
-    this.fetch_soma_channels();
-    this.station_select.change((function(_this) {
+    this.findElements();
+    this.handleLinks();
+    this.applyTheme();
+    this.fetchSomaStations();
+    this.listenForPlayback();
+    this.listenForStationChange();
+  }
+
+  SomaPlayerPopup.prototype.listenForStationChange = function() {
+    this.stationSelect.change((function(_this) {
       return function() {
         return _this.station_changed();
       };
     })(this));
-    this.play_button.click((function(_this) {
+    this.stationSelect.keypress((function(_this) {
+      return function(e) {
+        return _this.onStationKeypress(e.keyCode);
+      };
+    })(this));
+  };
+
+  SomaPlayerPopup.prototype.listenForPlayback = function() {
+    this.playButton.click((function(_this) {
       return function() {
         return _this.play();
       };
     })(this));
-    this.pause_button.click((function(_this) {
+    this.pauseButton.click((function(_this) {
       return function() {
         return _this.pause();
       };
     })(this));
-    this.station_select.keypress((function(_this) {
-      return function(e) {
-        return _this.on_station_keypress(e.keyCode);
-      };
-    })(this));
-  }
+  };
 
-  SomaPlayerPopup.prototype.on_station_keypress = function(keyCode) {
-    if (keyCode !== 13) {
+  SomaPlayerPopup.prototype.findElements = function() {
+    this.stationSelect = $('#station');
+    this.playButton = $('#play');
+    this.pauseButton = $('#pause');
+    this.currentInfoEl = $('#currently-playing');
+    this.titleEl = $('span#title');
+    this.artistEl = $('span#artist');
+  };
+
+  SomaPlayerPopup.prototype.onStationKeypress = function(keyCode) {
+    if (keyCode !== 13) { // Enter
       return;
     }
-    if (this.station_select.val() === '') {
+    if (this.stationSelect.val() === '') {
       return;
     }
-    if (!(this.play_button.is(':disabled') || this.play_button.hasClass('hidden'))) {
+    if (!(this.playButton.is(':disabled') ||
+          this.playButton.hasClass('hidden'))) {
       console.debug('pressing play button');
       this.play();
     }
-    if (!(this.pause_button.is(':disabled') || this.pause_button.hasClass('hidden'))) {
+    if (!(this.pauseButton.is(':disabled') ||
+          this.pauseButton.hasClass('hidden'))) {
       console.debug('pressing pause button');
       return this.pause();
     }
   };
 
-  SomaPlayerPopup.prototype.insert_station_options = function(stations) {
-    var station, _i, _len;
-    for (_i = 0, _len = stations.length; _i < _len; _i++) {
-      station = stations[_i];
-      this.station_select.append('<option value="' + station.id + '">' + station.title + '</option>');
+  SomaPlayerPopup.prototype.insertStationOptions = function(stations) {
+    for (var i = 0; i < stations.length; i++) {
+      this.stationSelect.append('<option value="' + stations[i].id + '">' +
+                                 stations[i].title + '</option>');
     }
-    this.station_select.prop('disabled', false);
-    return this.load_current_info();
+    this.stationSelect.prop('disabled', false);
+    this.loadCurrentInfo();
   };
 
-  SomaPlayerPopup.prototype.load_default_stations = function() {
-    var default_stations;
+  SomaPlayerPopup.prototype.loadDefaultStations = function() {
     console.debug('loading default station list');
-    default_stations = [
+    var defaultStations = [
       {
         id: 'bagel',
         title: 'BAGeL Radio'
@@ -172,99 +182,96 @@ SomaPlayerPopup = (function() {
         title: 'Xmas in Frisko'
       }
     ];
-    return this.insert_station_options(default_stations);
+    this.insertStationOptions(defaultStations);
   };
 
-  SomaPlayerPopup.prototype.fetch_soma_channels = function() {
-    return SomaPlayerUtil.send_message({
+  SomaPlayerPopup.prototype.fetchSomaStations = function() {
+    return SomaPlayerUtil.sendMessage({
       action: 'get_stations'
     }, (function(_this) {
-      return function(cached_list) {
-        var msg;
-        console.log('stations already stored', cached_list);
-        if (cached_list === null || cached_list.length < 1) {
-          msg = {
-            action: 'fetch_stations'
-          };
-          return SomaPlayerUtil.send_message(msg, function(stations, error) {
+      return function(cachedList) {
+        console.log('stations already stored', cachedList);
+        if (!cachedList || cachedList.length < 1) {
+          var msg = { action: 'fetch_stations' };
+          SomaPlayerUtil.sendMessage(msg, function(stations, error) {
             if (error) {
-              return _this.load_default_stations();
+              _this.loadDefaultStations();
             } else {
-              return _this.insert_station_options(stations);
+              _this.insertStationOptions(stations);
             }
           });
         } else {
-          return _this.insert_station_options(cached_list);
+          _this.insertStationOptions(cachedList);
         }
       };
     })(this));
   };
 
-  SomaPlayerPopup.prototype.display_track_info = function(info) {
+  SomaPlayerPopup.prototype.displayTrackInfo = function(info) {
     if (info.artist || info.title) {
-      this.title_el.text(info.title);
-      this.artist_el.text(info.artist);
-      return this.current_info_el.removeClass('hidden');
+      this.titleEl.text(info.title);
+      this.artistEl.text(info.artist);
+      this.currentInfoEl.removeClass('hidden');
     }
   };
 
-  SomaPlayerPopup.prototype.hide_track_info = function() {
-    this.title_el.text('');
-    this.artist_el.text('');
-    return this.current_info_el.addClass('hidden');
+  SomaPlayerPopup.prototype.hideTrackInfo = function() {
+    this.titleEl.text('');
+    this.artistEl.text('');
+    this.currentInfoEl.addClass('hidden');
   };
 
-  SomaPlayerPopup.prototype.load_current_info = function() {
-    this.station_select.prop('disabled', true);
-    return SomaPlayerUtil.send_message({
+  SomaPlayerPopup.prototype.loadCurrentInfo = function() {
+    this.stationSelect.prop('disabled', true);
+    return SomaPlayerUtil.sendMessage({
       action: 'info'
     }, (function(_this) {
       return function(info) {
         console.debug('finished info request, info', info);
-        _this.station_select.val(info.station);
-        _this.station_select.trigger('change');
-        if (info.is_paused) {
-          _this.station_is_paused();
+        _this.stationSelect.val(info.station);
+        _this.stationSelect.trigger('change');
+        if (info.paused) {
+          _this.stationIsPaused();
         } else {
-          _this.station_is_playing();
+          _this.stationIsPlaying();
         }
-        _this.station_select.prop('disabled', false);
-        return _this.display_track_info(info);
+        _this.stationSelect.prop('disabled', false);
+        _this.displayTrackInfo(info);
       };
     })(this));
   };
 
-  SomaPlayerPopup.prototype.station_is_playing = function() {
-    this.pause_button.removeClass('hidden');
-    this.play_button.addClass('hidden');
-    return this.station_select.focus();
+  SomaPlayerPopup.prototype.stationIsPlaying = function() {
+    this.pauseButton.removeClass('hidden');
+    this.playButton.addClass('hidden');
+    return this.stationSelect.focus();
   };
 
-  SomaPlayerPopup.prototype.station_is_paused = function() {
-    this.pause_button.addClass('hidden');
-    this.play_button.removeClass('hidden').prop('disabled', false);
-    return this.station_select.focus();
+  SomaPlayerPopup.prototype.stationIsPaused = function() {
+    this.pauseButton.addClass('hidden');
+    this.playButton.removeClass('hidden').prop('disabled', false);
+    return this.stationSelect.focus();
   };
 
   SomaPlayerPopup.prototype.play = function() {
     var station;
-    station = this.station_select.val();
+    station = this.stationSelect.val();
     console.debug('play button clicked, station', station);
-    return SomaPlayerUtil.send_message({
+    return SomaPlayerUtil.sendMessage({
       action: 'play',
       station: station
     }, (function(_this) {
       return function() {
         console.debug('finishing telling station to play');
-        _this.station_is_playing();
-        return SomaPlayerUtil.send_message({
+        _this.stationIsPlaying();
+        SomaPlayerUtil.sendMessage({
           action: 'info'
         }, function(info) {
           if (info.artist !== '' || info.title !== '') {
-            return _this.display_track_info(info);
+            _this.displayTrackInfo(info);
           } else {
-            return SomaPlayerUtil.get_current_track_info(station, function(info) {
-              return _this.display_track_info(info);
+            SomaPlayerUtil.getCurrentTrackInfo(station, function(info) {
+              _this.displayTrackInfo(info);
             });
           }
         });
@@ -273,50 +280,47 @@ SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.pause = function(callback) {
-    var station;
-    station = this.station_select.val();
+    var station = this.stationSelect.val();
     console.debug('pause button clicked, station', station);
-    return SomaPlayerUtil.send_message({
+    return SomaPlayerUtil.sendMessage({
       action: 'pause',
       station: station
     }, (function(_this) {
       return function() {
         console.debug('finished telling station to pause');
-        _this.station_is_paused();
-        _this.station_select.focus();
+        _this.stationIsPaused();
+        _this.stationSelect.focus();
         if (typeof callback === 'function') {
-          return callback();
+          callback();
         }
       };
     })(this));
   };
 
   SomaPlayerPopup.prototype.station_changed = function() {
-    var new_station;
-    new_station = this.station_select.val();
-    if (new_station === '') {
-      return SomaPlayerUtil.send_message({
+    var newStation = this.stationSelect.val();
+    if (newStation === '') {
+      SomaPlayerUtil.sendMessage({
         action: 'clear'
       }, (function(_this) {
         return function() {
           console.debug('station cleared');
-          _this.play_button.prop('disabled', true);
-          _this.hide_track_info();
-          return _this.pause();
+          _this.playButton.prop('disabled', true);
+          _this.hideTrackInfo();
+          _this.pause();
         };
       })(this));
     } else {
-      return SomaPlayerUtil.send_message({
+      SomaPlayerUtil.sendMessage({
         action: 'info'
       }, (function(_this) {
         return function(info) {
-          var current_station;
-          current_station = info.station;
-          if (new_station !== '' && new_station !== current_station) {
-            console.debug('station changed to ' + new_station);
-            _this.play_button.prop('disabled', false);
-            return _this.pause(function() {
-              return _this.play();
+          var currentStation = info.station;
+          if (newStation !== '' && newStation !== currentStation) {
+            console.debug('station changed to ' + newStation);
+            _this.playButton.prop('disabled', false);
+            _this.pause(function() {
+              _this.play();
             });
           }
         };
@@ -324,33 +328,29 @@ SomaPlayerPopup = (function() {
     }
   };
 
-  SomaPlayerPopup.prototype.handle_links = function() {
+  SomaPlayerPopup.prototype.handleLinks = function() {
     return $('a').click(function(e) {
-      var link, url;
       e.preventDefault();
-      link = $(this);
+      var link = $(this);
+      var url;
       if (link.attr('href') === '#options') {
         url = chrome.extension.getURL('options.html');
       } else {
         url = link.attr('href');
       }
-      chrome.tabs.create({
-        url: url
-      });
+      chrome.tabs.create({ url: url });
       return false;
     });
   };
 
-  SomaPlayerPopup.prototype.apply_theme = function() {
-    return SomaPlayerUtil.get_options(function(opts) {
-      var theme;
-      theme = opts.theme || 'light';
+  SomaPlayerPopup.prototype.applyTheme = function() {
+    return SomaPlayerUtil.getOptions(function(opts) {
+      var theme = opts.theme || 'light';
       return document.body.classList.add('theme-' + theme);
     });
   };
 
   return SomaPlayerPopup;
-
 })();
 
 document.addEventListener('DOMContentLoaded', function() {
