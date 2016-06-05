@@ -7,19 +7,19 @@
 ## Version 0.0.0.9:
 
 - Change stations while playing without having to hit Pause first.
-- Keep station menu selected. Hitting Enter will play/pause current station. Use arrow keys or start typing a station name to change to that station.
+- Keep the station menu selected. Hitting Enter will play/pause the current station. Use arrow keys or start typing a station name to change to that station.
 
 ## Version 0.0.0.8:
 
-- Update GitHub link.
+- Update GitHub link to view source.
 
 ## Version 0.0.0.7:
 
-- Dynamically pull stations from Soma so you always see the latest available stations.
+- Dynamically pull stations from SomaFM so you always see the latest available stations.
 
 ## Version 0.0.0.6:
 
-- New icon thanks to @rustyhodge at SomaFM.
+- New icon thanks to [@rustyhodge](https://github.com/rustyhodge) at SomaFM.
 
 ## Version 0.0.0.5:
 
@@ -32,10 +32,10 @@
 
 ## Version 0.0.0.3:
 
-- Updated to work with version 1.3.0 of http://api.somascrobbler.com/
+- Updated to work with version 1.3.0 of [SomaScrobbler API](http://api.somascrobbler.com/).
 - Show last known track info in the popup as soon as you start playing a station.
 
 ## Version 0.0.0.2:
 
-- Added DEF CON and Jolly Ol' Soul stations.
+- Added DEF CON Radio and Jolly Ol' Soul stations.
 - Fixed desktop notifications thanks to lantrix.
