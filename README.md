@@ -10,19 +10,19 @@ See the [change log](CHANGELOG.md). You might also be interested in my [desktop 
 
 The popup using the dark theme:
 
-![Screenshot 1 - the popup dark](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot.png)
+![Screenshot 1 - the popup dark](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshots/screenshot.png)
 
 The popup using the light theme with a song playing:
 
-![Screenshot 4 - the popup light](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot4.png)
+![Screenshot 4 - the popup light](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshots/screenshot4.png)
 
 The options page using the dark theme:
 
-![Screenshot 2 - the options page](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot2.png)
+![Screenshot 2 - the options page](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshots/screenshot2.png)
 
 A song notification:
 
-![Screenshot 3 - a song notification](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshot3.png)
+![Screenshot 3 - a song notification](https://raw.githubusercontent.com/cheshire137/soma-chrome/master/screenshots/screenshot3.png)
 
 ## How to Develop
 
