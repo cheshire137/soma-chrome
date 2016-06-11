@@ -229,9 +229,7 @@ class SomaPlayerBackground {
     const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
     console.debug(`fetching channels list from ${url}`);
     return new Promise((resolve, reject) => {
-      window.fetch(url).then(response => {
-        return response.json();
-      }).then(data => {
+      SomaPlayerUtil.getJSON(url).then(data => {
         console.debug('fetched stations list', data);
         const simpleStations = this.extractStations(data);
         this.setStations(simpleStations);
@@ -257,6 +255,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (typeof somaPlayerBG === 'undefined') {
+    return;
+  }
   console.debug('received:', request.action, request);
   if (request.action === 'play') {
     somaPlayerBG.play(request.station);
