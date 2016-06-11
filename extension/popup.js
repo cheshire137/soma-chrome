@@ -51,7 +51,7 @@ const SomaPlayerPopup = (function() {
     if (!(this.pauseButton.disabled ||
           this.pauseButton.classList.contains('hidden'))) {
       console.debug('pressing pause button');
-      return this.pause();
+      this.pause();
     }
   };
 
@@ -257,16 +257,16 @@ const SomaPlayerPopup = (function() {
     });
   };
 
-  SomaPlayerPopup.prototype.pause = function(callback) {
+  SomaPlayerPopup.prototype.pause = function() {
     const station = this.stationSelect.value;
     console.debug('pause button clicked, station', station);
-    return SomaPlayerUtil.sendMessage({ action: 'pause', station }, () => {
-      console.debug('finished telling station to pause');
-      this.stationIsPaused();
-      this.stationSelect.focus();
-      if (typeof callback === 'function') {
-        callback();
-      }
+    return new Promise(resolve => {
+      SomaPlayerUtil.sendMessage({ action: 'pause', station }, () => {
+        console.debug('finished telling station to pause');
+        this.stationIsPaused();
+        this.stationSelect.focus();
+        resolve();
+      });
     });
   };
 
@@ -280,14 +280,12 @@ const SomaPlayerPopup = (function() {
         this.pause();
       });
     } else {
-      SomaPlayerUtil.sendMessage({ action: 'info' }, (info) => {
+      SomaPlayerUtil.sendMessage({ action: 'info' }, info => {
         const currentStation = info.station;
         if (newStation !== '' && newStation !== currentStation) {
           console.debug(`station changed to ${newStation}`);
           this.playButton.disabled = false;
-          this.pause(() => {
-            this.play();
-          });
+          this.pause().then(this.play.bind(this));
         }
       });
     }

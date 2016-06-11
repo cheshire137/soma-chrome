@@ -145,7 +145,7 @@ const SomaPlayerOptions = (function() {
     this.options.lastfm_session_key = null;
     this.options.lastfmUser = null;
     this.options.scrobbling = false;
-    return SomaPlayerUtil.setOptions(this.options, () => {
+    SomaPlayerUtil.setOptions(this.options, () => {
       this.flashNotice('Disconnected from Last.fm!');
       this.lastfmUser.textContent = '';
       this.lastfmConnectedMessage.classList.add('hidden');
