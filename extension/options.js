@@ -63,7 +63,7 @@ const SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.restoreOptions = function() {
-    return SomaPlayerUtil.getOptions(opts => {
+    return SomaPlayerUtil.getOptions().then(opts => {
       if (opts.lastfm_session_key) {
         this.lastfmConnectedMessage.classList.remove('hidden');
         this.enableScrobbling.removeAttribute('disabled');
@@ -145,7 +145,7 @@ const SomaPlayerOptions = (function() {
     this.options.lastfm_session_key = null;
     this.options.lastfm_user = null;
     this.options.scrobbling = false;
-    SomaPlayerUtil.setOptions(this.options, () => {
+    SomaPlayerUtil.setOptions(this.options).then(() => {
       this.flashNotice('Disconnected from Last.fm!');
       this.lastfmUser.textContent = '';
       this.lastfmConnectedMessage.classList.add('hidden');
@@ -179,7 +179,7 @@ const SomaPlayerOptions = (function() {
     this.options.notifications = checkedNotifications.value === 'enabled';
     const checkedTheme = document.querySelector('input[name="theme"]:checked');
     this.options.theme = checkedTheme.value;
-    return SomaPlayerUtil.setOptions(this.options, () => {
+    return SomaPlayerUtil.setOptions(this.options).then(() => {
       this.flashNotice('Saved your options!');
       this.applyTheme();
     });
@@ -195,12 +195,12 @@ const SomaPlayerOptions = (function() {
     }
     console.debug('authenticating with Last.fm token...');
     const lastfm = SomaPlayerUtil.getLastfmConnection();
-    return lastfm.auth.getSession({ token: this.lastfmToken }, {
+    lastfm.auth.getSession({ token: this.lastfmToken }, {
       success: data => {
         this.options.lastfm_session_key = data.session.key;
         this.options.lastfm_user = data.session.name;
         this.options.scrobbling = true;
-        return SomaPlayerUtil.setOptions(this.options, () => {
+        SomaPlayerUtil.setOptions(this.options).then(() => {
           this.flashNotice('Connected to Last.fm!');
           this.lastfmUser.textContent = this.options.lastfm_user;
           this.lastfmConnectedMessage.classList.remove('hidden');
@@ -213,7 +213,7 @@ const SomaPlayerOptions = (function() {
         console.error('Last.fm error:', data.error, ',', data.message);
         delete this.options.lastfm_session_key;
         delete this.options.lastfm_user;
-        SomaPlayerUtil.setOptions(this.options, () => {
+        SomaPlayerUtil.setOptions(this.options).then(() => {
           this.flashNotice('Error authenticating with Last.fm.');
         });
       }

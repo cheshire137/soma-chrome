@@ -315,7 +315,7 @@ const SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.applyTheme = function() {
-    return SomaPlayerUtil.getOptions(opts => {
+    return SomaPlayerUtil.getOptions().then(opts => {
       const theme = opts.theme || 'light';
       return document.body.classList.add(`theme-${theme}`);
     });

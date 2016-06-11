@@ -42,18 +42,19 @@ window.SomaPlayerUtil = (function() {
     return decodeURIComponent(results[1].replace(/\+/g, ' '));
   };
 
-  SomaPlayerUtil.getOptions = function(callback) {
-    return chrome.storage.sync.get('somaplayer_options', opts => {
-      opts = opts.somaplayer_options || {};
-      return callback(opts);
+  SomaPlayerUtil.getOptions = function() {
+    return new Promise(resolve => {
+      chrome.storage.sync.get('somaplayer_options', opts => {
+        resolve(opts.somaplayer_options || {});
+      });
     });
   };
 
-  SomaPlayerUtil.setOptions = function(opts, callback) {
-    return chrome.storage.sync.set({ somaplayer_options: opts }, () => {
-      if (callback) {
-        return callback();
-      }
+  SomaPlayerUtil.setOptions = function(opts) {
+    return new Promise(resolve => {
+      chrome.storage.sync.set({ somaplayer_options: opts }, () => {
+        resolve();
+      });
     });
   };
 

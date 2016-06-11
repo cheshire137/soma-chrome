@@ -90,7 +90,7 @@ const SomaPlayerBackground = (function() {
     console.debug('new track:', track);
     this.titleEl.textContent = track.title;
     this.artistEl.textContent = track.artist;
-    SomaPlayerUtil.getOptions(opts => {
+    SomaPlayerUtil.getOptions().then(opts => {
       this.notifyOfTrack(track, opts);
       this.scrobbleTrack(track, opts);
     });
@@ -199,7 +199,7 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.setStations = function(stations) {
     console.debug('set stations', stations);
-    SomaPlayerUtil.getOptions(opts => {
+    SomaPlayerUtil.getOptions().then(opts => {
       opts.stations = stations;
       SomaPlayerUtil.setOptions(opts);
     });
@@ -207,7 +207,7 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.getStations = function() {
     return new Promise(resolve => {
-      SomaPlayerUtil.getOptions(opts => {
+      SomaPlayerUtil.getOptions().then(opts => {
         resolve(opts.stations);
       });
     });
