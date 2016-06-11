@@ -71,8 +71,8 @@ const SomaPlayerOptions = (function() {
         this.lastfmNotConnectedMessage.classList.remove('hidden');
       }
       if (opts.lastfmUser) {
-        this.lastfmUser.textContent = opts.lastfmUser;
-        this.lastfmUser.href = `http://last.fm/user/${opts.lastfmUser}`;
+        this.lastfmUser.textContent = opts.lastfm_user;
+        this.lastfmUser.href = `http://last.fm/user/${opts.lastfm_user}`;
       }
       if (opts.scrobbling) {
         this.enableScrobbling.checked = true;
@@ -143,7 +143,7 @@ const SomaPlayerOptions = (function() {
   SomaPlayerOptions.prototype.disconnectFromLastfm = function() {
     console.debug('disconnecting from Last.fm...');
     this.options.lastfm_session_key = null;
-    this.options.lastfmUser = null;
+    this.options.lastfm_user = null;
     this.options.scrobbling = false;
     SomaPlayerUtil.setOptions(this.options, () => {
       this.flashNotice('Disconnected from Last.fm!');
@@ -195,16 +195,14 @@ const SomaPlayerOptions = (function() {
     }
     console.debug('authenticating with Last.fm token...');
     const lastfm = SomaPlayerUtil.getLastfmConnection();
-    return lastfm.auth.getSession({
-      token: this.lastfmToken
-    }, {
+    return lastfm.auth.getSession({ token: this.lastfmToken }, {
       success: data => {
         this.options.lastfm_session_key = data.session.key;
-        this.options.lastfmUser = data.session.name;
+        this.options.lastfm_user = data.session.name;
         this.options.scrobbling = true;
         return SomaPlayerUtil.setOptions(this.options, () => {
           this.flashNotice('Connected to Last.fm!');
-          this.lastfmUser.textContent = this.options.lastfmUser;
+          this.lastfmUser.textContent = this.options.lastfm_user;
           this.lastfmConnectedMessage.classList.remove('hidden');
           this.lastfmNotConnectedMessage.classList.add('hidden');
           this.enableScrobbling.removeAttribute('disabled');
