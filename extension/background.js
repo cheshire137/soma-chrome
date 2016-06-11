@@ -200,38 +200,36 @@ const SomaPlayerBackground = (function() {
     });
   };
 
-  SomaPlayerBackground.prototype.getStations = function(callback) {
-    SomaPlayerUtil.getOptions(opts => {
-      return callback(opts.stations);
+  SomaPlayerBackground.prototype.getStations = function() {
+    return new Promise(resolve => {
+      SomaPlayerUtil.getOptions(opts => {
+        resolve(opts.stations);
+      });
     });
   };
 
-  SomaPlayerBackground.prototype.fetchStations = function(callback) {
+  SomaPlayerBackground.prototype.fetchStations = function() {
     const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
     console.debug(`fetching channels list from ${url}`);
-    return window.fetch(url).then(response => {
-      return response.json();
-    }).then(this.onStationsFetched.bind(this, callback)).
-       catch(this.onStationFetchError.bind(this, callback));
-  };
-
-  SomaPlayerBackground.prototype.onStationsFetched = function(callback, data) {
-    console.debug('fetched stations list', data);
-    const stations = data.channels;
-    const simpleStations = [];
-    for (let i = 0; i < stations.length; i++) {
-      simpleStations.push({
-        id: stations[i].id,
-        title: stations[i].title
+    return new Promise((resolve, reject) => {
+      window.fetch(url).then(response => {
+        return response.json();
+      }).then(data => {
+        console.debug('fetched stations list', data);
+        const simpleStations = this.extractStations(data);
+        this.setStations(simpleStations);
+        resolve(simpleStations);
+      }).catch((xhr, status, error) => {
+        console.error('failed to fetch stations list', error);
+        reject(error);
       });
-    }
-    this.setStations(simpleStations);
-    callback(simpleStations);
+    });
   };
 
-  SomaPlayerBackground.prototype.onStationFetchError = function(callback, xhr, status, error) {
-    console.error('failed to fetch stations list', error);
-    callback(null, true);
+  SomaPlayerBackground.prototype.extractStations = function(data) {
+    return data.channels.map(station => {
+      return { id: station.id, title: station.title };
+    });
   };
 
   return SomaPlayerBackground;
@@ -266,15 +264,17 @@ SomaPlayerUtil.receiveMessage((request, sender, sendResponse) => {
     return true;
   }
   if (request.action === 'fetch_stations') {
-    somaPlayerBG.fetchStations((stations, error) => {
-      return sendResponse(stations, error);
+    somaPlayerBG.fetchStations().then(stations => {
+      sendResponse(stations);
+    }).catch(error => {
+      sendResponse(null, error);
     });
     return true;
   }
   if (request.action === 'get_stations') {
-    somaPlayerBG.getStations(stations => {
+    somaPlayerBG.getStations().then(stations => {
       console.debug('got saved list of stations:', stations);
-      return sendResponse(stations);
+      sendResponse(stations);
     });
     return true;
   }
