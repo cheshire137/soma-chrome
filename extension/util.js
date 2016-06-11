@@ -8,13 +8,6 @@ class SomaPlayerUtil {
     });
   }
 
-  static sendMessage(message) {
-    console.debug('sending message:', message);
-    return new Promise(resolve => {
-      chrome.runtime.sendMessage(message, resolve);
-    });
-  }
-
   static getJSON(url) {
     return new Promise((resolve, reject) => {
       window.fetch(url).then(response => {

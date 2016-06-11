@@ -129,7 +129,7 @@ const SomaPlayerOptions = (function() {
     this.stationsList.textContent = '';
     this.refreshStationsButton.disabled = true;
     const msg = { action: 'fetch_stations' };
-    SomaPlayerUtil.sendMessage(msg).then((stations, error) => {
+    chrome.runtime.sendMessage(msg, (stations, error) => {
       if (error) {
         this.stationsList.textContent = 'Could not fetch station list. :(';
       } else {
