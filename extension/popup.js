@@ -249,7 +249,7 @@ const SomaPlayerPopup = (function() {
         if (info.artist !== '' || info.title !== '') {
           this.displayTrackInfo(info);
         } else {
-          SomaPlayerUtil.getCurrentTrackInfo(station, info => {
+          SomaPlayerUtil.getCurrentTrackInfo(station).then(info => {
             this.displayTrackInfo(info);
           });
         }

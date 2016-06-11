@@ -56,7 +56,7 @@ const SomaPlayerBackground = (function() {
   };
 
   SomaPlayerBackground.prototype.getCurrentTrackInfo = function(station) {
-    SomaPlayerUtil.getCurrentTrackInfo(station, track => {
+    return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
       this.titleEl.textContent = track.title;
       this.artistEl.textContent = track.artist;
     });

@@ -21,14 +21,16 @@ window.SomaPlayerUtil = (function() {
     return chrome.runtime.onMessage.addListener(handler);
   };
 
-  SomaPlayerUtil.getCurrentTrackInfo = function(station, callback) {
+  SomaPlayerUtil.getCurrentTrackInfo = function(station) {
     const url = `${SomaPlayerConfig.scrobbler_api_url}/api/v1/nowplaying/${station}`;
     console.debug('getting current track info from', url);
-    return window.fetch(url).then(response => {
-      return response.json();
-    }).then(track => {
-      console.debug('got track info', track);
-      return callback(track);
+    return new Promise((resolve, reject) => {
+      window.fetch(url).then(response => {
+        return response.json();
+      }).then(track => {
+        console.debug('got track info', track);
+        resolve(track);
+      }).catch(reject);
     });
   };
 
