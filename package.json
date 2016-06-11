@@ -21,6 +21,7 @@
     "xo": "^0.15.1"
   },
   "xo": {
+    "esnext": true,
     "globals": [
       "document",
       "SomaPlayerUtil",

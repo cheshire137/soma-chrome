@@ -1,4 +1,4 @@
-var SomaPlayerPopup = (function() {
+const SomaPlayerPopup = (function() {
   function SomaPlayerPopup() {
     this.base = this;
     this.findElements();
@@ -64,9 +64,8 @@ var SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.insertStationOptions = function(stations) {
-    for (var i = 0; i < stations.length; i++) {
-      this.stationSelect.append('<option value="' + stations[i].id + '">' +
-                                 stations[i].title + '</option>');
+    for (let i = 0; i < stations.length; i++) {
+      this.stationSelect.append(`<option value="${stations[i].id}">${stations[i].title}</option>`);
     }
     this.stationSelect.prop('disabled', false);
     this.loadCurrentInfo();
@@ -74,7 +73,7 @@ var SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.loadDefaultStations = function() {
     console.debug('loading default station list');
-    var defaultStations = [
+    const defaultStations = [
       {
         id: 'bagel',
         title: 'BAGeL Radio'
@@ -192,8 +191,8 @@ var SomaPlayerPopup = (function() {
       return function(cachedList) {
         console.log('stations already stored', cachedList);
         if (!cachedList || cachedList.length < 1) {
-          var msg = { action: 'fetch_stations' };
-          SomaPlayerUtil.sendMessage(msg, function(stations, error) {
+          const msg = { action: 'fetch_stations' };
+          SomaPlayerUtil.sendMessage(msg, (stations, error) => {
             if (error) {
               _this.loadDefaultStations();
             } else {
@@ -254,23 +253,22 @@ var SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.play = function() {
-    var station;
-    station = this.stationSelect.val();
+    const station = this.stationSelect.val();
     console.debug('play button clicked, station', station);
     return SomaPlayerUtil.sendMessage({
       action: 'play',
-      station: station
+      station
     }, (function(_this) {
       return function() {
         console.debug('finishing telling station to play');
         _this.stationIsPlaying();
         SomaPlayerUtil.sendMessage({
           action: 'info'
-        }, function(info) {
+        }, info => {
           if (info.artist !== '' || info.title !== '') {
             _this.displayTrackInfo(info);
           } else {
-            SomaPlayerUtil.getCurrentTrackInfo(station, function(info) {
+            SomaPlayerUtil.getCurrentTrackInfo(station, info => {
               _this.displayTrackInfo(info);
             });
           }
@@ -280,11 +278,11 @@ var SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.pause = function(callback) {
-    var station = this.stationSelect.val();
+    const station = this.stationSelect.val();
     console.debug('pause button clicked, station', station);
     return SomaPlayerUtil.sendMessage({
       action: 'pause',
-      station: station
+      station
     }, (function(_this) {
       return function() {
         console.debug('finished telling station to pause');
@@ -298,7 +296,7 @@ var SomaPlayerPopup = (function() {
   };
 
   SomaPlayerPopup.prototype.station_changed = function() {
-    var newStation = this.stationSelect.val();
+    const newStation = this.stationSelect.val();
     if (newStation === '') {
       SomaPlayerUtil.sendMessage({
         action: 'clear'
@@ -315,11 +313,11 @@ var SomaPlayerPopup = (function() {
         action: 'info'
       }, (function(_this) {
         return function(info) {
-          var currentStation = info.station;
+          const currentStation = info.station;
           if (newStation !== '' && newStation !== currentStation) {
-            console.debug('station changed to ' + newStation);
+            console.debug(`station changed to ${newStation}`);
             _this.playButton.prop('disabled', false);
-            _this.pause(function() {
+            _this.pause(() => {
               _this.play();
             });
           }
@@ -331,28 +329,28 @@ var SomaPlayerPopup = (function() {
   SomaPlayerPopup.prototype.handleLinks = function() {
     return $('a').click(function(e) {
       e.preventDefault();
-      var link = $(this);
-      var url;
+      const link = $(this);
+      let url;
       if (link.attr('href') === '#options') {
         url = chrome.extension.getURL('options.html');
       } else {
         url = link.attr('href');
       }
-      chrome.tabs.create({ url: url });
+      chrome.tabs.create({ url });
       return false;
     });
   };
 
   SomaPlayerPopup.prototype.applyTheme = function() {
-    return SomaPlayerUtil.getOptions(function(opts) {
-      var theme = opts.theme || 'light';
-      return document.body.classList.add('theme-' + theme);
+    return SomaPlayerUtil.getOptions(opts => {
+      const theme = opts.theme || 'light';
+      return document.body.classList.add(`theme-${theme}`);
     });
   };
 
   return SomaPlayerPopup;
 })();
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   return new SomaPlayerPopup();
 });

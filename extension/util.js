@@ -22,10 +22,9 @@ window.SomaPlayerUtil = (function() {
   };
 
   SomaPlayerUtil.getCurrentTrackInfo = function(station, callback) {
-    var url = SomaPlayerConfig.scrobbler_api_url + '/api/v1/nowplaying/' +
-              station;
+    const url = `${SomaPlayerConfig.scrobbler_api_url}/api/v1/nowplaying/${station}`;
     console.debug('getting current track info from', url);
-    return $.getJSON(url, function(track) {
+    return $.getJSON(url, track => {
       console.debug('got track info', track);
       return callback(track);
     });
@@ -33,8 +32,8 @@ window.SomaPlayerUtil = (function() {
 
   SomaPlayerUtil.getUrlParam = function(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(window.location.search);
+    const regex = new RegExp(`[\\?&]${name}=([^&#]*)`);
+    const results = regex.exec(window.location.search);
     if (results === null) {
       return '';
     }
@@ -42,14 +41,14 @@ window.SomaPlayerUtil = (function() {
   };
 
   SomaPlayerUtil.getOptions = function(callback) {
-    return chrome.storage.sync.get('somaplayer_options', function(opts) {
+    return chrome.storage.sync.get('somaplayer_options', opts => {
       opts = opts.somaplayer_options || {};
       return callback(opts);
     });
   };
 
   SomaPlayerUtil.setOptions = function(opts, callback) {
-    return chrome.storage.sync.set({ somaplayer_options: opts }, function() {
+    return chrome.storage.sync.set({ somaplayer_options: opts }, () => {
       if (callback) {
         return callback();
       }

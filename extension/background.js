@@ -1,12 +1,12 @@
-var __bind = function(fn, me) {
+const __bind = function(fn, me) {
   return function() {
     return fn.apply(me, arguments);
   };
 };
 
-var somaPlayerBG;
+let somaPlayerBG;
 
-var SomaPlayerBackground = (function() {
+const SomaPlayerBackground = (function() {
   function SomaPlayerBackground() {
     this.onTrack = __bind(this.onTrack, this);
     console.debug('initializing SomaPlayer background script');
@@ -61,10 +61,10 @@ var SomaPlayerBackground = (function() {
   };
 
   SomaPlayerBackground.prototype.subscribe = function(station) {
-    var emitSubscribe = (function(_this) {
+    const emitSubscribe = (function(_this) {
       return function() {
         console.debug('subscribing to', station, '...');
-        _this.socket.emit('subscribe', station, function(response) {
+        _this.socket.emit('subscribe', station, response => {
           if (response.subscribed) {
             console.debug('subscribed to', station);
             _this.getCurrentTrackInfo(station);
@@ -77,7 +77,7 @@ var SomaPlayerBackground = (function() {
     if (this.socket.connected) {
       emitSubscribe();
     } else {
-      this.socket.on('connect', function() {
+      this.socket.on('connect', () => {
         emitSubscribe();
       });
     }
@@ -99,13 +99,13 @@ var SomaPlayerBackground = (function() {
     if (opts.notifications === false) {
       return;
     }
-    var notificationOpts = {
+    const notificationOpts = {
       type: 'basic',
       title: track.artist,
       message: track.title,
       iconUrl: 'icon48.png'
     };
-    return chrome.notifications.create('', notificationOpts, function() {});
+    return chrome.notifications.create('', notificationOpts, () => {});
   };
 
   SomaPlayerBackground.prototype.scrobbleTrack = function(track, opts) {
@@ -113,7 +113,7 @@ var SomaPlayerBackground = (function() {
       return;
     }
     console.debug('scrobbling track for Last.fm user', opts.lastfm_user, track);
-    var scrobbleData = {
+    const scrobbleData = {
       artist: (track.artist || '').replace(/"/g, "'"),
       track: (track.title || '').replace(/"/g, "'"),
       user: opts.lastfm_user,
@@ -123,8 +123,8 @@ var SomaPlayerBackground = (function() {
     return this.lastfm.track.scrobble(scrobbleData, {
       key: opts.lastfm_session_key
     }, {
-      success: function() {
-        var e;
+      success() {
+        let e;
         try {
           $('iframe').contents().find('form').submit();
           return console.debug('scrobbled track');
@@ -135,7 +135,7 @@ var SomaPlayerBackground = (function() {
           }
         }
       },
-      error: function(data) {
+      error(data) {
         return console.error('failed to scrobble track; response:', data);
       }
     });
@@ -144,16 +144,16 @@ var SomaPlayerBackground = (function() {
   SomaPlayerBackground.prototype.pause = function(station) {
     console.debug('pausing station', station);
     this.unsubscribe(station);
-    var audioTag = this.audio[0];
+    const audioTag = this.audio[0];
     audioTag.pause();
     audioTag.currentTime = 0;
     this.audio.attr('data-paused', 'true');
   };
 
   SomaPlayerBackground.prototype.clear = function() {
-    var info = this.getInfo();
+    const info = this.getInfo();
     this.unsubscribe(info.station);
-    var audioTag = this.audio[0];
+    const audioTag = this.audio[0];
     audioTag.pause();
     audioTag.currentTime = 0;
     this.audio.attr('data-station', '');
@@ -165,7 +165,7 @@ var SomaPlayerBackground = (function() {
       return;
     }
     console.debug('unsubscribing from', station, '...');
-    this.socket.emit('unsubscribe', station, function(response) {
+    this.socket.emit('unsubscribe', station, response => {
       if (response.unsubscribed) {
         console.debug('unsubscribed from', station);
       } else {
@@ -177,12 +177,12 @@ var SomaPlayerBackground = (function() {
   };
 
   SomaPlayerBackground.prototype.getInfo = function() {
-    var station = '';
+    let station = '';
     if (this.audio.length >= 1) {
       station = this.audio.attr('data-station') || '';
     }
     return {
-      station: station,
+      station,
       artist: this.artistEl.text(),
       title: this.titleEl.text(),
       paused: this.audio.is('[data-paused]') || station === ''
@@ -191,22 +191,21 @@ var SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.setStations = function(stations) {
     console.debug('set stations', stations);
-    SomaPlayerUtil.getOptions(function(opts) {
+    SomaPlayerUtil.getOptions(opts => {
       opts.stations = stations;
       SomaPlayerUtil.setOptions(opts);
     });
   };
 
   SomaPlayerBackground.prototype.getStations = function(callback) {
-    SomaPlayerUtil.getOptions(function(opts) {
+    SomaPlayerUtil.getOptions(opts => {
       return callback(opts.stations);
     });
   };
 
   SomaPlayerBackground.prototype.fetchStations = function(callback) {
-    var url;
-    url = SomaPlayerConfig.somafm_api_url + 'channels.json';
-    console.debug('fetching channels list from ' + url);
+    const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
+    console.debug(`fetching channels list from ${url}`);
     return $.getJSON(url).
              done(this.onStationsFetched.bind(this, callback)).
              fail(this.onStationFetchError.bind(this, callback));
@@ -214,9 +213,9 @@ var SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.onStationsFetched = function(callback, data) {
     console.debug('fetched stations list', data);
-    var stations = data.channels;
-    var simpleStations = [];
-    for (var i = 0; i < stations.length; i++) {
+    const stations = data.channels;
+    const simpleStations = [];
+    for (let i = 0; i < stations.length; i++) {
       simpleStations.push({
         id: stations[i].id,
         title: stations[i].title
@@ -234,12 +233,12 @@ var SomaPlayerBackground = (function() {
   return SomaPlayerBackground;
 })();
 
-$(function() {
+$(() => {
   somaPlayerBG = new SomaPlayerBackground();
 });
 
-SomaPlayerUtil.receiveMessage(function(request, sender, sendResponse) {
-  var info;
+SomaPlayerUtil.receiveMessage((request, sender, sendResponse) => {
+  let info;
   console.debug('received message in background:', request);
   if (request.action === 'play') {
     somaPlayerBG.play(request.station);
@@ -263,13 +262,13 @@ SomaPlayerUtil.receiveMessage(function(request, sender, sendResponse) {
     return true;
   }
   if (request.action === 'fetch_stations') {
-    somaPlayerBG.fetchStations(function(stations, error) {
+    somaPlayerBG.fetchStations((stations, error) => {
       return sendResponse(stations, error);
     });
     return true;
   }
   if (request.action === 'get_stations') {
-    somaPlayerBG.getStations(function(stations) {
+    somaPlayerBG.getStations(stations => {
       console.debug('got saved list of stations:', stations);
       return sendResponse(stations);
     });
