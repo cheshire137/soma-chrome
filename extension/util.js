@@ -15,11 +15,6 @@ class SomaPlayerUtil {
     });
   }
 
-  static receiveMessage(handler) {
-    console.log('setting up message receiver');
-    return chrome.runtime.onMessage.addListener(handler);
-  }
-
   static getCurrentTrackInfo(station) {
     const url = `${SomaPlayerConfig.scrobbler_api_url}/api/v1/nowplaying/${station}`;
     console.debug('getting current track info from', url);

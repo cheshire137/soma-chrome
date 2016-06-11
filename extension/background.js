@@ -256,8 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
   somaPlayerBG = new SomaPlayerBackground();
 });
 
-SomaPlayerUtil.receiveMessage((request, sender, sendResponse) => {
-  console.debug('received message in background:', request);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.debug('received:', request.action, request);
   if (request.action === 'play') {
     somaPlayerBG.play(request.station);
     sendResponse();
