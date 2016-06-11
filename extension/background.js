@@ -11,21 +11,25 @@ const SomaPlayerBackground = (function() {
     this.onTrack = __bind(this.onTrack, this);
     console.debug('initializing SomaPlayer background script');
     this.lastfm = SomaPlayerUtil.getLastfmConnection();
-    this.audio = $('audio');
-    if (this.audio.length < 1) {
+    this.audio = document.querySelector('audio');
+    if (!this.audio) {
       console.debug('adding new audio tag');
-      $('body').append($('<audio autoplay="true" data-station=""></audio>'));
-      this.audio = $('audio');
+      this.audio = document.createElement('audio');
+      this.audio.setAttribute('autoplay', 'true');
+      this.audio.setAttribute('data-station', '');
+      document.body.appendChild(this.audio);
     }
-    this.titleEl = $('div#title');
-    if (this.titleEl.length < 1) {
-      $('body').append($('<div id="title"></div>'));
-      this.titleEl = $('div#title');
+    this.titleEl = document.getElementById('title');
+    if (!this.titleEl) {
+      this.titleEl = document.createElement('div');
+      this.titleEl.id = 'title';
+      document.body.appendChild(this.titleEl);
     }
-    this.artistEl = $('div#artist');
-    if (this.artistEl.length < 1) {
-      $('body').append($('<div id="artist"></div>'));
-      this.artistEl = $('div#artist');
+    this.artistEl = document.getElementById('artist');
+    if (!this.artistEl) {
+      this.artistEl = document.createElement('div');
+      this.artistEl.id = 'artist';
+      document.body.appendChild(this.artistEl);
     }
     this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
   }
@@ -36,44 +40,41 @@ const SomaPlayerBackground = (function() {
     this.subscribe(station);
     console.debug('adding track listener');
     this.socket.on('track', this.onTrack);
-    this.audio.attr('src', SomaPlayerConfig.somafm_station_url + station);
-    this.audio.attr('data-station', station);
-    this.audio.removeAttr('data-paused');
+    this.audio.src = SomaPlayerConfig.somafm_station_url + station;
+    this.audio.setAttribute('data-station', station);
+    this.audio.removeAttribute('data-paused');
   };
 
   SomaPlayerBackground.prototype.resetTrackInfoIfNecessary = function(station) {
-    if (this.audio.attr('data-station') === station) {
+    if (this.audio.getAttribute('data-station') === station) {
       return;
     }
-    console.debug('changed station from', this.audio.attr('data-station'),
-                  'to', station, ', clearing current track info');
-    this.titleEl.text('');
-    this.artistEl.text('');
+    console.debug('changed station from',
+                  this.audio.getAttribute('data-station'), 'to', station,
+                  ', clearing current track info');
+    this.titleEl.textContent = '';
+    this.artistEl.textContent = '';
   };
 
   SomaPlayerBackground.prototype.getCurrentTrackInfo = function(station) {
-    return SomaPlayerUtil.getCurrentTrackInfo(station, (function(_this) {
-      return function(track) {
-        _this.titleEl.text(track.title);
-        _this.artistEl.text(track.artist);
-      };
-    })(this));
+    SomaPlayerUtil.getCurrentTrackInfo(station, track => {
+      this.titleEl.textContent = track.title;
+      this.artistEl.textContent = track.artist;
+    });
   };
 
   SomaPlayerBackground.prototype.subscribe = function(station) {
-    const emitSubscribe = (function(_this) {
-      return function() {
-        console.debug('subscribing to', station, '...');
-        _this.socket.emit('subscribe', station, response => {
-          if (response.subscribed) {
-            console.debug('subscribed to', station);
-            _this.getCurrentTrackInfo(station);
-          } else {
-            console.error('failed to subscribe to', station, response);
-          }
-        });
-      };
-    })(this);
+    const emitSubscribe = () => {
+      console.debug('subscribing to', station, '...');
+      this.socket.emit('subscribe', station, response => {
+        if (response.subscribed) {
+          console.debug('subscribed to', station);
+          this.getCurrentTrackInfo(station);
+        } else {
+          console.error('failed to subscribe to', station, response);
+        }
+      });
+    };
     if (this.socket.connected) {
       emitSubscribe();
     } else {
@@ -85,14 +86,12 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.onTrack = function(track) {
     console.debug('new track:', track);
-    this.titleEl.text(track.title);
-    this.artistEl.text(track.artist);
-    SomaPlayerUtil.getOptions((function(_this) {
-      return function(opts) {
-        _this.notifyOfTrack(track, opts);
-        _this.scrobbleTrack(track, opts);
-      };
-    })(this));
+    this.titleEl.textContent = track.title;
+    this.artistEl.textContent = track.artist;
+    SomaPlayerUtil.getOptions(opts => {
+      this.notifyOfTrack(track, opts);
+      this.scrobbleTrack(track, opts);
+    });
   };
 
   SomaPlayerBackground.prototype.notifyOfTrack = function(track, opts) {
@@ -126,7 +125,9 @@ const SomaPlayerBackground = (function() {
       success() {
         let e;
         try {
-          $('iframe').contents().find('form').submit();
+          const iframeWin = document.querySelector('iframe').contentWindow;
+          const iframeDoc = iframeWin.contentDocument ? iframeWin.contentDocument : iframeWin.contentWindow.document;
+          iframeDoc.querySelector('form').submit();
           return console.debug('scrobbled track');
         } catch (_error) {
           e = _error;
@@ -144,20 +145,18 @@ const SomaPlayerBackground = (function() {
   SomaPlayerBackground.prototype.pause = function(station) {
     console.debug('pausing station', station);
     this.unsubscribe(station);
-    const audioTag = this.audio[0];
-    audioTag.pause();
-    audioTag.currentTime = 0;
-    this.audio.attr('data-paused', 'true');
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.audio.setAttribute('data-paused', 'true');
   };
 
   SomaPlayerBackground.prototype.clear = function() {
     const info = this.getInfo();
     this.unsubscribe(info.station);
-    const audioTag = this.audio[0];
-    audioTag.pause();
-    audioTag.currentTime = 0;
-    this.audio.attr('data-station', '');
-    this.audio.removeAttr('data-paused');
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.audio.setAttribute('data-station', '');
+    this.audio.removeAttribute('data-paused');
   };
 
   SomaPlayerBackground.prototype.unsubscribe = function(station) {
@@ -178,14 +177,14 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.getInfo = function() {
     let station = '';
-    if (this.audio.length >= 1) {
-      station = this.audio.attr('data-station') || '';
+    if (this.audio) {
+      station = this.audio.getAttribute('data-station') || '';
     }
     return {
       station,
-      artist: this.artistEl.text(),
-      title: this.titleEl.text(),
-      paused: this.audio.is('[data-paused]') || station === ''
+      artist: this.artistEl.textContent,
+      title: this.titleEl.textContent,
+      paused: this.audio.hasAttribute('data-paused') || station === ''
     };
   };
 
@@ -206,9 +205,10 @@ const SomaPlayerBackground = (function() {
   SomaPlayerBackground.prototype.fetchStations = function(callback) {
     const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
     console.debug(`fetching channels list from ${url}`);
-    return $.getJSON(url).
-             done(this.onStationsFetched.bind(this, callback)).
-             fail(this.onStationFetchError.bind(this, callback));
+    return window.fetch(url).then(response => {
+      return response.json();
+    }).then(this.onStationsFetched.bind(this, callback)).
+       catch(this.onStationFetchError.bind(this, callback));
   };
 
   SomaPlayerBackground.prototype.onStationsFetched = function(callback, data) {
@@ -233,7 +233,7 @@ const SomaPlayerBackground = (function() {
   return SomaPlayerBackground;
 })();
 
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   somaPlayerBG = new SomaPlayerBackground();
 });
 

@@ -24,7 +24,9 @@ window.SomaPlayerUtil = (function() {
   SomaPlayerUtil.getCurrentTrackInfo = function(station, callback) {
     const url = `${SomaPlayerConfig.scrobbler_api_url}/api/v1/nowplaying/${station}`;
     console.debug('getting current track info from', url);
-    return $.getJSON(url, track => {
+    return window.fetch(url).then(response => {
+      return response.json();
+    }).then(track => {
       console.debug('got track info', track);
       return callback(track);
     });
