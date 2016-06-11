@@ -31,7 +31,6 @@ const SomaPlayerBackground = (function() {
       this.artistEl.id = 'artist';
       document.body.appendChild(this.artistEl);
     }
-    this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
   }
 
   SomaPlayerBackground.prototype.play = function(station) {
@@ -65,7 +64,6 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.subscribe = function(station) {
     const emitSubscribe = () => {
-      console.debug('subscribing to', station, '...');
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
           console.debug('subscribed to', station);
@@ -75,6 +73,10 @@ const SomaPlayerBackground = (function() {
         }
       });
     };
+    if (typeof this.socket === 'undefined') {
+      console.debug('connecting to socket', SomaPlayerConfig.scrobbler_api_url);
+      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
+    }
     if (this.socket.connected) {
       emitSubscribe();
     } else {
@@ -113,7 +115,7 @@ const SomaPlayerBackground = (function() {
     if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
       return;
     }
-    console.debug('scrobbling track for Last.fm user', opts.lastfm_user, track);
+    console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
     const scrobbleData = {
       artist: (track.artist || '').replace(/"/g, "'"),
       track: (track.title || '').replace(/"/g, "'"),
@@ -165,6 +167,9 @@ const SomaPlayerBackground = (function() {
 
   SomaPlayerBackground.prototype.unsubscribe = function(station) {
     if (!(typeof station === 'string' && station.length > 0)) {
+      return;
+    }
+    if (typeof this.socket === 'undefined') {
       return;
     }
     console.debug('unsubscribing from', station, '...');
