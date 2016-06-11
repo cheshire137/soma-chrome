@@ -293,18 +293,24 @@ const SomaPlayerPopup = (function() {
 
   SomaPlayerPopup.prototype.handleLinks = function() {
     const links = Array.from(document.querySelectorAll('a'));
-    links.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        let url;
-        if (this.href === '#options') {
-          url = chrome.extension.getURL('options.html');
-        } else {
-          url = this.href;
-        }
-        chrome.tabs.create({ url });
-        return false;
-      });
+    for (let i = 0; i < links.length; i++) {
+      this.handleLink(links[i]);
+    }
+  };
+
+  SomaPlayerPopup.prototype.handleLink = function(link) {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      let url;
+      const href = link.href;
+      const optionsSuffix = '#options';
+      if (href.indexOf(optionsSuffix) === href.length - optionsSuffix.length) {
+        url = chrome.extension.getURL('options.html');
+      } else {
+        url = href;
+      }
+      chrome.tabs.create({ url });
+      return false;
     });
   };
 
@@ -319,5 +325,5 @@ const SomaPlayerPopup = (function() {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-  return new SomaPlayerPopup();
+  new SomaPlayerPopup();
 });
