@@ -1,145 +1,145 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>SomaPlayer Options</title>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="reset.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="style.css" media="screen" rel="stylesheet" type="text/css">
-  </head>
-  <body class="options">
-    <div class="container">
-      <header>
-        <img alt="SomaPlayer logo" class="icon-light pull-left" height="48" src="icon48.png" width="48">
-        <img alt="SomaPlayer logo" class="icon-dark pull-left" height="48" src="icon48-dark.png" width="48">
-        <h1>SomaPlayer Options</h1>
-        <hr>
-      </header>
-      <p class="hidden alert" id="status-message"></p>
-      <fieldset>
-        <legend>Last.fm Authentication</legend>
-        <div class="hidden" id="lastfm-is-authenticated">
-          <p class="help-block">
-            Connected as:
-            <a id="lastfm-user" target="_blank"></a>
-            &mdash;
-            <a href="#" id="lastfm-disconnect">
-              Disconnect
-            </a>
-          </p>
-          <p>
-            <button class="lastfm-auth hidden">
-              <i class="fa fa-lastfm"></i>
-              Authenticate with Last.fm
-            </button>
-            <span class="help-inline">
-              You can re-authenticate if scrobbling isn't working
-            </span>
-          </p>
-        </div>
-        <div class="hidden" id="lastfm-is-not-authenticated">
-          <button class="lastfm-auth hidden btn-lastfm">
+<head>
+  <title>SomaPlayer Options</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="reset.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="style.css" media="screen" rel="stylesheet" type="text/css">
+</head>
+<body class="options">
+  <div class="container">
+    <header>
+      <img alt="SomaPlayer logo" class="icon-light pull-left" height="48" src="icon48.png" width="48">
+      <img alt="SomaPlayer logo" class="icon-dark pull-left" height="48" src="icon48-dark.png" width="48">
+      <h1>SomaPlayer Options</h1>
+      <hr>
+    </header>
+    <p class="hidden alert" id="status-message"></p>
+    <fieldset>
+      <legend>Last.fm Authentication</legend>
+      <div class="hidden" id="lastfm-is-authenticated">
+        <p class="help-block">
+          Connected as:
+          <a id="lastfm-user" target="_blank"></a>
+          &mdash;
+          <a href="#" id="lastfm-disconnect">
+            Disconnect
+          </a>
+        </p>
+        <p>
+          <button class="lastfm-auth hidden">
             <i class="fa fa-lastfm"></i>
             Authenticate with Last.fm
           </button>
-        </div>
-      </fieldset>
-      <hr>
-      <fieldset>
-        <legend>Track Scrobbling</legend>
-        <div class="controls hidden">
-          <label for="enable_scrobbling">
-            <input disabled="disabled" id="enable_scrobbling" name="scrobbling" type="radio" value="enabled">
-            Enable scrobbling
-          </label>
-          <label for="disable_scrobbling">
-            <input checked="checked" id="disable_scrobbling" name="scrobbling" type="radio" value="disabled">
-            Disable scrobbling
-          </label>
-        </div>
-        <p class="help-block">
-          Requires Last.fm authentication. Only stations supported by the
-          <a href="http://api.somascrobbler.com/">SomaScrobbler</a>
-          will get notifications/scrobbling.
+          <span class="help-inline">
+            You can re-authenticate if scrobbling isn't working
+          </span>
         </p>
-      </fieldset>
-      <hr>
-      <fieldset>
-        <legend>Desktop Notifications</legend>
-        <div class="controls hidden">
-          <label for="enable_notifications">
-            <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
-            Enable desktop notifications
-          </label>
-          <label for="disable_notifications">
-            <input id="disable_notifications" name="notifications" type="radio" value="disabled">
-            Disable desktop notifications
-          </label>
-        </div>
-        <p class="help-block">
-          Notifications when the track changes.
-        </p>
-      </fieldset>
-      <hr>
-      <fieldset>
-        <legend>Theme</legend>
-        <div class="controls hidden">
-          <label for="light_theme">
-            <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
-            Light theme
-          </label>
-          <label for="dark_theme">
-            <input id="dark_theme" name="theme" type="radio" value="dark">
-            Dark theme
-          </label>
-        </div>
-        <p class="help-block">
-          Black on white (light) or white on black (dark)? Decisions, decisions.
-        </p>
-      </fieldset>
-      <hr class="stations-divider hidden">
-      <fieldset class="stations-options hidden">
-        <legend>
-          Known Stations
-          <span class="station-count"></span>
-        </legend>
-        <button class="refresh-stations">
-          Refresh List
+      </div>
+      <div class="hidden" id="lastfm-is-not-authenticated">
+        <button class="lastfm-auth hidden btn-lastfm">
+          <i class="fa fa-lastfm"></i>
+          Authenticate with Last.fm
         </button>
-        <p class="stations-list"></p>
-      </fieldset>
-      <hr>
-      <fieldset>
-        <legend>About</legend>
-        <p class="help-block">
-          This is an unofficial extension, endorsed by neither
-          <a href="http://somafm.com" target="_blank">SomaFM</a>
-          nor
-          <a href="http://last.fm" target="_blank">Last.fm.</a>
-          I just love both services and hope you find this useful. :)
-        </p>
-      </fieldset>
-      <hr>
-      <footer>
-        <ul class="list-inline">
-          <li>
-            &copy; 2016
-            <a href="http://3till7.net/" target="_blank">
-              Sarah Vessels
-            </a>
-          </li>
-          <li>&middot;</li>
-          <li>
-            <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
-              View source code
-            </a>
-          </li>
-        </ul>
-      </footer>
-    </div>
-    <script src="jquery-2.1.0.min.js"></script>
-    <script src="lastfm.min.js"></script>
-    <script src="config.js"></script>
-    <script src="util.js"></script>
-    <script src="options.js"></script>
-  </body>
+      </div>
+    </fieldset>
+    <hr>
+    <fieldset>
+      <legend>Track Scrobbling</legend>
+      <div class="controls hidden">
+        <label for="enable_scrobbling">
+          <input disabled="disabled" id="enable_scrobbling" name="scrobbling" type="radio" value="enabled">
+          Enable scrobbling
+        </label>
+        <label for="disable_scrobbling">
+          <input checked="checked" id="disable_scrobbling" name="scrobbling" type="radio" value="disabled">
+          Disable scrobbling
+        </label>
+      </div>
+      <p class="help-block">
+        Requires Last.fm authentication. Only stations supported by the
+        <a href="http://api.somascrobbler.com/">SomaScrobbler</a>
+        will get notifications/scrobbling.
+      </p>
+    </fieldset>
+    <hr>
+    <fieldset>
+      <legend>Desktop Notifications</legend>
+      <div class="controls hidden">
+        <label for="enable_notifications">
+          <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
+          Enable desktop notifications
+        </label>
+        <label for="disable_notifications">
+          <input id="disable_notifications" name="notifications" type="radio" value="disabled">
+          Disable desktop notifications
+        </label>
+      </div>
+      <p class="help-block">
+        Notifications when the track changes.
+      </p>
+    </fieldset>
+    <hr>
+    <fieldset>
+      <legend>Theme</legend>
+      <div class="controls hidden">
+        <label for="light_theme">
+          <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
+          Light theme
+        </label>
+        <label for="dark_theme">
+          <input id="dark_theme" name="theme" type="radio" value="dark">
+          Dark theme
+        </label>
+      </div>
+      <p class="help-block">
+        Black on white (light) or white on black (dark)? Decisions, decisions.
+      </p>
+    </fieldset>
+    <hr class="stations-divider hidden">
+    <fieldset class="stations-options hidden">
+      <legend>
+        Known Stations
+        <span class="station-count"></span>
+      </legend>
+      <button class="refresh-stations">
+        Refresh List
+      </button>
+      <p class="stations-list"></p>
+    </fieldset>
+    <hr>
+    <fieldset>
+      <legend>About</legend>
+      <p class="help-block">
+        This is an unofficial extension, endorsed by neither
+        <a href="http://somafm.com" target="_blank">SomaFM</a>
+        nor
+        <a href="http://last.fm" target="_blank">Last.fm.</a>
+        I just love both services and hope you find this useful. :)
+      </p>
+    </fieldset>
+    <hr>
+    <footer>
+      <ul class="list-inline">
+        <li>
+          &copy; 2016
+          <a href="http://3till7.net/" target="_blank">
+            Sarah Vessels
+          </a>
+        </li>
+        <li>&middot;</li>
+        <li>
+          <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
+            View source code
+          </a>
+        </li>
+      </ul>
+    </footer>
+  </div>
+  <script src="jquery-2.1.0.min.js"></script>
+  <script src="lastfm.min.js"></script>
+  <script src="config.js"></script>
+  <script src="util.js"></script>
+  <script src="options.js"></script>
+</body>
 </html>
