@@ -129,7 +129,7 @@ const SomaPlayerOptions = (function() {
     this.stationsList.textContent = '';
     this.refreshStationsButton.disabled = true;
     const msg = { action: 'fetch_stations' };
-    return SomaPlayerUtil.sendMessage(msg, (stations, error) => {
+    SomaPlayerUtil.sendMessage(msg).then((stations, error) => {
       if (error) {
         this.stationsList.textContent = 'Could not fetch station list. :(';
       } else {

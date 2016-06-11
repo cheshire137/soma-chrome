@@ -180,11 +180,11 @@ class SomaPlayerPopup {
   }
 
   fetchSomaStations() {
-    return SomaPlayerUtil.sendMessage({ action: 'get_stations' }, cache => {
+    SomaPlayerUtil.sendMessage({ action: 'get_stations' }).then(cache => {
       console.log('stations already stored', cache);
       if (!cache || cache.length < 1) {
         const msg = { action: 'fetch_stations' };
-        SomaPlayerUtil.sendMessage(msg, (stations, error) => {
+        SomaPlayerUtil.sendMessage(msg).then((stations, error) => {
           if (error) {
             this.loadDefaultStations();
           } else {
@@ -213,7 +213,7 @@ class SomaPlayerPopup {
 
   loadCurrentInfo() {
     this.stationSelect.disabled = true;
-    return SomaPlayerUtil.sendMessage({ action: 'info' }, info => {
+    return SomaPlayerUtil.sendMessage({ action: 'info' }).then(info => {
       console.debug('finished info request, info', info);
       this.stationSelect.value = info.station;
       if (info.paused) {
@@ -242,10 +242,10 @@ class SomaPlayerPopup {
   play() {
     const station = this.stationSelect.value;
     console.debug('play button clicked, station', station);
-    return SomaPlayerUtil.sendMessage({ action: 'play', station }, () => {
+    SomaPlayerUtil.sendMessage({ action: 'play', station }).then(() => {
       console.debug('finishing telling station to play');
       this.stationIsPlaying();
-      SomaPlayerUtil.sendMessage({ action: 'info' }, info => {
+      SomaPlayerUtil.sendMessage({ action: 'info' }).then(info => {
         if (info.artist !== '' || info.title !== '') {
           this.displayTrackInfo(info);
         } else {
@@ -261,7 +261,7 @@ class SomaPlayerPopup {
     const station = this.stationSelect.value;
     console.debug('pause button clicked, station', station);
     return new Promise(resolve => {
-      SomaPlayerUtil.sendMessage({ action: 'pause', station }, () => {
+      SomaPlayerUtil.sendMessage({ action: 'pause', station }).then(() => {
         console.debug('finished telling station to pause');
         this.stationIsPaused();
         this.stationSelect.focus();
@@ -273,14 +273,14 @@ class SomaPlayerPopup {
   stationChanged() {
     const newStation = this.stationSelect.value;
     if (newStation === '') {
-      SomaPlayerUtil.sendMessage({ action: 'clear' }, () => {
+      SomaPlayerUtil.sendMessage({ action: 'clear' }).then(() => {
         console.debug('station cleared');
         this.playButton.disabled = true;
         this.hideTrackInfo();
         this.pause();
       });
     } else {
-      SomaPlayerUtil.sendMessage({ action: 'info' }, info => {
+      SomaPlayerUtil.sendMessage({ action: 'info' }).then(info => {
         const currentStation = info.station;
         if (newStation !== '' && newStation !== currentStation) {
           console.debug(`station changed to ${newStation}`);

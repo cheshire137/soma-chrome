@@ -8,9 +8,11 @@ class SomaPlayerUtil {
     });
   }
 
-  static sendMessage(message, onResponse) {
+  static sendMessage(message) {
     console.debug('sending message:', message);
-    return chrome.runtime.sendMessage(message, onResponse);
+    return new Promise(resolve => {
+      chrome.runtime.sendMessage(message, resolve);
+    });
   }
 
   static receiveMessage(handler) {
