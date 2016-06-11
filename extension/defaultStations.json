@@ -1,0 +1,135 @@
+[
+  {
+    "id": "bagel",
+    "title": "BAGeL Radio",
+    "description": "What alternative rock radio should sound like."
+  }, {
+    "id": "beatblender",
+    "title": "Beat Blender",
+    "description": "A late night blend of deep-house and downtempo chill."
+  }, {
+    "id": "bootliquor",
+    "title": "Boot Liquor",
+    "description": "Americana Roots music for Cowhands, Cowpokes and Cowtippers"
+  }, {
+    "id": "brfm",
+    "title": "Black Rock FM",
+    "description": "From the Playa to the world, back for the 2015 Burning Man festival."
+  }, {
+    "id": "cliqhop",
+    "title": "cliqhop idm",
+    "description": "Blips'n'beeps backed mostly w/beats. Intelligent Dance Music."
+  }, {
+    "id": "covers",
+    "title": "Covers",
+    "description": "Just covers. Songs you know by artists you don't. We've got you covered."
+  }, {
+    "id": "defcon",
+    "title": "DEF CON Radio",
+    "description": "Music for Hacking. The DEF CON Year-Round Channel."
+  }, {
+    "id": "deepspaceone",
+    "title": "Deep Space One",
+    "description": "Deep ambient electronic, experimental and space music. For inner and outer space exploration."
+  }, {
+    "id": "digitalis",
+    "title": "Digitalis",
+    "description": "Digitally affected analog rock to calm the agitated heart."
+  }, {
+    "id": "doomed",
+    "title": "Doomed",
+    "description": "Dark industrial/ambient music for tortured souls."
+  }, {
+    "id": "dronezone",
+    "title": "Drone Zone",
+    "description": "Served best chilled, safe with most medications. Atmospheric textures with minimal beats."
+  }, {
+    "id": "dubstep",
+    "title": "Dub Step Beyond",
+    "description": "Dubstep, Dub and Deep Bass. May damage speakers at high volume."
+  }, {
+    "id": "earwaves",
+    "title": "Earwaves",
+    "description": "Spanning the history of electronic and experimental music from the early pioneers to the latest innovators."
+  }, {
+    "id": "fluid",
+    "title": "Fluid",
+    "description": "Drown in the electronic sound of instrumental hiphop, future soul and liquid trap."
+  }, {
+    "id": "folkfwd",
+    "title": "Folk Forward",
+    "description": "Indie Folk, Alt-folk and the occasional folk classics."
+  }, {
+    "id": "groovesalad",
+    "title": "Groove Salad",
+    "description": "A nicely chilled plate of ambient/downtempo beats and grooves."
+  }, {
+    "id": "illstreet",
+    "title": "Illinois Street Lounge",
+    "description": "Classic bachelor pad, playful exotica and vintage music of tomorrow."
+  }, {
+    "id": "indiepop",
+    "title": "Indie Pop Rocks!",
+    "description": "New and classic favorite indie pop tracks."
+  }, {
+    "id": "lush",
+    "title": "Lush",
+    "description": "Sensuous and mellow vocals, mostly female, with an electronic influence."
+  }, {
+    "id": "metal",
+    "title": "Metal Detector",
+    "description": "From black to doom, prog to sludge, thrash to post, stoner to crossover, punk to industrial."
+  }, {
+    "id": "missioncontrol",
+    "title": "Mission Control",
+    "description": "Celebrating NASA and Space Explorers everywhere."
+  }, {
+    "id": "poptron",
+    "title": "PopTron",
+    "description": "Electropop and indie dance rock with sparkle and pop."
+  }, {
+    "id": "secretagent",
+    "title": "Secret Agent",
+    "description": "The soundtrack for your stylish, mysterious, dangerous life. For Spies and PIs too!"
+  }, {
+    "id": "7soul",
+    "title": "Seven Inch Soul",
+    "description": "Vintage soul tracks from the original 45 RPM vinyl."
+  }, {
+    "id": "sf1033",
+    "title": "SF 10-33",
+    "description": "Ambient music mixed with the sounds of San Francisco public safety radio traffic."
+  }, {
+    "id": "seventies",
+    "title": "Left Coast 70s",
+    "description": "Mellow album rock from the Seventies. Yacht friendly."
+  }, {
+    "id": "silent",
+    "title": "The Silent Channel",
+    "description": "Chilled ambient electronic music for calm inner atmospheres from Silent Records."
+  }, {
+    "id": "sonicuniverse",
+    "title": "Sonic Universe",
+    "description": "Transcending the world of jazz with eclectic, avant-garde takes on tradition."
+  }, {
+    "id": "spacestation",
+    "title": "Space Station Soma",
+    "description": "Tune in, turn on, space out. Spaced-out ambient and mid-tempo electronica."
+  }, {
+    "id": "suburbsofgoa",
+    "title": "Suburbs of Goa",
+    "description": "Desi-influenced Asian world beats and beyond."
+  }, {
+    "id": "thetrip",
+    "title": "The Trip",
+    "description": "Progressive house / trance. Tip top tunes."
+  }, {
+    "id": "thistle",
+    "title": "ThistleRadio",
+    "description": "Exploring music from Celtic roots and branches"
+  }, {
+    "id": "u80s",
+    "title": "Underground 80s",
+    "description": "Early 80s UK Synthpop and a bit of New Wave."
+  }
+]

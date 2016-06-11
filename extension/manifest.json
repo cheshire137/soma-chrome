@@ -22,5 +22,6 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "web_accessible_resources": ["icon48.png", "icon48-dark.png", "options.html"]
+  "web_accessible_resources": ["defaultStations.json", "icon48.png",
+                               "icon48-dark.png", "options.html"]
 }
