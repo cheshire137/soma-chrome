@@ -6,23 +6,35 @@ const __bind = function(fn, me) {
 
 class SomaPlayerBackground {
   constructor() {
-    this.onTrack = __bind(this.onTrack, this);
     console.debug('initializing SomaPlayer background script');
+    this.onTrack = __bind(this.onTrack, this);
     this.lastfm = SomaPlayerUtil.getLastfmConnection();
-    this.audio = document.querySelector('audio');
-    if (!this.audio) {
+    this.createAudioTag();
+    this.createTitleEl();
+    this.createArtistEl();
+  }
+
+  createAudioTag() {
+    this.audioTag = document.querySelector('audio');
+    if (!this.audioTag) {
       console.debug('adding new audio tag');
-      this.audio = document.createElement('audio');
-      this.audio.setAttribute('autoplay', 'true');
-      this.audio.setAttribute('data-station', '');
-      document.body.appendChild(this.audio);
+      this.audioTag = document.createElement('audio');
+      this.audioTag.setAttribute('autoplay', 'true');
+      this.audioTag.setAttribute('data-station', '');
+      document.body.appendChild(this.audioTag);
     }
+  }
+
+  createTitleEl() {
     this.titleEl = document.getElementById('title');
     if (!this.titleEl) {
       this.titleEl = document.createElement('div');
       this.titleEl.id = 'title';
       document.body.appendChild(this.titleEl);
     }
+  }
+
+  createArtistEl() {
     this.artistEl = document.getElementById('artist');
     if (!this.artistEl) {
       this.artistEl = document.createElement('div');
@@ -35,25 +47,24 @@ class SomaPlayerBackground {
     console.debug('playing station', station);
     this.resetTrackInfoIfNecessary(station);
     this.subscribe(station);
-    console.debug('adding track listener');
     this.socket.on('track', this.onTrack);
-    this.audio.src = SomaPlayerConfig.somafm_station_url + station;
-    this.audio.setAttribute('data-station', station);
-    this.audio.removeAttribute('data-paused');
+    this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
+    this.audioTag.setAttribute('data-station', station);
+    this.audioTag.removeAttribute('data-paused');
   }
 
   resetTrackInfoIfNecessary(station) {
-    if (this.audio.getAttribute('data-station') === station) {
+    if (this.audioTag.getAttribute('data-station') === station) {
       return;
     }
     console.debug('changed station from',
-                  this.audio.getAttribute('data-station'), 'to', station,
-                  ', clearing current track info');
+                  this.audioTag.getAttribute('data-station'), 'to', station,
+                  'clearing current track info');
     this.titleEl.textContent = '';
     this.artistEl.textContent = '';
   }
 
-  getCurrentTrackInfo(station) {
+  displayCurrentTrack(station) {
     return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
       this.titleEl.textContent = track.title;
       this.artistEl.textContent = track.artist;
@@ -65,7 +76,7 @@ class SomaPlayerBackground {
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
           console.debug('subscribed to', station);
-          this.getCurrentTrackInfo(station);
+          this.displayCurrentTrack(station);
         } else {
           console.error('failed to subscribe to', station, response);
         }
@@ -109,27 +120,30 @@ class SomaPlayerBackground {
     return chrome.notifications.create('', notificationOpts, () => {});
   }
 
-  scrobbleTrack(track, opts) {
-    if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
-      return;
-    }
-    console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
-    const scrobbleData = {
+  getScrobbleData(track, opts) {
+    return {
       artist: (track.artist || '').replace(/"/g, "'"),
       track: (track.title || '').replace(/"/g, "'"),
       user: opts.lastfm_user,
       chosenByUser: 0,
       timestamp: Math.round((new Date()).getTime() / 1000)
     };
-    return this.lastfm.track.scrobble(scrobbleData, {
-      key: opts.lastfm_session_key
-    }, {
+  }
+
+  scrobbleTrack(track, opts) {
+    if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
+      return;
+    }
+    console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
+    const data = this.getScrobbleData(track, opts);
+    const auth = { key: opts.lastfm_session_key };
+    return this.lastfm.track.scrobble(data, auth, {
       success() {
         let e;
         try {
           const iframeWin = document.querySelector('iframe').contentWindow;
           iframeWin.document.querySelector('form').submit();
-          console.debug('scrobbled track', scrobbleData);
+          console.debug('scrobbled track', track.title, track.artist);
         } catch (_error) {
           // Mysterious second submit after scrobble form has already POSTed
           // to Last.fm and the iframe has its origin changed to
@@ -149,18 +163,18 @@ class SomaPlayerBackground {
   pause(station) {
     console.debug('pausing station', station);
     this.unsubscribe(station);
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.audio.setAttribute('data-paused', 'true');
+    this.audioTag.pause();
+    this.audioTag.currentTime = 0;
+    this.audioTag.setAttribute('data-paused', 'true');
   }
 
   clear() {
     const info = this.getInfo();
     this.unsubscribe(info.station);
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.audio.setAttribute('data-station', '');
-    this.audio.removeAttribute('data-paused');
+    this.audioTag.pause();
+    this.audioTag.currentTime = 0;
+    this.audioTag.setAttribute('data-station', '');
+    this.audioTag.removeAttribute('data-paused');
   }
 
   unsubscribe(station) {
@@ -184,14 +198,14 @@ class SomaPlayerBackground {
 
   getInfo() {
     let station = '';
-    if (this.audio) {
-      station = this.audio.getAttribute('data-station') || '';
+    if (this.audioTag) {
+      station = this.audioTag.getAttribute('data-station') || '';
     }
     return {
       station,
       artist: this.artistEl.textContent,
       title: this.titleEl.textContent,
-      paused: this.audio.hasAttribute('data-paused') || station === ''
+      paused: this.audioTag.hasAttribute('data-paused') || station === ''
     };
   }
 
