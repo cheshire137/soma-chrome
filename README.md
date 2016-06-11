@@ -1,5 +1,7 @@
 # SomaPlayer for Chrome
 
+[![Build status](https://travis-ci.org/cheshire137/soma-chrome.svg?branch=master)](https://travis-ci.org/cheshire137/soma-chrome)
+
 SomaPlayer is a Chrome extension for playing and scrobbling stations from [SomaFM](http://somafm.com).
 
 **[Install from the Chrome Web Store](https://chrome.google.com/webstore/detail/somaplayer/dpcghdgbhjkihgnnbojldhjmcbieofgo?hl=en&gl=US&authuser=1)**
