@@ -4,10 +4,8 @@ const __bind = function(fn, me) {
   };
 };
 
-let somaPlayerBG;
-
-const SomaPlayerBackground = (function() {
-  function SomaPlayerBackground() {
+class SomaPlayerBackground {
+  constructor() {
     this.onTrack = __bind(this.onTrack, this);
     console.debug('initializing SomaPlayer background script');
     this.lastfm = SomaPlayerUtil.getLastfmConnection();
@@ -33,7 +31,7 @@ const SomaPlayerBackground = (function() {
     }
   }
 
-  SomaPlayerBackground.prototype.play = function(station) {
+  play(station) {
     console.debug('playing station', station);
     this.resetTrackInfoIfNecessary(station);
     this.subscribe(station);
@@ -42,9 +40,9 @@ const SomaPlayerBackground = (function() {
     this.audio.src = SomaPlayerConfig.somafm_station_url + station;
     this.audio.setAttribute('data-station', station);
     this.audio.removeAttribute('data-paused');
-  };
+  }
 
-  SomaPlayerBackground.prototype.resetTrackInfoIfNecessary = function(station) {
+  resetTrackInfoIfNecessary(station) {
     if (this.audio.getAttribute('data-station') === station) {
       return;
     }
@@ -53,16 +51,16 @@ const SomaPlayerBackground = (function() {
                   ', clearing current track info');
     this.titleEl.textContent = '';
     this.artistEl.textContent = '';
-  };
+  }
 
-  SomaPlayerBackground.prototype.getCurrentTrackInfo = function(station) {
+  getCurrentTrackInfo(station) {
     return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
       this.titleEl.textContent = track.title;
       this.artistEl.textContent = track.artist;
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.subscribe = function(station) {
+  subscribe(station) {
     const emitSubscribe = () => {
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
@@ -84,9 +82,9 @@ const SomaPlayerBackground = (function() {
         emitSubscribe();
       });
     }
-  };
+  }
 
-  SomaPlayerBackground.prototype.onTrack = function(track) {
+  onTrack(track) {
     console.debug('new track:', track);
     this.titleEl.textContent = track.title;
     this.artistEl.textContent = track.artist;
@@ -94,9 +92,9 @@ const SomaPlayerBackground = (function() {
       this.notifyOfTrack(track, opts);
       this.scrobbleTrack(track, opts);
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.notifyOfTrack = function(track, opts) {
+  notifyOfTrack(track, opts) {
     // Default to showing notifications, so if user has not saved preferences,
     // assume they want notifications.
     if (opts.notifications === false) {
@@ -109,9 +107,9 @@ const SomaPlayerBackground = (function() {
       iconUrl: 'icon48.png'
     };
     return chrome.notifications.create('', notificationOpts, () => {});
-  };
+  }
 
-  SomaPlayerBackground.prototype.scrobbleTrack = function(track, opts) {
+  scrobbleTrack(track, opts) {
     if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
       return;
     }
@@ -146,26 +144,26 @@ const SomaPlayerBackground = (function() {
         console.error('failed to scrobble track', track, 'response:', data);
       }
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.pause = function(station) {
+  pause(station) {
     console.debug('pausing station', station);
     this.unsubscribe(station);
     this.audio.pause();
     this.audio.currentTime = 0;
     this.audio.setAttribute('data-paused', 'true');
-  };
+  }
 
-  SomaPlayerBackground.prototype.clear = function() {
+  clear() {
     const info = this.getInfo();
     this.unsubscribe(info.station);
     this.audio.pause();
     this.audio.currentTime = 0;
     this.audio.setAttribute('data-station', '');
     this.audio.removeAttribute('data-paused');
-  };
+  }
 
-  SomaPlayerBackground.prototype.unsubscribe = function(station) {
+  unsubscribe(station) {
     if (!(typeof station === 'string' && station.length > 0)) {
       return;
     }
@@ -182,9 +180,9 @@ const SomaPlayerBackground = (function() {
     });
     console.debug('removing track listener');
     this.socket.removeListener('track', this.onTrack);
-  };
+  }
 
-  SomaPlayerBackground.prototype.getInfo = function() {
+  getInfo() {
     let station = '';
     if (this.audio) {
       station = this.audio.getAttribute('data-station') || '';
@@ -195,25 +193,25 @@ const SomaPlayerBackground = (function() {
       title: this.titleEl.textContent,
       paused: this.audio.hasAttribute('data-paused') || station === ''
     };
-  };
+  }
 
-  SomaPlayerBackground.prototype.setStations = function(stations) {
+  setStations(stations) {
     console.debug('set stations', stations);
     SomaPlayerUtil.getOptions().then(opts => {
       opts.stations = stations;
       SomaPlayerUtil.setOptions(opts);
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.getStations = function() {
+  getStations() {
     return new Promise(resolve => {
       SomaPlayerUtil.getOptions().then(opts => {
         resolve(opts.stations);
       });
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.fetchStations = function() {
+  fetchStations() {
     const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
     console.debug(`fetching channels list from ${url}`);
     return new Promise((resolve, reject) => {
@@ -229,23 +227,22 @@ const SomaPlayerBackground = (function() {
         reject(error);
       });
     });
-  };
+  }
 
-  SomaPlayerBackground.prototype.extractStations = function(data) {
+  extractStations(data) {
     return data.channels.map(station => {
       return { id: station.id, title: station.title };
     });
-  };
+  }
+}
 
-  return SomaPlayerBackground;
-})();
+let somaPlayerBG;
 
 document.addEventListener('DOMContentLoaded', () => {
   somaPlayerBG = new SomaPlayerBackground();
 });
 
 SomaPlayerUtil.receiveMessage((request, sender, sendResponse) => {
-  let info;
   console.debug('received message in background:', request);
   if (request.action === 'play') {
     somaPlayerBG.play(request.station);
@@ -258,7 +255,7 @@ SomaPlayerUtil.receiveMessage((request, sender, sendResponse) => {
     return true;
   }
   if (request.action === 'info') {
-    info = somaPlayerBG.getInfo();
+    const info = somaPlayerBG.getInfo();
     console.debug('info:', info);
     sendResponse(info);
     return true;

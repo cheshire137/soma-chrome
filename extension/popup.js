@@ -1,5 +1,5 @@
-const SomaPlayerPopup = (function() {
-  function SomaPlayerPopup() {
+class SomaPlayerPopup {
+  constructor() {
     this.base = this;
     this.findElements();
     this.handleLinks();
@@ -9,34 +9,34 @@ const SomaPlayerPopup = (function() {
     this.listenForStationChange();
   }
 
-  SomaPlayerPopup.prototype.listenForStationChange = function() {
+  listenForStationChange() {
     this.stationSelect.addEventListener('change', () => {
       this.stationChanged();
     });
     this.stationSelect.addEventListener('keypress', e => {
       this.onStationKeypress(e.keyCode);
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.listenForPlayback = function() {
+  listenForPlayback() {
     this.playButton.addEventListener('click', () => {
       this.play();
     });
     this.pauseButton.addEventListener('click', () => {
       this.pause();
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.findElements = function() {
+  findElements() {
     this.stationSelect = document.getElementById('station');
     this.playButton = document.getElementById('play');
     this.pauseButton = document.getElementById('pause');
     this.currentInfoEl = document.getElementById('currently-playing');
     this.titleEl = document.getElementById('title');
     this.artistEl = document.getElementById('artist');
-  };
+  }
 
-  SomaPlayerPopup.prototype.onStationKeypress = function(keyCode) {
+  onStationKeypress(keyCode) {
     if (keyCode !== 13) { // Enter
       return;
     }
@@ -53,9 +53,9 @@ const SomaPlayerPopup = (function() {
       console.debug('pressing pause button');
       this.pause();
     }
-  };
+  }
 
-  SomaPlayerPopup.prototype.insertStationOptions = function(stations) {
+  insertStationOptions(stations) {
     for (let i = 0; i < stations.length; i++) {
       const option = document.createElement('option');
       option.value = stations[i].id;
@@ -64,9 +64,9 @@ const SomaPlayerPopup = (function() {
     }
     this.stationSelect.disabled = false;
     this.loadCurrentInfo();
-  };
+  }
 
-  SomaPlayerPopup.prototype.loadDefaultStations = function() {
+  loadDefaultStations() {
     console.debug('loading default station list');
     const defaultStations = [
       {
@@ -177,9 +177,9 @@ const SomaPlayerPopup = (function() {
       }
     ];
     this.insertStationOptions(defaultStations);
-  };
+  }
 
-  SomaPlayerPopup.prototype.fetchSomaStations = function() {
+  fetchSomaStations() {
     return SomaPlayerUtil.sendMessage({ action: 'get_stations' }, cache => {
       console.log('stations already stored', cache);
       if (!cache || cache.length < 1) {
@@ -195,23 +195,23 @@ const SomaPlayerPopup = (function() {
         this.insertStationOptions(cache);
       }
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.displayTrackInfo = function(info) {
+  displayTrackInfo(info) {
     if (info.artist || info.title) {
       this.titleEl.textContent = info.title;
       this.artistEl.textContent = info.artist;
       this.currentInfoEl.classList.remove('hidden');
     }
-  };
+  }
 
-  SomaPlayerPopup.prototype.hideTrackInfo = function() {
+  hideTrackInfo() {
     this.titleEl.textContent = '';
     this.artistEl.textContent = '';
     this.currentInfoEl.classList.add('hidden');
-  };
+  }
 
-  SomaPlayerPopup.prototype.loadCurrentInfo = function() {
+  loadCurrentInfo() {
     this.stationSelect.disabled = true;
     return SomaPlayerUtil.sendMessage({ action: 'info' }, info => {
       console.debug('finished info request, info', info);
@@ -224,22 +224,22 @@ const SomaPlayerPopup = (function() {
       this.stationSelect.disabled = false;
       this.displayTrackInfo(info);
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.stationIsPlaying = function() {
+  stationIsPlaying() {
     this.pauseButton.classList.remove('hidden');
     this.playButton.classList.add('hidden');
     this.stationSelect.focus();
-  };
+  }
 
-  SomaPlayerPopup.prototype.stationIsPaused = function() {
+  stationIsPaused() {
     this.pauseButton.classList.add('hidden');
     this.playButton.classList.remove('hidden');
     this.playButton.disabled = false;
     this.stationSelect.focus();
-  };
+  }
 
-  SomaPlayerPopup.prototype.play = function() {
+  play() {
     const station = this.stationSelect.value;
     console.debug('play button clicked, station', station);
     return SomaPlayerUtil.sendMessage({ action: 'play', station }, () => {
@@ -255,9 +255,9 @@ const SomaPlayerPopup = (function() {
         }
       });
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.pause = function() {
+  pause() {
     const station = this.stationSelect.value;
     console.debug('pause button clicked, station', station);
     return new Promise(resolve => {
@@ -268,9 +268,9 @@ const SomaPlayerPopup = (function() {
         resolve();
       });
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.stationChanged = function() {
+  stationChanged() {
     const newStation = this.stationSelect.value;
     if (newStation === '') {
       SomaPlayerUtil.sendMessage({ action: 'clear' }, () => {
@@ -289,16 +289,16 @@ const SomaPlayerPopup = (function() {
         }
       });
     }
-  };
+  }
 
-  SomaPlayerPopup.prototype.handleLinks = function() {
+  handleLinks() {
     const links = Array.from(document.querySelectorAll('a'));
     for (let i = 0; i < links.length; i++) {
       this.handleLink(links[i]);
     }
-  };
+  }
 
-  SomaPlayerPopup.prototype.handleLink = function(link) {
+  handleLink(link) {
     link.addEventListener('click', event => {
       event.preventDefault();
       let url;
@@ -312,17 +312,15 @@ const SomaPlayerPopup = (function() {
       chrome.tabs.create({ url });
       return false;
     });
-  };
+  }
 
-  SomaPlayerPopup.prototype.applyTheme = function() {
+  applyTheme() {
     return SomaPlayerUtil.getOptions().then(opts => {
       const theme = opts.theme || 'light';
       return document.body.classList.add(`theme-${theme}`);
     });
-  };
-
-  return SomaPlayerPopup;
-})();
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   new SomaPlayerPopup();

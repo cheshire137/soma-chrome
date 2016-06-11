@@ -1,27 +1,24 @@
-window.SomaPlayerUtil = (function() {
-  function SomaPlayerUtil() {
-  }
-
-  SomaPlayerUtil.getLastfmConnection = function() {
+class SomaPlayerUtil {
+  static getLastfmConnection() {
     return new LastFM({
       apiKey: SomaPlayerConfig.lastfm_api_key,
       apiSecret: SomaPlayerConfig.lastfm_api_secret,
       apiUrl: SomaPlayerConfig.lastfm_api_url,
       cache: new LastFMCache()
     });
-  };
+  }
 
-  SomaPlayerUtil.sendMessage = function(message, onResponse) {
+  static sendMessage(message, onResponse) {
     console.debug('sending message:', message);
     return chrome.runtime.sendMessage(message, onResponse);
-  };
+  }
 
-  SomaPlayerUtil.receiveMessage = function(handler) {
+  static receiveMessage(handler) {
     console.log('setting up message receiver');
     return chrome.runtime.onMessage.addListener(handler);
-  };
+  }
 
-  SomaPlayerUtil.getCurrentTrackInfo = function(station) {
+  static getCurrentTrackInfo(station) {
     const url = `${SomaPlayerConfig.scrobbler_api_url}/api/v1/nowplaying/${station}`;
     console.debug('getting current track info from', url);
     return new Promise((resolve, reject) => {
@@ -32,9 +29,9 @@ window.SomaPlayerUtil = (function() {
         resolve(track);
       }).catch(reject);
     });
-  };
+  }
 
-  SomaPlayerUtil.getUrlParam = function(name) {
+  static getUrlParam(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp(`[\\?&]${name}=([^&#]*)`);
     const results = regex.exec(window.location.search);
@@ -42,23 +39,23 @@ window.SomaPlayerUtil = (function() {
       return '';
     }
     return decodeURIComponent(results[1].replace(/\+/g, ' '));
-  };
+  }
 
-  SomaPlayerUtil.getOptions = function() {
+  static getOptions() {
     return new Promise(resolve => {
       chrome.storage.sync.get('somaplayer_options', opts => {
         resolve(opts.somaplayer_options || {});
       });
     });
-  };
+  }
 
-  SomaPlayerUtil.setOptions = function(opts) {
+  static setOptions(opts) {
     return new Promise(resolve => {
       chrome.storage.sync.set({ somaplayer_options: opts }, () => {
         resolve();
       });
     });
-  };
+  }
+}
 
-  return SomaPlayerUtil;
-})();
+window.SomaPlayerUtil = SomaPlayerUtil;
