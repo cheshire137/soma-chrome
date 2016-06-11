@@ -95,6 +95,8 @@ const SomaPlayerBackground = (function() {
   };
 
   SomaPlayerBackground.prototype.notifyOfTrack = function(track, opts) {
+    // Default to showing notifications, so if user has not saved preferences,
+    // assume they want notifications.
     if (opts.notifications === false) {
       return;
     }
@@ -126,10 +128,12 @@ const SomaPlayerBackground = (function() {
         let e;
         try {
           const iframeWin = document.querySelector('iframe').contentWindow;
-          const iframeDoc = iframeWin.contentDocument ? iframeWin.contentDocument : iframeWin.contentWindow.document;
-          iframeDoc.querySelector('form').submit();
-          return console.debug('scrobbled track');
+          iframeWin.document.querySelector('form').submit();
+          console.debug('scrobbled track', scrobbleData);
         } catch (_error) {
+          // Mysterious second submit after scrobble form has already POSTed
+          // to Last.fm and the iframe has its origin changed to
+          // ws.audioscrobbler.com, which can't be touched by the extension.
           e = _error;
           if (e.name !== 'SecurityError') {
             throw e;
@@ -137,7 +141,7 @@ const SomaPlayerBackground = (function() {
         }
       },
       error(data) {
-        return console.error('failed to scrobble track; response:', data);
+        console.error('failed to scrobble track', track, 'response:', data);
       }
     });
   };
