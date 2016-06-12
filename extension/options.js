@@ -55,7 +55,6 @@ const SomaPlayerOptions = (function() {
         document.getElementById('lastfm-is-not-authenticated');
     this.lastfmUser = document.getElementById('lastfm-user');
     this.lastfmDisconnect = document.getElementById('lastfm-disconnect');
-    this.stationsDivider = document.querySelector('.stations-divider');
     this.stationsOptions = document.querySelector('.stations-options');
     this.stationCount = document.querySelector('.station-count');
     this.stationsList = document.querySelector('.stations-list');
@@ -91,7 +90,7 @@ const SomaPlayerOptions = (function() {
           this.options[key] = opts[key];
         }
       }
-      Array.from(document.querySelectorAll('.controls.hidden')).
+      Array.from(document.querySelectorAll('.control.hidden')).
             forEach(control => {
               control.classList.remove('hidden');
             });
@@ -114,7 +113,6 @@ const SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.showCachedStations = function(stations) {
-    this.stationsDivider.classList.remove('hidden');
     this.stationsOptions.classList.remove('hidden');
     this.stationCount.textContent = stations.length;
     const titles = stations.map(s => s.title);
