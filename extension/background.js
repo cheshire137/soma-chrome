@@ -120,6 +120,10 @@ class SomaPlayerBackground {
     return chrome.notifications.create('', notificationOpts, () => {});
   }
 
+  trackHasDuration(track) {
+    return typeof track.duration === 'number' && track.duration > 0;
+  }
+
   getScrobbleData(track, opts) {
     // http://www.last.fm/api/show/track.scrobble
     const data = {
@@ -132,8 +136,7 @@ class SomaPlayerBackground {
     if (typeof track.trackMBID === 'string') {
       data.mbid = track.trackMBID;
     }
-    if (typeof track.duration === 'number' &&
-        !track.durationEstimated && track.duration > 0) {
+    if (this.trackHasDuration(track)) {
       const milliseconds = track.duration;
       data.duration = milliseconds / 1000;
     }
@@ -156,7 +159,7 @@ class SomaPlayerBackground {
         try {
           const iframeWin = document.querySelector('iframe').contentWindow;
           iframeWin.document.querySelector('form').submit();
-          console.debug('scrobbled track', data);
+          console.debug('scrobbled track', track.title, track.artist);
         } catch (_error) {
           // Mysterious second submit after scrobble form has already POSTed
           // to Last.fm and the iframe has its origin changed to
