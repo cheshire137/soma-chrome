@@ -3,7 +3,7 @@
   "name": "SomaPlayer",
   "short_name": "SomaPlayer",
   "description": "Listen to SomaFM web radio stations from your browser and scrobble tracks to your Last.fm account.",
-  "version": "0.0.1.0",
+  "version": "0.0.1.1",
   "permissions": [
     "storage", "notifications", "http://api.somascrobbler.com/"
   ],
