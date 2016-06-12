@@ -52,7 +52,8 @@ body,
 .theme-dark .section {
   background-color: #222;
 }
-.theme-dark .box {
+.theme-dark .box,
+.theme-dark .footer {
   background-color: #292929;
 }
 .theme-dark,
@@ -99,9 +100,9 @@ button .fa {
   padding-left: 5px;
   padding-right: 5px;
 }
-footer {
-  margin-top: 40px;
+.footer {
   font-size: 13px;
+  text-align: center;
 }
 .theme-dark .button {
   background-color: #292929;
@@ -117,4 +118,14 @@ footer {
 .theme-dark .box .button {
   background-color: #222;
   border-color: #3c3e40;
+}
+.theme-dark .footer a:not(.icon),
+.theme-dark .footer a:visited:not(.icon) {
+  border-bottom-color: #2b6573;
+  color: #eee;
+}
+.theme-dark .footer a:not(.icon):hover,
+.theme-dark .footer a:visited:not(.icon):hover {
+  border-bottom-color: #ffb164;
+  color: #eee;
 }

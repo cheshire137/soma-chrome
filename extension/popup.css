@@ -11,8 +11,10 @@ body,
   text-align: center;
 }
 body {
-  padding: 1em;
   min-width: 19em;
+}
+.container {
+  padding: 1em;
 }
 .theme-dark .title {
   color: #c7c7c7;
@@ -30,4 +32,8 @@ body {
 }
 .theme-dark .select:hover:after {
   border-color: #ffb164;
+}
+.footer {
+  margin-top: 10px;
+  padding: 20px;
 }
