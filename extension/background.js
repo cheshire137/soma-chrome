@@ -131,6 +131,12 @@ class SomaPlayerBackground {
       message: track.title,
       iconUrl: 'icon48.png'
     };
+    if (this.audioTag && this.audioTag.hasAttribute('data-station')) {
+      const station = this.audioTag.getAttribute('data-station');
+      if (station.length > 0) {
+        notification.iconUrl = `station-images/${station}.png`;
+      }
+    }
     const delay = 15000; // 15 seconds
     console.debug('notifying in', (delay / 1000), 'seconds', notification);
     this.notifyTimer = setTimeout(() => {

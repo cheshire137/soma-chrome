@@ -6,6 +6,8 @@
 - New appearance for dark and light themes.
 - Stations are now sorted alphabetically.
 - More accurate Last.fm scrobbles with album, MusicBrainz ID, and track duration included.
+- Tracks are no longer scrobbled as soon as they begin, but rather halfway through the song.
+- Notifications use the station artwork instead of the SomaFM logo.
 
 ## Version 0.0.1.0:
 
