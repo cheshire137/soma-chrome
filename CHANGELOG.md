@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 0.0.1.1:
+
+- SomaFM station artwork is displayed for each station.
+- New appearance for dark and light themes.
+
 ## Version 0.0.1.0:
 
 - Add dark theme option.
