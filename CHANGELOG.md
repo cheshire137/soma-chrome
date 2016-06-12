@@ -3,6 +3,7 @@
 ## Version 0.0.1.2:
 
 - Fixed bug where Last.fm user link would not be clickable when you first authenticated with Last.fm.
+- Fixed bug where a notification might appear or a scrobble might be posted after you had paused the station, for a song you had started listening to.
 
 ## Version 0.0.1.1:
 
