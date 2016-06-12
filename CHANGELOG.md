@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.2:
+
+- Fixed bug where Last.fm user link would not be clickable when you first authenticated with Last.fm.
+
 ## Version 0.0.1.1:
 
 - SomaFM station artwork is displayed for each station.

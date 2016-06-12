@@ -61,6 +61,10 @@ class SomaPlayerOptions {
     this.refreshStationsButton = document.querySelector('.refresh-stations');
   }
 
+  getLastfmUserUrl(opts) {
+    return `http://last.fm/user/${opts.lastfm_user}`;
+  }
+
   restoreOptions() {
     return SomaPlayerUtil.getOptions().then(opts => {
       if (opts.lastfm_session_key) {
@@ -71,7 +75,7 @@ class SomaPlayerOptions {
       }
       if (opts.lastfm_user) {
         this.lastfmUserEl.textContent = opts.lastfm_user;
-        this.lastfmUserEl.href = `http://last.fm/user/${opts.lastfm_user}`;
+        this.lastfmUserEl.href = this.getLastfmUserUrl(opts);
       }
       if (opts.scrobbling) {
         this.enableScrobbling.checked = true;
@@ -145,6 +149,7 @@ class SomaPlayerOptions {
     SomaPlayerUtil.setOptions(this.options).then(() => {
       this.flashNotice('Disconnected from Last.fm!');
       this.lastfmUserEl.textContent = '';
+      this.lastfmUserEl.href = '#';
       this.lastfmConnectedMessage.classList.add('hidden');
       this.lastfmNotConnectedMessage.classList.remove('hidden');
       this.enableScrobbling.disabled = true;
@@ -220,6 +225,7 @@ class SomaPlayerOptions {
         SomaPlayerUtil.setOptions(this.options).then(() => {
           this.flashNotice('Connected to Last.fm!');
           this.lastfmUserEl.textContent = this.options.lastfm_user;
+          this.lastfmUserEl.href = this.getLastfmUserUrl(this.options);
           this.lastfmConnectedMessage.classList.remove('hidden');
           this.lastfmNotConnectedMessage.classList.add('hidden');
           this.enableScrobbling.removeAttribute('disabled');
