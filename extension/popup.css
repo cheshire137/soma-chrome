@@ -25,6 +25,9 @@ body {
 .theme-dark .select select:hover {
   color: #ffb164;
 }
+.theme-dark .select:after {
+  border-color: #75e6d0;
+}
 .theme-dark .select:hover:after {
   border-color: #ffb164;
 }
