@@ -5,8 +5,7 @@
   "description": "Listen to SomaFM web radio stations from your browser and scrobble tracks to your Last.fm account.",
   "version": "0.0.1.1",
   "permissions": [
-    "storage", "notifications", "https://api.somascrobbler.com/",
-    "http://api.somafm.com/"
+    "storage", "notifications"
   ],
   "background": {
     "scripts": ["socket.io.min.js", "lastfm.min.js", "config.js", "util.js",
