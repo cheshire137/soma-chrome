@@ -11,10 +11,13 @@ body,
   text-align: center;
 }
 body {
-  min-width: 24em;
+  min-width: 28em;
 }
 .container {
   padding: 1em;
+}
+.box {
+  padding: 0;
 }
 .theme-dark .title {
   color: #c7c7c7;
@@ -35,5 +38,22 @@ body {
 }
 .footer {
   margin-top: 10px;
+  padding: 20px;
+}
+#currently-playing {
+  display: table;
+  width: 100%;
+}
+#station-image,
+#currently-playing .subtitle {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+#station-image {
+  width: 120px;
+  height: 120px;
+}
+#currently-playing .subtitle {
   padding: 20px;
 }

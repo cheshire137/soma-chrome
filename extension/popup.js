@@ -34,6 +34,7 @@ class SomaPlayerPopup {
     this.currentInfoEl = document.getElementById('currently-playing');
     this.titleEl = document.getElementById('title');
     this.artistEl = document.getElementById('artist');
+    this.stationImg = document.getElementById('station-image');
   }
 
   onStationKeypress(keyCode) {
@@ -116,6 +117,7 @@ class SomaPlayerPopup {
       } else {
         this.stationIsPlaying();
       }
+      this.updateStationImage(info.station);
       this.stationSelect.disabled = false;
       this.displayTrackInfo(info);
     });
@@ -137,6 +139,7 @@ class SomaPlayerPopup {
   play() {
     const station = this.stationSelect.value;
     console.debug('play button clicked, station', station);
+    this.updateStationImage(station);
     chrome.runtime.sendMessage({ action: 'play', station }, () => {
       console.debug('finishing telling station to play');
       this.stationIsPlaying();
@@ -163,6 +166,23 @@ class SomaPlayerPopup {
         resolve();
       });
     });
+  }
+
+  updateStationImage(station) {
+    if (!this.stationImg) {
+      this.stationImg = document.createElement('img');
+      this.stationImg.className = 'hidden';
+      this.stationImg.id = 'station-image';
+      const nextSibling = this.titleEl.parentNode;
+      const container = nextSibling.parentNode;
+      container.insertBefore(this.stationImg, nextSibling);
+    }
+    if (station && station.length > 0) {
+      this.stationImg.src = `station-images/${station}.png`;
+      this.stationImg.classList.remove('hidden');
+    } else {
+      this.stationImg.classList.add('hidden');
+    }
   }
 
   stationChanged() {
