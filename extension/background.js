@@ -96,7 +96,7 @@ class SomaPlayerBackground {
   }
 
   onTrack(track) {
-    console.debug('new track:', track);
+    console.debug('new track', track.title, track.artist);
     this.titleEl.textContent = track.title;
     this.artistEl.textContent = track.artist;
     SomaPlayerUtil.getOptions().then(opts => {
@@ -106,12 +106,19 @@ class SomaPlayerBackground {
   }
 
   waitToScrobbleTrack(track, opts) {
+    if (typeof this.scrobbleTimer !== 'undefined') {
+      clearTimeout(this.scrobbleTimer);
+    }
+    if (!this.shouldScrobble(opts)) {
+      return;
+    }
     let delay = 60000; // 60 seconds
     if (this.trackHasDuration(track)) {
       delay = track.duration / 2; // half the length of the song
     }
-    console.debug('waiting', (delay / 1000), 'seconds to scrobble track');
-    setTimeout(() => {
+    console.debug('waiting', (delay / 1000), 'seconds to scrobble',
+                  track.title, track.artist);
+    this.scrobbleTimer = setTimeout(() => {
       this.scrobbleTrack(track, opts);
     }, delay);
   }
@@ -170,11 +177,19 @@ class SomaPlayerBackground {
     return data;
   }
 
+  shouldScrobble(opts) {
+    if (!opts.scrobbling) {
+      return false;
+    }
+    return typeof opts.lastfm_session_key === 'string' &&
+        opts.lastfm_session_key.length > 0 &&
+        typeof opts.lastfm_user === 'string' && opts.lastfm_user.length > 0;
+  }
+
   scrobbleTrack(track, opts) {
-    if (!(opts.lastfm_session_key && opts.lastfm_user && opts.scrobbling)) {
+    if (!this.shouldScrobble(opts)) {
       return;
     }
-    console.debug('scrobbling track for Last.fm user', opts.lastfm_user);
     const data = this.getScrobbleData(track, opts);
     const auth = { key: opts.lastfm_session_key };
     return this.lastfm.track.scrobble(data, auth, {
@@ -232,8 +247,13 @@ class SomaPlayerBackground {
         console.error('failed to unsubscribe from', station);
       }
     });
-    console.debug('removing track listener');
     this.socket.removeListener('track', this.onTrack);
+    if (typeof this.scrobbleTimer !== 'undefined') {
+      clearTimeout(this.scrobbleTimer);
+    }
+    if (typeof this.notifyTimer !== 'undefined') {
+      clearTimeout(this.notifyTimer);
+    }
   }
 
   getInfo() {
