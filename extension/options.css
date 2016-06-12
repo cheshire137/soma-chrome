@@ -1,11 +1,18 @@
 a,
 a:link,
 button {
-  -webkit-transition: all 0.1s ease-in-out;
-  -moz-transition: all 0.1s ease-in-out;
-  -ms-transition: all 0.1s ease-in-out;
-  -o-transition: all 0.1s ease-in-out;
-  transition: all 0.1s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+  -moz-transition: all 0.15s ease-in-out;
+  -ms-transition: all 0.15s ease-in-out;
+  -o-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+a {
+  color: #36C6AA;
+}
+a:hover,
+a:focus {
+  color: #F79534;
 }
 body {
   font-size: 17px;
@@ -26,14 +33,15 @@ body,
 .theme-dark .title {
   color: #EEE;
 }
-.theme-dark a {
-  color: #a6e1fd;
-}
-.theme-dark .checkbox:hover {
+.theme-dark .radio:hover {
   color: #fff;
 }
-.theme-dark a:hover {
-  color: #fce473;
+.theme-dark a {
+  color: #75e6d0;
+}
+.theme-dark a:hover,
+.theme-dark a:focus {
+  color: #ffb164;
 }
 .theme-dark .subtitle,
 .theme-dark .help {
@@ -100,17 +108,18 @@ footer {
   margin-top: 40px;
   font-size: 13px;
 }
-label + label {
-  margin-left: 1.5em;
+.radio + .radio {
+  margin-left: 2em;
 }
 button .fa {
   margin-right: 0.3em;
 }
 .help {
   font-size: 13px;
+  margin-top: 10px;
 }
 #lastfm-is-authenticated p:first-child {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 #status-message {
   position: absolute;
@@ -124,4 +133,7 @@ button .fa {
   background-color: #468847;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
   border-color: #2F7130;
+}
+.radio input[type="radio"] {
+  margin-right: 0.2em;
 }
