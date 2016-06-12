@@ -239,11 +239,9 @@ class SomaPlayerBackground {
     if (typeof this.socket === 'undefined') {
       return;
     }
-    console.debug('unsubscribing from', station, '...');
+    console.debug('unsubscribing from', station);
     this.socket.emit('unsubscribe', station, response => {
-      if (response.unsubscribed) {
-        console.debug('unsubscribed from', station);
-      } else {
+      if (!response.unsubscribed) {
         console.error('failed to unsubscribe from', station);
       }
     });
