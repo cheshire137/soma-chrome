@@ -128,7 +128,10 @@ class SomaPlayerBackground {
       message: track.title,
       iconUrl: 'icon48.png'
     };
-    return chrome.notifications.create('', notificationOpts, () => {});
+    const delay = 15000; // 15 seconds
+    setTimeout(() => {
+      chrome.notifications.create('', notificationOpts, () => {});
+    }, delay);
   }
 
   trackHasDuration(track) {
