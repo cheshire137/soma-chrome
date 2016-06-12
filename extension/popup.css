@@ -1,6 +1,7 @@
 #title {
   font-weight: bold;
   display: block;
+  margin-bottom: 5px;
 }
 #artist:before {
   content: "by ";
@@ -15,4 +16,15 @@ body {
 }
 .theme-dark .title {
   color: #c7c7c7;
+}
+.theme-dark .select select {
+  background-color: #292929;
+  color: #eee;
+  border-color: #454648;
+}
+.theme-dark .select select:hover {
+  color: #ffb164;
+}
+.theme-dark .select:hover:after {
+  border-color: #ffb164;
 }

@@ -1,6 +1,8 @@
 a,
 a:link,
-button {
+button,
+.select select,
+.select:after {
   -webkit-transition: all 0.15s ease-in-out;
   -moz-transition: all 0.15s ease-in-out;
   -ms-transition: all 0.15s ease-in-out;
@@ -28,7 +30,7 @@ body,
 }
 .theme-dark,
 .theme-dark .title {
-  color: #EEE;
+  color: #eee;
 }
 .theme-dark a {
   color: #75e6d0;
@@ -73,4 +75,19 @@ button .fa {
 footer {
   margin-top: 40px;
   font-size: 13px;
+}
+.theme-dark .button {
+  background-color: #292929;
+  color: #eee;
+  border-color: #454648;
+}
+.theme-dark .button:hover,
+.theme-dark .button:focus {
+  background-color: #292929;
+  color: #ffb164;
+  border-color: #454648;
+}
+.theme-dark .box .button {
+  background-color: #222;
+  border-color: #3c3e40;
 }
