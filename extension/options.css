@@ -1,3 +1,12 @@
+a,
+a:link,
+button {
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -ms-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
 body {
   font-size: 17px;
 }
@@ -6,9 +15,31 @@ body,
 .theme-light .section {
   background-color: #f8f8f8;
 }
-.theme-dark {
+.theme-dark,
+.theme-dark .section {
   background-color: #222;
+}
+.theme-dark .box {
+  background-color: #292929;
+}
+.theme-dark,
+.theme-dark .title {
   color: #EEE;
+}
+.theme-dark a {
+  color: #a6e1fd;
+}
+.theme-dark .checkbox:hover {
+  color: #fff;
+}
+.theme-dark a:hover {
+  color: #fce473;
+}
+.theme-dark .subtitle,
+.theme-dark .help {
+  color: #c7c7c7;
+}
+.theme-dark {
   text-shadow: 0 1px 1px #111;
 }
 .subtitle {
@@ -80,4 +111,17 @@ button .fa {
 }
 #lastfm-is-authenticated p:first-child {
   margin-bottom: 5px;
+}
+#status-message {
+  position: absolute;
+  left: 50%;
+  width: 60%;
+  margin-left: -30%;
+  top: 15px;
+}
+.theme-dark .notification.is-success {
+  color: #dff0d8;
+  background-color: #468847;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  border-color: #2F7130;
 }

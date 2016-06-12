@@ -162,10 +162,30 @@ const SomaPlayerOptions = (function() {
   };
 
   SomaPlayerOptions.prototype.flashNotice = function(message) {
-    this.dismissNotice();
-    this.statusArea.textContent = message;
-    this.statusArea.classList.remove('hidden');
-    setTimeout(this.dismissNotice.bind(this), 10000);
+    const show = () => {
+      this.statusArea.appendChild(this.getDismissButton());
+      const span = document.createElement('span');
+      span.textContent = message;
+      this.statusArea.appendChild(span);
+      this.statusArea.classList.remove('hidden');
+      setTimeout(this.dismissNotice.bind(this), 10000);
+    };
+    if (this.statusArea.classList.contains('hidden')) {
+      show();
+    } else {
+      this.dismissNotice();
+      setTimeout(show, 250);
+    }
+  };
+
+  SomaPlayerOptions.prototype.getDismissButton = function() {
+    const button = document.createElement('button');
+    button.className = 'delete';
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      this.dismissNotice();
+    });
+    return button;
   };
 
   SomaPlayerOptions.prototype.saveOptions = function() {
