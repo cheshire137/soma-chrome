@@ -1,6 +1,18 @@
 #title {
   font-weight: bold;
+  display: block;
 }
 #artist:before {
-  content: " by ";
+  content: "by ";
+}
+body,
+.control {
+  text-align: center;
+}
+body {
+  padding: 1em;
+  min-width: 19em;
+}
+.theme-dark .title {
+  color: #c7c7c7;
 }
