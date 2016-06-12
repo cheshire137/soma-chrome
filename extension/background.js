@@ -117,20 +117,24 @@ class SomaPlayerBackground {
   }
 
   notifyOfTrack(track, opts) {
+    if (typeof this.notifyTimer !== 'undefined') {
+      clearTimeout(this.notifyTimer);
+    }
     // Default to showing notifications, so if user has not saved preferences,
     // assume they want notifications.
     if (opts.notifications === false) {
       return;
     }
-    const notificationOpts = {
+    const notification = {
       type: 'basic',
       title: track.artist,
       message: track.title,
       iconUrl: 'icon48.png'
     };
     const delay = 15000; // 15 seconds
-    setTimeout(() => {
-      chrome.notifications.create('', notificationOpts, () => {});
+    console.debug('notifying in', (delay / 1000), 'seconds', notification);
+    this.notifyTimer = setTimeout(() => {
+      chrome.notifications.create('', notification, () => {});
     }, delay);
   }
 
