@@ -120,6 +120,14 @@ button .fa {
   background-color: #222;
   border-color: #3c3e40;
 }
+.footer a:not(.icon),
+.footer a:visited:not(.icon) {
+  border-bottom-color: #36C6AA;
+}
+.footer a:not(.icon):hover,
+.footer a:visited:not(.icon):hover {
+  border-bottom-color: #F79534;
+}
 .theme-dark .footer a:not(.icon),
 .theme-dark .footer a:visited:not(.icon) {
   border-bottom-color: #2b6573;

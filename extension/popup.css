@@ -40,6 +40,14 @@ body {
   margin-top: 10px;
   padding: 20px;
 }
+.footer a:not(.icon),
+.footer a:visited:not(.icon) {
+  border-bottom-width: 0;
+}
+.footer a:not(.icon):hover,
+.footer a:visited:not(.icon):hover {
+  border-bottom-width: 1px;
+}
 #currently-playing {
   display: flex;
   align-items: center;
