@@ -1,5 +1,5 @@
-const SomaPlayerOptions = (function() {
-  function SomaPlayerOptions() {
+class SomaPlayerOptions {
+  constructor() {
     this.findElements();
     this.lastfmToken = SomaPlayerUtil.getUrlParam('token');
     this.options = { scrobbling: false, notifications: true };
@@ -10,13 +10,13 @@ const SomaPlayerOptions = (function() {
     this.authenticateLastfm();
   }
 
-  SomaPlayerOptions.prototype.listenForRefresh = function() {
+  listenForRefresh() {
     this.refreshStationsButton.addEventListener('click', () => {
       this.refreshStations();
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.listenForChanges = function() {
+  listenForChanges() {
     const selectors = ['input[name="scrobbling"]',
                        'input[name="notifications"]',
                        'input[name="theme"]'];
@@ -26,9 +26,9 @@ const SomaPlayerOptions = (function() {
         input.addEventListener('change', () => this.saveOptions());
       });
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.listenForLastfmClicks = function() {
+  listenForLastfmClicks() {
     this.lastfmAuthButtons.forEach(button => {
       button.addEventListener('click', () => {
         this.initAuthenticateLastfm();
@@ -38,9 +38,9 @@ const SomaPlayerOptions = (function() {
       event.preventDefault();
       return this.disconnectFromLastfm();
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.findElements = function() {
+  findElements() {
     this.statusArea = document.getElementById('status-message');
     this.lastfmAuthButtons =
         Array.from(document.querySelectorAll('button.lastfm-auth'));
@@ -59,9 +59,9 @@ const SomaPlayerOptions = (function() {
     this.stationCount = document.querySelector('.station-count');
     this.stationsList = document.querySelector('.stations-list');
     this.refreshStationsButton = document.querySelector('.refresh-stations');
-  };
+  }
 
-  SomaPlayerOptions.prototype.restoreOptions = function() {
+  restoreOptions() {
     return SomaPlayerUtil.getOptions().then(opts => {
       if (opts.lastfm_session_key) {
         this.lastfmConnectedMessage.classList.remove('hidden');
@@ -100,9 +100,9 @@ const SomaPlayerOptions = (function() {
       });
       this.applyTheme();
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.applyTheme = function() {
+  applyTheme() {
     const theme = this.options.theme || 'light';
     if (theme === 'light') {
       document.body.classList.remove('theme-dark');
@@ -110,9 +110,9 @@ const SomaPlayerOptions = (function() {
       document.body.classList.remove('theme-light');
     }
     document.body.classList.add(`theme-${theme}`);
-  };
+  }
 
-  SomaPlayerOptions.prototype.showCachedStations = function(stations) {
+  showCachedStations(stations) {
     this.stationsOptions.classList.remove('hidden');
     this.stationCount.textContent = stations.length;
     const titles = stations.map(s => s.title);
@@ -120,9 +120,9 @@ const SomaPlayerOptions = (function() {
     let textList = titles.slice(0, titles.length - 1).join(', ');
     textList += `, and ${titles[titles.length - 1]}.`;
     this.stationsList.textContent = textList;
-  };
+  }
 
-  SomaPlayerOptions.prototype.refreshStations = function() {
+  refreshStations() {
     console.debug('refreshing stations list');
     this.stationsList.textContent = '';
     this.refreshStationsButton.disabled = true;
@@ -136,9 +136,9 @@ const SomaPlayerOptions = (function() {
       this.options.stations = stations;
       this.refreshStationsButton.disabled = false;
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.disconnectFromLastfm = function() {
+  disconnectFromLastfm() {
     console.debug('disconnecting from Last.fm...');
     this.options.lastfm_session_key = null;
     this.options.lastfm_user = null;
@@ -152,16 +152,16 @@ const SomaPlayerOptions = (function() {
       this.enableScrobbling.removeAttribute('checked');
       this.disableScrobbling.checked = true;
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.dismissNotice = function() {
+  dismissNotice() {
     this.statusArea.classList.add('hidden');
     while (this.statusArea.hasChildNodes()) {
       this.statusArea.removeChild(this.statusArea.lastChild);
     }
-  };
+  }
 
-  SomaPlayerOptions.prototype.flashNotice = function(message) {
+  flashNotice(message) {
     const show = () => {
       this.statusArea.appendChild(this.getDismissButton());
       const span = document.createElement('span');
@@ -176,9 +176,9 @@ const SomaPlayerOptions = (function() {
       this.dismissNotice();
       setTimeout(show, 250);
     }
-  };
+  }
 
-  SomaPlayerOptions.prototype.getDismissButton = function() {
+  getDismissButton() {
     const button = document.createElement('button');
     button.className = 'delete';
     button.addEventListener('click', event => {
@@ -186,9 +186,9 @@ const SomaPlayerOptions = (function() {
       this.dismissNotice();
     });
     return button;
-  };
+  }
 
-  SomaPlayerOptions.prototype.saveOptions = function() {
+  saveOptions() {
     const checkedScrobbling =
         document.querySelector('input[name="scrobbling"]:checked');
     this.options.scrobbling = checkedScrobbling.value === 'enabled';
@@ -201,13 +201,13 @@ const SomaPlayerOptions = (function() {
       this.flashNotice('Saved your options!');
       this.applyTheme();
     });
-  };
+  }
 
-  SomaPlayerOptions.prototype.initAuthenticateLastfm = function() {
+  initAuthenticateLastfm() {
     window.location.href = `${SomaPlayerConfig.lastfm_auth_url}?api_key=${SomaPlayerConfig.lastfm_api_key}&cb=${window.location.href}`;
-  };
+  }
 
-  SomaPlayerOptions.prototype.authenticateLastfm = function() {
+  authenticateLastfm() {
     if (this.lastfmToken === '') {
       return;
     }
@@ -236,10 +236,8 @@ const SomaPlayerOptions = (function() {
         });
       }
     });
-  };
-
-  return SomaPlayerOptions;
-})();
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   new SomaPlayerOptions();
