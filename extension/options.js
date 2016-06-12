@@ -116,9 +116,8 @@ class SomaPlayerOptions {
     this.stationsOptions.classList.remove('hidden');
     this.stationCount.textContent = stations.length;
     const titles = stations.map(s => s.title);
-    titles.sort();
-    let textList = titles.slice(0, titles.length - 1).join(', ');
-    textList += `, and ${titles[titles.length - 1]}.`;
+    const commaSeparated = titles.slice(0, titles.length - 1).join(', ');
+    const textList = `${commaSeparated}, and ${titles[titles.length - 1]}.`;
     this.stationsList.textContent = textList;
   }
 

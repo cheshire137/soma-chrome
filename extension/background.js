@@ -242,9 +242,15 @@ class SomaPlayerBackground {
   }
 
   extractStations(data) {
-    return data.channels.map(station => {
+    const stations = data.channels.map(station => {
       return { id: station.id, title: station.title };
     });
+    stations.sort(this.stationCompare);
+    return stations;
+  }
+
+  stationCompare(a, b) {
+    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
   }
 }
 
