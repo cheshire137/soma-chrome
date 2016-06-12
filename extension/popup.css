@@ -41,14 +41,9 @@ body {
   padding: 20px;
 }
 #currently-playing {
-  display: table;
-  width: 100%;
-}
-#station-image,
-#currently-playing .subtitle {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 #station-image {
   width: 120px;
@@ -56,4 +51,5 @@ body {
 }
 #currently-playing .subtitle {
   padding: 20px;
+  width: 100%;
 }
