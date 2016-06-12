@@ -1,0 +1,76 @@
+a,
+a:link,
+button {
+  -webkit-transition: all 0.15s ease-in-out;
+  -moz-transition: all 0.15s ease-in-out;
+  -ms-transition: all 0.15s ease-in-out;
+  -o-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+a {
+  color: #36C6AA;
+}
+a:hover,
+a:focus {
+  color: #F79534;
+}
+body,
+.theme-light,
+.theme-light .section {
+  background-color: #f8f8f8;
+}
+.theme-dark,
+.theme-dark .section {
+  background-color: #222;
+}
+.theme-dark .box {
+  background-color: #292929;
+}
+.theme-dark,
+.theme-dark .title {
+  color: #EEE;
+}
+.theme-dark a {
+  color: #75e6d0;
+}
+.theme-dark a:hover,
+.theme-dark a:focus {
+  color: #ffb164;
+}
+.theme-dark .subtitle,
+.theme-dark .help {
+  color: #c7c7c7;
+}
+.theme-dark {
+  text-shadow: 0 1px 1px #111;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+.hidden {
+  display: none;
+}
+button .fa {
+  margin-right: 0.3em;
+}
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+  margin-left: -5px;
+}
+.list-inline li {
+  display: inline-block;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+footer {
+  margin-top: 40px;
+  font-size: 13px;
+}

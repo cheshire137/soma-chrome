@@ -3,50 +3,52 @@
 <head>
   <title>SomaPlayer Popup</title>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css">
-  <link href="reset.css" media="screen" rel="stylesheet" type="text/css">
-  <link href="style.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bulma.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="popup.css" media="screen" rel="stylesheet" type="text/css">
 </head>
 <body class="popup">
-  <h1>SomaPlayer</h1>
-  <div class="hidden" id="currently-playing">
-    <span id="last-known-header">
-      Last known track:
-    </span>
-    <span id="title"></span>
-    <span id="artist"></span>
+  <div class="container">
+    <h1 class="title">SomaPlayer</h1>
+    <div class="hidden box" id="currently-playing">
+      <h2 class="subtitle">
+        <span id="title"></span><span id="artist"></span>
+      </h2>
+    </div>
+    <div class="control">
+      <label class="sr-only" for="station">Station:</label>
+      <span class="select">
+        <select autofocus="autofocus" disabled="disabled" id="station" name="station">
+          <option value="">Choose a station</option>
+        </select>
+      </span>
+    </div>
+    <div class="control">
+      <button disabled="disabled" id="play" class="button" type="button">
+        <i class="fa fa-play"></i>
+        Play
+      </button>
+      <button class="hidden button" id="pause" type="button">
+        <i class="fa fa-pause"></i>
+        Pause
+      </button>
+    </div>
+    <footer>
+      <ul class="list-inline">
+        <li>
+          <a href="#options">
+            Settings
+          </a>
+        </li>
+        <li>&middot;</li>
+        <li>
+          <a href="http://somafm.com/support/">
+            Donate to SomaFM
+          </a>
+        </li>
+      </ul>
+    </footer>
   </div>
-  <div class="form-group">
-    <label class="sr-only" for="station">Station:</label>
-    <select autofocus="autofocus" disabled="disabled" id="station" name="station">
-      <option value="">Choose a station</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <button disabled="disabled" id="play" type="button">
-      <i class="fa fa-play"></i>
-      Play
-    </button>
-    <button class="hidden" id="pause" type="button">
-      <i class="fa fa-pause"></i>
-      Pause
-    </button>
-  </div>
-  <hr>
-  <footer>
-    <ul class="list-inline">
-      <li>
-        <a href="#options">
-          Settings
-        </a>
-      </li>
-      <li>&middot;</li>
-      <li>
-        <a href="http://somafm.com/support/">
-          Donate to SomaFM
-        </a>
-      </li>
-    </ul>
-  </footer>
   <script src="config.js"></script>
   <script src="util.js"></script>
   <script src="analytics.js"></script>
