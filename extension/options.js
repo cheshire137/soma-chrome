@@ -53,7 +53,7 @@ class SomaPlayerOptions {
         document.getElementById('lastfm-is-authenticated');
     this.lastfmNotConnectedMessage =
         document.getElementById('lastfm-is-not-authenticated');
-    this.lastfmUser = document.getElementById('lastfm-user');
+    this.lastfmUserEl = document.getElementById('lastfm-user');
     this.lastfmDisconnect = document.getElementById('lastfm-disconnect');
     this.stationsOptions = document.querySelector('.stations-options');
     this.stationCount = document.querySelector('.station-count');
@@ -69,9 +69,9 @@ class SomaPlayerOptions {
       } else {
         this.lastfmNotConnectedMessage.classList.remove('hidden');
       }
-      if (opts.lastfmUser) {
-        this.lastfmUser.textContent = opts.lastfm_user;
-        this.lastfmUser.href = `http://last.fm/user/${opts.lastfm_user}`;
+      if (opts.lastfm_user) {
+        this.lastfmUserEl.textContent = opts.lastfm_user;
+        this.lastfmUserEl.href = `http://last.fm/user/${opts.lastfm_user}`;
       }
       if (opts.scrobbling) {
         this.enableScrobbling.checked = true;
@@ -144,7 +144,7 @@ class SomaPlayerOptions {
     this.options.scrobbling = false;
     SomaPlayerUtil.setOptions(this.options).then(() => {
       this.flashNotice('Disconnected from Last.fm!');
-      this.lastfmUser.textContent = '';
+      this.lastfmUserEl.textContent = '';
       this.lastfmConnectedMessage.classList.add('hidden');
       this.lastfmNotConnectedMessage.classList.remove('hidden');
       this.enableScrobbling.disabled = true;
@@ -219,7 +219,7 @@ class SomaPlayerOptions {
         this.options.scrobbling = true;
         SomaPlayerUtil.setOptions(this.options).then(() => {
           this.flashNotice('Connected to Last.fm!');
-          this.lastfmUser.textContent = this.options.lastfm_user;
+          this.lastfmUserEl.textContent = this.options.lastfm_user;
           this.lastfmConnectedMessage.classList.remove('hidden');
           this.lastfmNotConnectedMessage.classList.add('hidden');
           this.enableScrobbling.removeAttribute('disabled');
