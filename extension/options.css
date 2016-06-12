@@ -71,3 +71,8 @@ body {
 .radio input[type="radio"] {
   margin-right: 0.2em;
 }
+.center-vertically {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
