@@ -101,8 +101,19 @@ class SomaPlayerBackground {
     this.artistEl.textContent = track.artist;
     SomaPlayerUtil.getOptions().then(opts => {
       this.notifyOfTrack(track, opts);
-      this.scrobbleTrack(track, opts);
+      this.waitToScrobbleTrack(track, opts);
     });
+  }
+
+  waitToScrobbleTrack(track, opts) {
+    let delay = 60000; // 60 seconds
+    if (this.trackHasDuration(track)) {
+      delay = track.duration / 2; // half the length of the song
+    }
+    console.debug('waiting', (delay / 1000), 'seconds to scrobble track');
+    setTimeout(() => {
+      this.scrobbleTrack(track, opts);
+    }, delay);
   }
 
   notifyOfTrack(track, opts) {
@@ -170,8 +181,8 @@ class SomaPlayerBackground {
           }
         }
       },
-      error(data) {
-        console.error('failed to scrobble track', track, 'response:', data);
+      error(err) {
+        console.error('failed to scrobble track', track, 'response:', err);
       }
     });
   }
