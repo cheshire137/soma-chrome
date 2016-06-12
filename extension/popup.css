@@ -45,6 +45,9 @@ body {
   align-items: center;
   justify-content: flex-start;
 }
+#currently-playing.hidden {
+  display: none;
+}
 #station-image {
   width: 120px;
   height: 120px;

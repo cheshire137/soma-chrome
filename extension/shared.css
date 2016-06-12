@@ -84,7 +84,8 @@ body,
   clip: rect(0,0,0,0);
   border: 0;
 }
-.hidden {
+.hidden,
+.box.hidden {
   display: none;
 }
 button .fa {
