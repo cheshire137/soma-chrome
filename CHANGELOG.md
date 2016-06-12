@@ -5,6 +5,7 @@
 - SomaFM station artwork is displayed for each station.
 - New appearance for dark and light themes.
 - Stations are now sorted alphabetically.
+- More accurate Last.fm scrobbles with album, MusicBrainz ID, and track duration included.
 
 ## Version 0.0.1.0:
 

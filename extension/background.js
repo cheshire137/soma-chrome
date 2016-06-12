@@ -121,13 +121,26 @@ class SomaPlayerBackground {
   }
 
   getScrobbleData(track, opts) {
-    return {
+    // http://www.last.fm/api/show/track.scrobble
+    const data = {
       artist: (track.artist || '').replace(/"/g, "'"),
       track: (track.title || '').replace(/"/g, "'"),
       user: opts.lastfm_user,
       chosenByUser: 0,
       timestamp: Math.round((new Date()).getTime() / 1000)
     };
+    if (typeof track.trackMBID === 'string') {
+      data.mbid = track.trackMBID;
+    }
+    if (typeof track.duration === 'number' &&
+        !track.durationEstimated && track.duration > 0) {
+      const milliseconds = track.duration;
+      data.duration = milliseconds / 1000;
+    }
+    if (typeof track.album === 'string') {
+      data.album = track.album;
+    }
+    return data;
   }
 
   scrobbleTrack(track, opts) {
@@ -143,7 +156,7 @@ class SomaPlayerBackground {
         try {
           const iframeWin = document.querySelector('iframe').contentWindow;
           iframeWin.document.querySelector('form').submit();
-          console.debug('scrobbled track', track.title, track.artist);
+          console.debug('scrobbled track', data);
         } catch (_error) {
           // Mysterious second submit after scrobble form has already POSTed
           // to Last.fm and the iframe has its origin changed to
