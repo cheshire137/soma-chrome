@@ -16,11 +16,28 @@
   "browser_action": {
     "default_icon": "icon48.png",
     "default_popup": "popup.html",
-    "default_title": "Play/pause SomaFM station"
+    "default_title": "Change SomaFM station"
   },
   "icons": {
     "48": "icon48.png",
     "128": "icon128.png"
+  },
+  "commands": {
+    "play-pause-station": {
+      "suggested_key": {
+        "default": "MediaPlayPause",
+        "mac": "MediaPlayPause"
+      },
+      "description": "Toggle playing the selected station",
+      "global": true
+    },
+    "pause-station": {
+      "suggested_key": {
+        "default": "MediaStop"
+      },
+      "description": "Pause the selected station",
+      "global": true
+    }
   },
   "web_accessible_resources": ["defaultStations.json", "icon48.png",
                                "icon48-dark.png", "options.html"]

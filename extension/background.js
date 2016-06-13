@@ -216,11 +216,36 @@ class SomaPlayerBackground {
   }
 
   pause(station) {
+    if (!this.audioTag) {
+      return;
+    }
+    if (typeof station === 'undefined') {
+      station = this.audioTag.getAttribute('data-station');
+    }
+    if (!station || station.length < 1) {
+      return;
+    }
     console.debug('pausing station', station);
     this.unsubscribe(station);
     this.audioTag.pause();
     this.audioTag.currentTime = 0;
     this.audioTag.setAttribute('data-paused', 'true');
+  }
+
+  togglePlay() {
+    if (!this.audioTag) {
+      return;
+    }
+    const station = this.audioTag.getAttribute('data-station');
+    const haveStation = station && station.length > 0;
+    if (!haveStation) {
+      return;
+    }
+    if (this.audioTag.hasAttribute('data-paused')) {
+      this.play(station);
+    } else {
+      this.pause(station);
+    }
   }
 
   clear() {
@@ -358,5 +383,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(stations);
     });
     return true;
+  }
+});
+
+chrome.commands.onCommand.addListener(command => {
+  if (typeof somaPlayerBG === 'undefined') {
+    return;
+  }
+  if (command === 'play-pause-station') {
+    somaPlayerBG.togglePlay();
+  } else if (command === 'pause-station') {
+    somaPlayerBG.pause();
   }
 });
