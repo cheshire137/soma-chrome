@@ -116,10 +116,11 @@ class SomaPlayerBackground {
     if (this.trackHasDuration(track)) {
       delay = track.duration / 2; // half the length of the song
     }
+    const timestamp = Math.round((new Date()).getTime() / 1000);
     console.debug('waiting', (delay / 1000), 'seconds to scrobble',
-                  track.title, track.artist);
+                  track.title, track.artist, 'that started at', timestamp);
     this.scrobbleTimer = setTimeout(() => {
-      this.scrobbleTrack(track, opts);
+      this.scrobbleTrack(track, timestamp, opts);
     }, delay);
   }
 
@@ -155,14 +156,14 @@ class SomaPlayerBackground {
     return typeof track.duration === 'number' && track.duration > 0;
   }
 
-  getScrobbleData(track, opts) {
+  getScrobbleData(track, timestamp, opts) {
     // http://www.last.fm/api/show/track.scrobble
     const data = {
       artist: (track.artist || '').replace(/"/g, "'"),
       track: (track.title || '').replace(/"/g, "'"),
       user: opts.lastfm_user,
       chosenByUser: 0,
-      timestamp: Math.round((new Date()).getTime() / 1000)
+      timestamp: timestamp
     };
     if (typeof track.trackMBID === 'string') {
       data.mbid = track.trackMBID;
@@ -186,11 +187,11 @@ class SomaPlayerBackground {
         typeof opts.lastfm_user === 'string' && opts.lastfm_user.length > 0;
   }
 
-  scrobbleTrack(track, opts) {
+  scrobbleTrack(track, timestamp, opts) {
     if (!this.shouldScrobble(opts)) {
       return;
     }
-    const data = this.getScrobbleData(track, opts);
+    const data = this.getScrobbleData(track, timestamp, opts);
     const auth = { key: opts.lastfm_session_key };
     return this.lastfm.track.scrobble(data, auth, {
       success() {
