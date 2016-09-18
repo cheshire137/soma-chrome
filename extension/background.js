@@ -52,6 +52,12 @@ class SomaPlayerBackground {
     this.audioTag.setAttribute('data-station', station);
     this.audioTag.removeAttribute('data-paused');
   }
+  
+  togglePlayPause() {
+    let info = this.getInfo();
+    if(info.paused) this.play(info.station);
+    else this.pause(info.station);
+  }
 
   resetTrackInfoIfNecessary(station) {
     if (this.audioTag.getAttribute('data-station') === station) {
@@ -358,5 +364,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(stations);
     });
     return true;
+  }});
+
+chrome.commands.onCommand.addListener(function (command) {
+  console.debug('Command:', command);
+  if(command === 'play/pause' || command === 'play/pause2') {
+    somaPlayerBG.togglePlayPause();
   }
 });
