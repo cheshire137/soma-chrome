@@ -73,19 +73,20 @@ class SomaPlayerBackground {
     this.artistEl.textContent = '';
   }
 
-  displayCurrentTrack(station) {
-    return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
+  displayTrack(track) {
       this.titleEl.textContent = track.title;
       this.artistEl.textContent = track.artist;
-    });
   }
 
   subscribe(station) {
     const emitSubscribe = () => {
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
-          console.debug('subscribed to', station);
-          this.displayCurrentTrack(station);
+          console.debug('subscribed to', station);          
+          SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
+            this.displayTrack(track);
+            this.setTooltip(track);
+          });
         } else {
           console.error('failed to subscribe to', station, response);
         }
@@ -111,6 +112,13 @@ class SomaPlayerBackground {
     SomaPlayerUtil.getOptions().then(opts => {
       this.notifyOfTrack(track, opts);
       this.waitToScrobbleTrack(track, opts);
+      this.setTooltip(track);
+    });
+  }
+
+  setTooltip(track) {
+    chrome.browserAction.setTitle({
+      title: `${track.artist} - ${track.title}`
     });
   }
 
