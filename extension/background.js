@@ -74,15 +74,15 @@ class SomaPlayerBackground {
   }
 
   displayTrack(track) {
-      this.titleEl.textContent = track.title;
-      this.artistEl.textContent = track.artist;
+    this.titleEl.textContent = track.title;
+    this.artistEl.textContent = track.artist;
   }
 
   subscribe(station) {
     const emitSubscribe = () => {
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
-          console.debug('subscribed to', station);          
+          console.debug('subscribed to', station);
           SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
             this.displayTrack(track);
             this.setTooltip(track);
