@@ -368,7 +368,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 chrome.commands.onCommand.addListener(function (command) {
   console.debug('Command:', command);
-  if(command === 'play/pause' || command === 'play/pause2') {
+  if(command === 'play/pause') {
     somaPlayerBG.togglePlayPause();
   }
 });
