@@ -51,6 +51,16 @@ class SomaPlayerBackground {
     this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
     this.audioTag.setAttribute('data-station', station);
     this.audioTag.removeAttribute('data-paused');
+    chrome.runtime.sendMessage('play');
+  }
+
+  togglePlayPause() {
+    const info = this.getInfo();
+    if (info.paused) {
+      this.play(info.station);
+    } else {
+      this.pause(info.station);
+    }
   }
 
   resetTrackInfoIfNecessary(station) {
@@ -221,6 +231,7 @@ class SomaPlayerBackground {
     this.audioTag.pause();
     this.audioTag.currentTime = 0;
     this.audioTag.setAttribute('data-paused', 'true');
+    chrome.runtime.sendMessage('pause');
   }
 
   clear() {
@@ -358,5 +369,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(stations);
     });
     return true;
+  }});
+
+chrome.commands.onCommand.addListener(command => {
+  console.debug('Command:', command);
+  if (command === 'play/pause') {
+    somaPlayerBG.togglePlayPause();
   }
 });
