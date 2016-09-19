@@ -51,6 +51,16 @@ class SomaPlayerBackground {
     this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
     this.audioTag.setAttribute('data-station', station);
     this.audioTag.removeAttribute('data-paused');
+    chrome.runtime.sendMessage('play');
+  }
+
+  togglePlayPause() {
+    const info = this.getInfo();
+    if (info.paused) {
+      this.play(info.station);
+    } else {
+      this.pause(info.station);
+    }
   }
 
   resetTrackInfoIfNecessary(station) {
@@ -64,11 +74,9 @@ class SomaPlayerBackground {
     this.artistEl.textContent = '';
   }
 
-  displayCurrentTrack(station) {
-    return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
-      this.titleEl.textContent = track.title;
-      this.artistEl.textContent = track.artist;
-    });
+  displayTrack(track) {
+    this.titleEl.textContent = track.title;
+    this.artistEl.textContent = track.artist;
   }
 
   subscribe(station) {
@@ -76,7 +84,10 @@ class SomaPlayerBackground {
       this.socket.emit('subscribe', station, response => {
         if (response.subscribed) {
           console.debug('subscribed to', station);
-          this.displayCurrentTrack(station);
+          SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
+            this.displayTrack(track);
+            this.setTooltip(track);
+          });
         } else {
           console.error('failed to subscribe to', station, response);
         }
@@ -102,6 +113,13 @@ class SomaPlayerBackground {
     SomaPlayerUtil.getOptions().then(opts => {
       this.notifyOfTrack(track, opts);
       this.waitToScrobbleTrack(track, opts);
+      this.setTooltip(track);
+    });
+  }
+
+  setTooltip(track) {
+    chrome.browserAction.setTitle({
+      title: `${track.artist} - ${track.title}`
     });
   }
 
@@ -221,6 +239,7 @@ class SomaPlayerBackground {
     this.audioTag.pause();
     this.audioTag.currentTime = 0;
     this.audioTag.setAttribute('data-paused', 'true');
+    chrome.runtime.sendMessage('pause');
   }
 
   clear() {
@@ -358,5 +377,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(stations);
     });
     return true;
+  }});
+
+chrome.commands.onCommand.addListener(command => {
+  console.debug('Command:', command);
+  if (command === 'play/pause') {
+    somaPlayerBG.togglePlayPause();
   }
 });

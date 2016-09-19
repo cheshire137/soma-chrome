@@ -45,12 +45,12 @@ class SomaPlayerPopup {
       return;
     }
     if (!(this.playButton.disabled ||
-          this.playButton.classList.contains('hidden'))) {
+      this.playButton.classList.contains('hidden'))) {
       console.debug('pressing play button');
       this.play();
     }
     if (!(this.pauseButton.disabled ||
-          this.pauseButton.classList.contains('hidden'))) {
+      this.pauseButton.classList.contains('hidden'))) {
       console.debug('pressing pause button');
       this.pause();
     }
@@ -238,5 +238,18 @@ class SomaPlayerPopup {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new SomaPlayerPopup();
+  const popup = new SomaPlayerPopup();
+
+  chrome.runtime.onMessage.addListener(request => {
+    switch (request) {
+      case 'play':
+        popup.stationIsPlaying();
+        break;
+      case 'pause':
+        popup.stationIsPaused();
+        break;
+      default:
+        break;
+    }
+  });
 });

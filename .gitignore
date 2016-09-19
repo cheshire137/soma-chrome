@@ -5,3 +5,4 @@ extension.pem
 extension.crx
 extension/Archive.zip
 npm-debug.log
+.vscode/
