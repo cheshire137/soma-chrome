@@ -51,6 +51,7 @@ class SomaPlayerBackground {
     this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
     this.audioTag.setAttribute('data-station', station);
     this.audioTag.removeAttribute('data-paused');
+    chrome.runtime.sendMessage('play');
   }
 
   togglePlayPause() {
@@ -238,6 +239,7 @@ class SomaPlayerBackground {
     this.audioTag.pause();
     this.audioTag.currentTime = 0;
     this.audioTag.setAttribute('data-paused', 'true');
+    chrome.runtime.sendMessage('pause');
   }
 
   clear() {
