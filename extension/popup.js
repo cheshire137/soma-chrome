@@ -5,6 +5,7 @@ class SomaPlayerPopup {
     this.handleLinks();
     this.applyTheme();
     this.fetchSomaStations();
+    this.fetchVolume();
     this.listenForPlayback();
     this.listenForStationChange();
   }
@@ -99,6 +100,12 @@ class SomaPlayerPopup {
       } else {
         this.insertStationOptions(cache);
       }
+    });
+  }
+
+  fetchVolume() {
+    chrome.runtime.sendMessage({ action: 'get_volume' }, volume => {
+      this.volumeSlider.value = volume * this.volumeSlider.max;
     });
   }
 

@@ -14,6 +14,10 @@ class SomaPlayerBackground {
     this.createArtistEl();
   }
 
+  get volume() {
+    return this.audioTag.volume;
+  }
+
   createAudioTag() {
     this.audioTag = document.querySelector('audio');
     if (!this.audioTag) {
@@ -366,6 +370,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.action === 'volume') {
     somaPlayerBG.setVolume(request.volume);
+    return true;
+  }
+  if (request.action === 'get_volume') {
+    sendResponse(somaPlayerBG.volume);
     return true;
   }
 });
