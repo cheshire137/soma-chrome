@@ -64,3 +64,11 @@ body {
   padding: 20px;
   width: 100%;
 }
+.volumebox {
+  display: flex;
+  margin: 0.75rem;
+  align-items: center;
+}
+#volume {
+  margin: 1rem;
+}

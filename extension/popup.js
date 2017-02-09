@@ -25,6 +25,14 @@ class SomaPlayerPopup {
     this.pauseButton.addEventListener('click', () => {
       this.pause();
     });
+    this.volumeSlider.addEventListener('mousemove', (event) => {
+      if (event.buttons == 1) {
+        this.setVolume(event);
+      }
+    });
+    this.volumeSlider.addEventListener('click', (event) => {
+      this.setVolume(event);
+    });
   }
 
   findElements() {
@@ -35,6 +43,7 @@ class SomaPlayerPopup {
     this.titleEl = document.getElementById('title');
     this.artistEl = document.getElementById('artist');
     this.stationImg = document.getElementById('station-image');
+    this.volumeSlider = document.getElementById('volume');
   }
 
   onStationKeypress(keyCode) {
@@ -166,6 +175,12 @@ class SomaPlayerPopup {
         resolve();
       });
     });
+  }
+
+  setVolume(event) {
+    let volume = event.offsetX / this.volumeSlider.offsetWidth;
+    this.volumeSlider.value = volume * this.volumeSlider.max;
+    chrome.runtime.sendMessage({ action: 'volume', volume });
   }
 
   updateStationImage(station) {

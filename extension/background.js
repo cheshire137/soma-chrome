@@ -53,6 +53,11 @@ class SomaPlayerBackground {
     this.audioTag.removeAttribute('data-paused');
   }
 
+  setVolume(volume) {
+    console.debug('setVolume', volume);
+    this.audioTag.volume = volume;
+  }
+
   resetTrackInfoIfNecessary(station) {
     if (this.audioTag.getAttribute('data-station') === station) {
       return;
@@ -357,6 +362,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.debug('got saved list of stations:', stations);
       sendResponse(stations);
     });
+    return true;
+  }
+  if (request.action === 'volume') {
+    somaPlayerBG.setVolume(request.volume);
     return true;
   }
 });
