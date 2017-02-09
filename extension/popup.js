@@ -25,13 +25,13 @@ class SomaPlayerPopup {
     this.pauseButton.addEventListener('click', () => {
       this.pause();
     });
-    this.volumeSlider.addEventListener('mousemove', (event) => {
-      if (event.buttons == 1) {
-        this.setVolume(event);
+    this.volumeSlider.addEventListener('mousemove', e => {
+      if (e.buttons === 1) {
+        this.setVolume(e);
       }
     });
-    this.volumeSlider.addEventListener('click', (event) => {
-      this.setVolume(event);
+    this.volumeSlider.addEventListener('click', e => {
+      this.setVolume(e);
     });
   }
 
@@ -178,7 +178,7 @@ class SomaPlayerPopup {
   }
 
   setVolume(event) {
-    let volume = event.offsetX / this.volumeSlider.offsetWidth;
+    const volume = event.offsetX / this.volumeSlider.offsetWidth;
     this.volumeSlider.value = volume * this.volumeSlider.max;
     chrome.runtime.sendMessage({ action: 'volume', volume });
   }
