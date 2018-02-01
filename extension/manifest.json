@@ -2,14 +2,13 @@
   "manifest_version": 2,
   "name": "SomaPlayer",
   "short_name": "SomaPlayer",
-  "description": "Listen to SomaFM web radio stations from your browser and scrobble tracks to your Last.fm account.",
+  "description": "Listen to SomaFM web radio stations from your browser.",
   "version": "0.0.1.1",
   "permissions": [
     "storage", "notifications"
   ],
   "background": {
-    "scripts": ["socket.io.min.js", "lastfm.min.js", "config.js", "util.js",
-                "background.js"]
+    "scripts": ["socket.io.min.js", "config.js", "util.js", "background.js"]
   },
   "options_page": "options.html",
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://ws.audioscrobbler.com; object-src 'self'",

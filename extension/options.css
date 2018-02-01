@@ -31,29 +31,12 @@ body {
 .stations-list {
   margin-bottom: 0;
 }
-.lastfm-auth,
-.theme-dark .box .lastfm-auth {
-  background-color: #c91e24;
-  border-color: #b31b20;
-  color: white;
-}
-.lastfm-auth:hover,
-.theme-dark .box .lastfm-auth:hover,
-.lastfm-auth:focus,
-.theme-dark .box .lastfm-auth:focus {
-  color: white;
-  background-color: #9d171c;
-  border-color: #861418;
-}
 .radio + .radio {
   margin-left: 2em;
 }
 .help {
   font-size: 13px;
   margin-top: 10px;
-}
-#lastfm-is-authenticated p:first-child {
-  margin-bottom: 10px;
 }
 #status-message {
   position: absolute;

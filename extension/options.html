@@ -18,48 +18,6 @@
       <div class="columns">
         <div class="column">
           <div class="box">
-            <h2 class="subtitle">Last.fm Authentication</h2>
-            <div class="hidden" id="lastfm-is-authenticated">
-              <p>
-                Connected as:
-                <a id="lastfm-user" target="_blank"></a>
-                &mdash;
-                <a href="#" id="lastfm-disconnect">
-                  Disconnect
-                </a>
-              </p>
-              <button class="lastfm-auth button hidden">
-                Authenticate with Last.fm
-              </button>
-              <p class="help">
-                You can re-authenticate if scrobbling isn't working.
-              </p>
-            </div>
-            <div class="hidden" id="lastfm-is-not-authenticated">
-              <button class="lastfm-auth button hidden">
-                Authenticate with Last.fm
-              </button>
-            </div>
-          </div>
-          <div class="box">
-            <h2 class="subtitle">Last.fm Scrobbling</h2>
-            <div class="control hidden">
-              <label class="radio" for="enable_scrobbling">
-                <input disabled="disabled" id="enable_scrobbling" name="scrobbling" type="radio" value="enabled">
-                Enable scrobbling
-              </label>
-              <label class="radio" for="disable_scrobbling">
-                <input checked="checked" id="disable_scrobbling" name="scrobbling" type="radio" value="disabled">
-                Disable scrobbling
-              </label>
-            </div>
-            <p class="help">
-              Requires Last.fm authentication. Only stations supported by the
-              <a href="http://api.somascrobbler.com/">SomaScrobbler</a>
-              will get notifications/scrobbling.
-            </p>
-          </div>
-          <div class="box">
             <h2 class="subtitle">Desktop Notifications</h2>
             <div class="control hidden">
               <label class="radio" for="enable_notifications">
@@ -113,11 +71,9 @@
         <div class="column">
           <h2 class="subtitle">About</h2>
           <p>
-            This is an unofficial extension, endorsed by neither
-            <a href="http://somafm.com" target="_blank">SomaFM</a>
-            nor
-            <a href="http://last.fm" target="_blank">Last.fm.</a>
-            I just love both services and hope you find this useful. :)
+            This is an unofficial extension, not endorsed by
+            <a href="http://somafm.com" target="_blank">SomaFM</a>.
+            I just love SomaFM and hope you find this useful. :)
           </p>
         </div>
         <div class="column center-vertically">
@@ -131,8 +87,8 @@
   <footer class="footer">
     <ul class="list-inline">
       <li>
-        &copy; 2016
-        <a href="http://3till7.net/" target="_blank">
+        &copy; 2018
+        <a href="http://sarahvessels.com/" target="_blank">
           Sarah Vessels
         </a>
       </li>
@@ -144,7 +100,6 @@
       </li>
     </ul>
   </footer>
-  <script src="lastfm.min.js"></script>
   <script src="config.js"></script>
   <script src="util.js"></script>
   <script src="options.js"></script>

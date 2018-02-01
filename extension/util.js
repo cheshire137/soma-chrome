@@ -1,13 +1,4 @@
 class SomaPlayerUtil {
-  static getLastfmConnection() {
-    return new LastFM({
-      apiKey: SomaPlayerConfig.lastfm_api_key,
-      apiSecret: SomaPlayerConfig.lastfm_api_secret,
-      apiUrl: SomaPlayerConfig.lastfm_api_url,
-      cache: new LastFMCache()
-    });
-  }
-
   static getJSON(url) {
     return new Promise((resolve, reject) => {
       window.fetch(url).then(response => {

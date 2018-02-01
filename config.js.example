@@ -1,8 +1,4 @@
 window.SomaPlayerConfig = {
-  lastfm_api_key: '',
-  lastfm_api_secret: '',
-  lastfm_api_url: 'https://ws.audioscrobbler.com/2.0/',
-  lastfm_auth_url: 'http://www.last.fm/api/auth/',
   scrobbler_api_url: 'https://api.somascrobbler.com',
   somafm_station_url: 'http://ice.somafm.com/',
   somafm_api_url: 'http://api.somafm.com/'

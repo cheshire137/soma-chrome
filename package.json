@@ -28,9 +28,7 @@
       "SomaPlayerConfig",
       "io",
       "chrome",
-      "window",
-      "LastFM",
-      "LastFMCache"
+      "window"
     ],
     "space": true,
     "rules": {

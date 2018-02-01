@@ -8,7 +8,6 @@ class SomaPlayerBackground {
   constructor() {
     console.debug('initializing SomaPlayer background script');
     this.onTrack = __bind(this.onTrack, this);
-    this.lastfm = SomaPlayerUtil.getLastfmConnection();
     this.createAudioTag();
     this.createTitleEl();
     this.createArtistEl();
@@ -101,27 +100,7 @@ class SomaPlayerBackground {
     this.artistEl.textContent = track.artist;
     SomaPlayerUtil.getOptions().then(opts => {
       this.notifyOfTrack(track, opts);
-      this.waitToScrobbleTrack(track, opts);
     });
-  }
-
-  waitToScrobbleTrack(track, opts) {
-    if (typeof this.scrobbleTimer !== 'undefined') {
-      clearTimeout(this.scrobbleTimer);
-    }
-    if (!this.shouldScrobble(opts)) {
-      return;
-    }
-    let delay = 60000; // 60 seconds
-    if (this.trackHasDuration(track)) {
-      delay = track.duration / 2; // half the length of the song
-    }
-    const timestamp = Math.round((new Date()).getTime() / 1000);
-    console.debug('waiting', (delay / 1000), 'seconds to scrobble',
-                  track.title, track.artist, 'that started at', timestamp);
-    this.scrobbleTimer = setTimeout(() => {
-      this.scrobbleTrack(track, timestamp, opts);
-    }, delay);
   }
 
   notifyOfTrack(track, opts) {
@@ -154,66 +133,6 @@ class SomaPlayerBackground {
 
   trackHasDuration(track) {
     return typeof track.duration === 'number' && track.duration > 0;
-  }
-
-  getScrobbleData(track, timestamp, opts) {
-    // http://www.last.fm/api/show/track.scrobble
-    const data = {
-      artist: (track.artist || '').replace(/"/g, "'"),
-      track: (track.title || '').replace(/"/g, "'"),
-      user: opts.lastfm_user,
-      chosenByUser: 0,
-      timestamp: timestamp
-    };
-    if (typeof track.trackMBID === 'string') {
-      data.mbid = track.trackMBID;
-    }
-    if (this.trackHasDuration(track)) {
-      const milliseconds = track.duration;
-      data.duration = milliseconds / 1000;
-    }
-    if (typeof track.album === 'string') {
-      data.album = track.album;
-    }
-    return data;
-  }
-
-  shouldScrobble(opts) {
-    if (!opts.scrobbling) {
-      return false;
-    }
-    return typeof opts.lastfm_session_key === 'string' &&
-        opts.lastfm_session_key.length > 0 &&
-        typeof opts.lastfm_user === 'string' && opts.lastfm_user.length > 0;
-  }
-
-  scrobbleTrack(track, timestamp, opts) {
-    if (!this.shouldScrobble(opts)) {
-      return;
-    }
-    const data = this.getScrobbleData(track, timestamp, opts);
-    const auth = { key: opts.lastfm_session_key };
-    return this.lastfm.track.scrobble(data, auth, {
-      success() {
-        let e;
-        try {
-          const iframeWin = document.querySelector('iframe').contentWindow;
-          iframeWin.document.querySelector('form').submit();
-          console.debug('scrobbled track', track.title, track.artist);
-        } catch (_error) {
-          // Mysterious second submit after scrobble form has already POSTed
-          // to Last.fm and the iframe has its origin changed to
-          // ws.audioscrobbler.com, which can't be touched by the extension.
-          e = _error;
-          if (e.name !== 'SecurityError') {
-            throw e;
-          }
-        }
-      },
-      error(err) {
-        console.error('failed to scrobble track', track, 'response:', err);
-      }
-    });
   }
 
   pause(station) {
@@ -272,9 +191,6 @@ class SomaPlayerBackground {
       }
     });
     this.socket.removeListener('track', this.onTrack);
-    if (typeof this.scrobbleTimer !== 'undefined') {
-      clearTimeout(this.scrobbleTimer);
-    }
     if (typeof this.notifyTimer !== 'undefined') {
       clearTimeout(this.notifyTimer);
     }
