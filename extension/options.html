@@ -16,33 +16,41 @@
     <div id="status-message"></div>
     <div class="mb-4">
       <h2 class="h2 text-normal mb-2">Desktop Notifications</h2>
-      <div>
-        <label for="enable_notifications">
-          <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
-          Enable notifications
-        </label>
-        <label for="disable_notifications">
-          <input id="disable_notifications" name="notifications" type="radio" value="disabled">
-          Disable notifications
-        </label>
+      <div class="d-flex">
+        <div class="form-checkbox my-0 mr-4">
+          <label for="enable_notifications">
+            <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
+            Enable notifications
+          </label>
+        </div>
+        <div class="form-checkbox my-0">
+          <label for="disable_notifications">
+            <input id="disable_notifications" name="notifications" type="radio" value="disabled">
+            Disable notifications
+          </label>
+        </div>
       </div>
-      <p>
+      <p class="note">
         Receive notifications when the track changes.
       </p>
     </div>
     <div class="mb-4">
       <h2 class="h2 text-normal mb-2">Theme</h2>
-      <div>
-        <label for="light_theme">
-          <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
-          Light theme
-        </label>
-        <label for="dark_theme">
-          <input id="dark_theme" name="theme" type="radio" value="dark">
-          Dark theme
-        </label>
+      <div class="d-flex">
+        <div class="form-checkbox my-0 mr-4">
+          <label for="light_theme">
+            <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
+            Light theme
+          </label>
+        </div>
+        <div class="form-checkbox my-0">
+          <label for="dark_theme">
+            <input id="dark_theme" name="theme" type="radio" value="dark">
+            Dark theme
+          </label>
+        </div>
       </div>
-      <p>
+      <p class="note">
         Black on white or white on black? Decisions, decisions.
       </p>
     </div>
