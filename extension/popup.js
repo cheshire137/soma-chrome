@@ -54,28 +54,6 @@ class SomaPlayerPopup {
     this.stationImg = document.getElementById('station-image')
   }
 
-  onStationKeypress(keyCode) {
-    if (keyCode !== 13) { // Enter
-      return
-    }
-
-    if (this.stationMenuToggle.value === '') {
-      return
-    }
-
-    if (!(this.playButton.disabled ||
-          this.playButton.classList.contains('d-none'))) {
-      console.debug('pressing play button')
-      this.play()
-    }
-
-    if (!(this.pauseButton.disabled ||
-          this.pauseButton.classList.contains('d-none'))) {
-      console.debug('pressing pause button')
-      this.pause()
-    }
-  }
-
   insertStationOptions(stations) {
     for (const data of stations) {
       const listItem = this.createStationListItem(data)
@@ -192,6 +170,7 @@ class SomaPlayerPopup {
       console.debug('finished info request, info', info);
       const currentStationButton = document.querySelector(`.station-button[value="${info.station}"]`)
       if (currentStationButton) {
+        this.stationMenuToggle.value = info.station
         this.stationMenuToggle.textContent = currentStationButton.textContent
       }
 

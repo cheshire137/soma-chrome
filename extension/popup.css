@@ -5,5 +5,22 @@ body {
 
 .dropdown-menu {
   overflow: auto;
+  width: 15em;
   height: 200px;
+}
+
+.station-list-item + .station-list-item {
+  margin-top: 4px;
+}
+
+.station-list-item:nth-child(even) .station-button {
+  background-color: #ededed;
+}
+
+.btn-audio {
+  line-height: 1;
+}
+
+.btn-audio i {
+  opacity: 1;
 }

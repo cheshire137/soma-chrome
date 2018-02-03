@@ -9,23 +9,25 @@
 </head>
 <body>
   <h1 class="h1 text-center mb-2">SomaPlayer</h1>
-  <div class="mb-4">
-    <img id="station-image" class="d-none rounded-2">
-    <div class="dropdown">
-      <button class="disabled btn dropdown-toggle" value="" id="station-menu-toggle" type="button" aria-expanded="false" aria-haspopup="true">
-        Choose a station
-        <div class="dropdown-caret"></div>
-      </button>
-      <div class="dropdown-menu-content">
-        <ul id="station-list" class="dropdown-menu dropdown-menu-se"></ul>
+  <div class="mb-4 d-flex flex-justify-center">
+    <img id="station-image" class="mr-4 d-none rounded-2">
+    <div class="d-flex flex-column flex-items-center flex-justify-center">
+      <div class="dropdown mb-4">
+        <button class="disabled btn dropdown-toggle" value="" id="station-menu-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+          Choose a station
+          <div class="dropdown-caret"></div>
+        </button>
+        <div class="dropdown-menu-content">
+          <ul id="station-list" class="dropdown-menu dropdown-menu-se"></ul>
+        </div>
       </div>
+      <button disabled id="play" class="btn btn-audio" type="button">
+        <i class="material-icons">play_arrow</i>
+      </button>
+      <button id="pause" class="btn btn-audio" type="button">
+        <i class="material-icons">pause</i>
+      </button>
     </div>
-    <button disabled id="play" type="button">
-      <i class="material-icons">play_arrow</i>
-    </button>
-    <button id="pause" type="button">
-      <i class="material-icons">pause</i>
-    </button>
   </div>
   <ul id="track-list" class="list-style-none">
   </ul>
@@ -39,8 +41,8 @@
   </template>
   <template id="station-list-item-template">
     <li class="station-list-item">
-      <button class="station-button" type="button">
-        <img class="station-image">
+      <button class="width-full station-button d-flex btn-link flex-items-center" type="button">
+        <img class="station-image rounded-2 mr-2" width="30" height="30">
         <span class="station-name"></span>
       </button>
     </li>
