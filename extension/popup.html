@@ -9,12 +9,8 @@
 <body class="popup">
   <div class="container">
     <h1 class="title">SomaPlayer</h1>
-    <div class="hidden box" id="currently-playing">
-      <h2 class="subtitle">
-        <span id="title"></span><span id="artist"></span>
-      </h2>
-    </div>
     <div class="control">
+      <img id="station-image" class="hidden">
       <label class="sr-only" for="station">Station:</label>
       <span class="select is-medium">
         <select autofocus="autofocus" disabled="disabled" id="station" name="station">
@@ -28,24 +24,33 @@
         <i class="material-icons">pause</i>
       </button>
     </div>
+    <ul id="track-list">
+    </ul>
+    <template id="track-list-item-template">
+      <li class="track-list-item">
+        <span class="track-name"></span>
+        by
+        <span class="artist"></span>
+        <div>
+          <span class="track-date"></span>
+        </div>
+      </li>
+    </template>
   </div>
   <footer class="footer">
     <ul class="list-inline">
       <li>
-        <a href="#options">
-          Settings
-        </a>
+        <a href="#options">Settings</a>
       </li>
       <li>&middot;</li>
       <li>
-        <a href="http://somafm.com/support/">
-          Donate to SomaFM
-        </a>
+        <a href="http://somafm.com/support/">Donate to SomaFM</a>
       </li>
     </ul>
   </footer>
   <script src="config.js"></script>
   <script src="util.js"></script>
+  <script src="soma-api.js"></script>
   <script src="analytics.js"></script>
   <script src="popup.js"></script>
 </body>

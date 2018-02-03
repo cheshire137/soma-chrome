@@ -7,100 +7,57 @@ const __bind = function(fn, me) {
 class SomaPlayerBackground {
   constructor() {
     console.debug('initializing SomaPlayer background script');
-    this.onTrack = __bind(this.onTrack, this);
-    this.createAudioTag();
-    this.createTitleEl();
-    this.createArtistEl();
+    this.findElements()
   }
 
-  createAudioTag() {
-    this.audioTag = document.querySelector('audio');
-    if (!this.audioTag) {
-      console.debug('adding new audio tag');
-      this.audioTag = document.createElement('audio');
-      this.audioTag.setAttribute('autoplay', 'true');
-      this.audioTag.setAttribute('data-station', '');
-      document.body.appendChild(this.audioTag);
-    }
-  }
-
-  createTitleEl() {
-    this.titleEl = document.getElementById('title');
-    if (!this.titleEl) {
-      this.titleEl = document.createElement('div');
-      this.titleEl.id = 'title';
-      document.body.appendChild(this.titleEl);
-    }
-  }
-
-  createArtistEl() {
-    this.artistEl = document.getElementById('artist');
-    if (!this.artistEl) {
-      this.artistEl = document.createElement('div');
-      this.artistEl.id = 'artist';
-      document.body.appendChild(this.artistEl);
-    }
+  findElements() {
+    this.audioTag = document.getElementById('audio')
   }
 
   play(station) {
-    console.debug('playing station', station);
-    this.resetTrackInfoIfNecessary(station);
-    this.subscribe(station);
-    this.socket.on('track', this.onTrack);
-    this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
-    this.audioTag.setAttribute('data-station', station);
-    this.audioTag.removeAttribute('data-paused');
+    console.debug('playing station', station)
+    this.resetTrackInfoIfNecessary(station)
+    this.subscribe(station)
+    this.audioTag.src = SomaPlayerConfig.somafm_station_url + station
+    SomaPlayerUtil.setCurrentStation(station)
+    this.audioTag.removeAttribute('data-paused')
   }
 
   resetTrackInfoIfNecessary(station) {
-    if (this.audioTag.getAttribute('data-station') === station) {
-      return;
+    if (SomaPlayerUtil.getCurrentStation() === station) {
+      return
     }
+
     console.debug('changed station from',
                   this.audioTag.getAttribute('data-station'), 'to', station,
-                  'clearing current track info');
-    this.titleEl.textContent = '';
-    this.artistEl.textContent = '';
-  }
-
-  displayCurrentTrack(station) {
-    return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
-      this.titleEl.textContent = track.title;
-      this.artistEl.textContent = track.artist;
-    });
+                  'clearing current track info')
+    SomaPlayerUtil.setTrackList([])
   }
 
   subscribe(station) {
-    const emitSubscribe = () => {
-      this.socket.emit('subscribe', station, response => {
-        if (response.subscribed) {
-          console.debug('subscribed to', station);
-          this.displayCurrentTrack(station);
-        } else {
-          console.error('failed to subscribe to', station, response);
-        }
-      });
-    };
-    if (typeof this.socket === 'undefined') {
-      console.debug('connecting to socket', SomaPlayerConfig.scrobbler_api_url);
-      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
+    if (this.songListInterval) {
+      clearInterval(this.songListInterval)
     }
-    if (this.socket.connected) {
-      emitSubscribe();
-    } else {
-      this.socket.on('connect', () => {
-        emitSubscribe();
-      });
-    }
-  }
 
-  onTrack(track) {
-    console.debug('new track', track.title, track.artist);
-    this.titleEl.textContent = track.title;
-    this.artistEl.textContent = track.artist;
-    SomaPlayerUtil.getOptions().then(opts => {
-      this.notifyOfTrack(track, opts);
-    });
+    SomaPlayerUtil.setTrackList([])
+
+    const getter = () => {
+      console.debug(`refreshing track list for ${station}`)
+
+      const api = new SomaAPI()
+      api.getStationTracks(station).then(tracks => {
+        console.debug('fetched track list', station, tracks)
+        SomaPlayerUtil.setTrackList(tracks)
+
+      }).catch((xhr, status, error) => {
+        console.error('failed to fetch track list', station, error)
+      })
+    };
+
+    const seconds = 30;
+    this.songListInterval = setInterval(getter, seconds * 1000)
+
+    getter()
   }
 
   notifyOfTrack(track, opts) {
@@ -137,179 +94,138 @@ class SomaPlayerBackground {
 
   pause(station) {
     if (!this.audioTag) {
-      return;
+      return
     }
+
     if (typeof station === 'undefined') {
-      station = this.audioTag.getAttribute('data-station');
+      station = this.audioTag.getAttribute('data-station')
     }
+
     if (!station || station.length < 1) {
-      return;
+      return
     }
-    console.debug('pausing station', station);
-    this.unsubscribe(station);
-    this.audioTag.pause();
-    this.audioTag.currentTime = 0;
-    this.audioTag.setAttribute('data-paused', 'true');
+
+    console.debug('pausing station', station)
+    this.unsubscribe(station)
+    this.audioTag.pause()
+    this.audioTag.currentTime = 0
+    this.audioTag.setAttribute('data-paused', 'true')
   }
 
   togglePlay() {
     if (!this.audioTag) {
-      return;
+      return
     }
-    const station = this.audioTag.getAttribute('data-station');
-    const haveStation = station && station.length > 0;
+
+    const station = this.audioTag.getAttribute('data-station')
+    const haveStation = station && station.length > 0
     if (!haveStation) {
-      return;
+      return
     }
+
     if (this.audioTag.hasAttribute('data-paused')) {
-      this.play(station);
+      this.play(station)
     } else {
-      this.pause(station);
+      this.pause(station)
     }
   }
 
   clear() {
-    const info = this.getInfo();
-    this.unsubscribe(info.station);
-    this.audioTag.pause();
-    this.audioTag.currentTime = 0;
-    this.audioTag.setAttribute('data-station', '');
-    this.audioTag.removeAttribute('data-paused');
+    const info = this.getInfo()
+    this.unsubscribe(info.station)
+    this.audioTag.pause()
+    this.audioTag.currentTime = 0
+    this.audioTag.setAttribute('data-station', '')
+    this.audioTag.removeAttribute('data-paused')
   }
 
   unsubscribe(station) {
     if (!(typeof station === 'string' && station.length > 0)) {
-      return;
+      return
     }
-    if (typeof this.socket === 'undefined') {
-      return;
-    }
-    console.debug('unsubscribing from', station);
-    this.socket.emit('unsubscribe', station, response => {
-      if (!response.unsubscribed) {
-        console.error('failed to unsubscribe from', station);
-      }
-    });
-    this.socket.removeListener('track', this.onTrack);
+
+    console.debug('unsubscribing from', station)
     if (typeof this.notifyTimer !== 'undefined') {
-      clearTimeout(this.notifyTimer);
+      clearTimeout(this.notifyTimer)
     }
   }
 
   getInfo() {
-    let station = '';
-    if (this.audioTag) {
-      station = this.audioTag.getAttribute('data-station') || '';
-    }
+    const station = SomaPlayerUtil.getCurrentStation()
+    console.log('station', station)
+
     return {
       station,
-      artist: this.artistEl.textContent,
-      title: this.titleEl.textContent,
+      tracks: SomaPlayerUtil.getTrackList(),
       paused: this.audioTag.hasAttribute('data-paused') || station === ''
     };
-  }
-
-  setStations(stations) {
-    console.debug('set stations', stations);
-    SomaPlayerUtil.getOptions().then(opts => {
-      opts.stations = stations;
-      SomaPlayerUtil.setOptions(opts);
-    });
-  }
-
-  getStations() {
-    return new Promise(resolve => {
-      SomaPlayerUtil.getOptions().then(opts => {
-        resolve(opts.stations);
-      });
-    });
-  }
-
-  fetchStations() {
-    const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
-    console.debug(`fetching channels list from ${url}`);
-    return new Promise((resolve, reject) => {
-      SomaPlayerUtil.getJSON(url).then(data => {
-        console.debug('fetched stations list', data);
-        const simpleStations = this.extractStations(data);
-        this.setStations(simpleStations);
-        resolve(simpleStations);
-      }).catch((xhr, status, error) => {
-        console.error('failed to fetch stations list', error);
-        reject(error);
-      });
-    });
-  }
-
-  extractStations(data) {
-    const stations = data.channels.map(station => {
-      return { id: station.id, title: station.title };
-    });
-    stations.sort(this.stationCompare);
-    return stations;
-  }
-
-  stationCompare(a, b) {
-    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
   }
 }
 
 let somaPlayerBG;
 
 document.addEventListener('DOMContentLoaded', () => {
-  somaPlayerBG = new SomaPlayerBackground();
-});
+  somaPlayerBG = new SomaPlayerBackground()
+})
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (typeof somaPlayerBG === 'undefined') {
-    return;
+    return
   }
-  console.debug('received:', request.action, request);
+
+  console.debug('received', request.action, request)
+
   if (request.action === 'play') {
-    somaPlayerBG.play(request.station);
-    sendResponse();
-    return true;
+    somaPlayerBG.play(request.station)
+    sendResponse()
+    return true
   }
+
   if (request.action === 'pause') {
-    somaPlayerBG.pause(request.station);
-    sendResponse();
-    return true;
+    somaPlayerBG.pause(request.station)
+    sendResponse()
+    return true
   }
+
   if (request.action === 'info') {
-    const info = somaPlayerBG.getInfo();
-    console.debug('info:', info);
-    sendResponse(info);
-    return true;
+    const info = somaPlayerBG.getInfo()
+    console.debug('info', info)
+    sendResponse(info)
+    return true
   }
+
   if (request.action === 'clear') {
-    somaPlayerBG.clear();
-    sendResponse();
-    return true;
+    somaPlayerBG.clear()
+    sendResponse()
+    return true
   }
+
   if (request.action === 'fetch_stations') {
-    somaPlayerBG.fetchStations().then(stations => {
-      sendResponse(stations);
-    }).catch(error => {
-      sendResponse(null, error);
-    });
-    return true;
+    const api = new SomaAPI()
+    api.getStations().then(stations => {
+      console.debug('got saved list of stations', stations)
+      SomaPlayerUtil.setStations(stations)
+      sendResponse(stations)
+    }).catch(error => sendResponse(null, error))
+    return true
   }
+
   if (request.action === 'get_stations') {
-    somaPlayerBG.getStations().then(stations => {
-      console.debug('got saved list of stations:', stations);
-      sendResponse(stations);
-    });
+    const stations = SomaPlayerUtil.getStations()
+    console.debug('got saved list of stations', stations)
+    sendResponse(stations)
     return true;
   }
-});
+})
 
 chrome.commands.onCommand.addListener(command => {
   if (typeof somaPlayerBG === 'undefined') {
-    return;
+    return
   }
+
   if (command === 'play-pause-station') {
-    somaPlayerBG.togglePlay();
+    somaPlayerBG.togglePlay()
   } else if (command === 'pause-station') {
-    somaPlayerBG.pause();
+    somaPlayerBG.pause()
   }
-});
+})

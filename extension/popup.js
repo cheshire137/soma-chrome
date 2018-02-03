@@ -28,99 +28,129 @@ class SomaPlayerPopup {
   }
 
   findElements() {
-    this.stationSelect = document.getElementById('station');
-    this.playButton = document.getElementById('play');
-    this.pauseButton = document.getElementById('pause');
-    this.currentInfoEl = document.getElementById('currently-playing');
-    this.titleEl = document.getElementById('title');
-    this.artistEl = document.getElementById('artist');
-    this.stationImg = document.getElementById('station-image');
+    this.stationSelect = document.getElementById('station')
+    this.playButton = document.getElementById('play')
+    this.pauseButton = document.getElementById('pause')
+    this.currentInfoEl = document.getElementById('currently-playing')
+    this.trackListEl = document.getElementById('track-list')
+    this.trackListItemTpl = document.getElementById('track-list-item-template')
+    this.stationImg = document.getElementById('station-image')
   }
 
   onStationKeypress(keyCode) {
     if (keyCode !== 13) { // Enter
-      return;
+      return
     }
+
     if (this.stationSelect.value === '') {
-      return;
+      return
     }
+
     if (!(this.playButton.disabled ||
           this.playButton.classList.contains('hidden'))) {
-      console.debug('pressing play button');
-      this.play();
+      console.debug('pressing play button')
+      this.play()
     }
+
     if (!(this.pauseButton.disabled ||
           this.pauseButton.classList.contains('hidden'))) {
-      console.debug('pressing pause button');
-      this.pause();
+      console.debug('pressing pause button')
+      this.pause()
     }
   }
 
   insertStationOptions(stations) {
     for (let i = 0; i < stations.length; i++) {
-      const option = document.createElement('option');
-      option.value = stations[i].id;
-      option.textContent = stations[i].title;
-      this.stationSelect.appendChild(option);
+      const option = document.createElement('option')
+
+      option.value = stations[i].id
+      option.textContent = stations[i].title
+
+      this.stationSelect.appendChild(option)
     }
-    this.stationSelect.disabled = false;
-    this.loadCurrentInfo();
+
+    this.stationSelect.disabled = false
+    this.loadCurrentInfo()
   }
 
   loadDefaultStations() {
-    console.debug('loading default station list');
-    const url = chrome.extension.getURL('defaultStations.json');
-    SomaPlayerUtil.getJSON(url).then(defaultStations => {
-      this.insertStationOptions(defaultStations);
-    });
+    console.debug('loading default station list')
+    const url = chrome.extension.getURL('defaultStations.json')
+    SomaPlayerUtil.getJSON(url).
+      then(defaultStations => this.insertStationOptions(defaultStations))
   }
 
   fetchSomaStations() {
-    chrome.runtime.sendMessage({ action: 'get_stations' }, cache => {
-      console.log('stations already stored', cache);
-      if (!cache || cache.length < 1) {
-        const msg = { action: 'fetch_stations' };
+    chrome.runtime.sendMessage({ action: 'get_stations' }, stations => {
+      if (!stations || stations.length < 1) {
+        const msg = { action: 'fetch_stations' }
         chrome.runtime.sendMessage(msg, (stations, error) => {
           if (error) {
-            this.loadDefaultStations();
+            console.error('failed to fetch stations, using defaults')
+            this.loadDefaultStations()
           } else {
-            this.insertStationOptions(stations);
+            console.debug('fetched stations', stations)
+            this.insertStationOptions(stations)
           }
-        });
+        })
       } else {
-        this.insertStationOptions(cache);
+        console.debug('stations already stored', stations)
+        this.insertStationOptions(stations)
       }
-    });
+    })
   }
 
-  displayTrackInfo(info) {
-    if (info.artist || info.title) {
-      this.titleEl.textContent = info.title;
-      this.artistEl.textContent = info.artist;
-      this.currentInfoEl.classList.remove('hidden');
+  emptyTrackList() {
+    while (this.trackListEl.hasChildNodes()) {
+      this.trackListEl.removeChild(this.trackListEl.lastChild);
     }
   }
 
+  listTracks(tracks) {
+    this.emptyTrackList()
+
+    for (const track of tracks) {
+      const listItem = this.createTrackListItem(track)
+      this.trackListEl.appendChild(listItem)
+    }
+  }
+
+  createTrackListItem(track) {
+    console.log(track)
+    const el = this.trackListItemTpl.content.cloneNode(true)
+    const nameEl = el.querySelector('.track-name')
+    const artistEl = el.querySelector('.artist')
+    const timeEl = el.querySelector('.track-date')
+
+    nameEl.textContent = track.title
+    artistEl.textContent = track.artist
+    timeEl.textContent = track.date
+
+    return el
+  }
+
   hideTrackInfo() {
-    this.titleEl.textContent = '';
-    this.artistEl.textContent = '';
-    this.currentInfoEl.classList.add('hidden');
+    this.emptyTrackList()
+    this.trackListEl.classList.add('hidden')
   }
 
   loadCurrentInfo() {
-    this.stationSelect.disabled = true;
+    this.stationSelect.disabled = true
+
     chrome.runtime.sendMessage({ action: 'info' }, info => {
       console.debug('finished info request, info', info);
-      this.stationSelect.value = info.station;
+      this.stationSelect.value = info.station
+
       if (info.paused) {
-        this.stationIsPaused();
+        this.stationIsPaused()
       } else {
-        this.stationIsPlaying();
+        this.stationIsPlaying()
       }
-      this.updateStationImage(info.station);
-      this.stationSelect.disabled = false;
-      this.displayTrackInfo(info);
-    });
+
+      this.updateStationImage(info.station)
+      this.stationSelect.disabled = false
+      this.listTracks(info.tracks)
+    })
   }
 
   stationIsPlaying() {
@@ -137,19 +167,20 @@ class SomaPlayerPopup {
   }
 
   play() {
-    const station = this.stationSelect.value;
-    console.debug('play button clicked, station', station);
-    this.updateStationImage(station);
+    const station = this.stationSelect.value
+    console.debug('play button clicked, station', station)
+    this.updateStationImage(station)
+
     chrome.runtime.sendMessage({ action: 'play', station }, () => {
-      console.debug('finishing telling station to play');
-      this.stationIsPlaying();
+      console.debug('finishing telling station to play')
+      this.stationIsPlaying()
+
       chrome.runtime.sendMessage({ action: 'info' }, info => {
-        if (info.artist !== '' || info.title !== '') {
-          this.displayTrackInfo(info);
+        if (info.tracks && info.tracks.length > 0) {
+          this.listTracks(info.tracks)
         } else {
-          SomaPlayerUtil.getCurrentTrackInfo(station).then(info => {
-            this.displayTrackInfo(info);
-          });
+          const api = new SomaAPI()
+          api.getStationTracks(station).then(tracks => this.listTracks(tracks))
         }
       });
     });
@@ -169,14 +200,6 @@ class SomaPlayerPopup {
   }
 
   updateStationImage(station) {
-    if (!this.stationImg) {
-      this.stationImg = document.createElement('img');
-      this.stationImg.className = 'hidden';
-      this.stationImg.id = 'station-image';
-      const nextSibling = this.titleEl.parentNode;
-      const container = nextSibling.parentNode;
-      container.insertBefore(this.stationImg, nextSibling);
-    }
     if (station && station.length > 0) {
       this.stationImg.src = `station-images/${station}.png`;
       this.stationImg.classList.remove('hidden');

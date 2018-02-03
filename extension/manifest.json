@@ -8,7 +8,7 @@
     "storage", "notifications"
   ],
   "background": {
-    "scripts": ["socket.io.min.js", "config.js", "util.js", "background.js"]
+    "page": "background.html"
   },
   "options_page": "options.html",
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://ws.audioscrobbler.com; object-src 'self'",
