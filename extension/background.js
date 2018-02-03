@@ -145,8 +145,12 @@ class SomaPlayerBackground {
     }
 
     console.debug('unsubscribing from', station)
-    if (typeof this.notifyTimer !== 'undefined') {
+    if (this.notifyTimer) {
       clearTimeout(this.notifyTimer)
+    }
+
+    if (this.songListInterval) {
+      clearInterval(this.songListInterval)
     }
   }
 
@@ -158,7 +162,7 @@ class SomaPlayerBackground {
       station,
       tracks: SomaPlayerUtil.getTrackList(),
       paused: this.audioTag.hasAttribute('data-paused') || station === ''
-    };
+    }
   }
 }
 
