@@ -19,12 +19,8 @@ class SomaPlayerPopup {
   }
 
   listenForPlayback() {
-    this.playButton.addEventListener('click', () => {
-      this.play();
-    });
-    this.pauseButton.addEventListener('click', () => {
-      this.pause();
-    });
+    this.playButton.addEventListener('click', () => this.play())
+    this.pauseButton.addEventListener('click', () => this.pause())
   }
 
   findElements() {

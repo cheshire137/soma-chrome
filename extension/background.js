@@ -1,9 +1,3 @@
-const __bind = function(fn, me) {
-  return function() {
-    return fn.apply(me, arguments);
-  };
-};
-
 class SomaPlayerBackground {
   constructor() {
     console.debug('initializing SomaPlayer background script');
@@ -15,23 +9,28 @@ class SomaPlayerBackground {
   }
 
   play(station) {
-    console.debug('playing station', station)
+    console.debug('playing', station)
     this.resetTrackInfoIfNecessary(station)
     this.subscribe(station)
     this.audioTag.src = SomaPlayerConfig.somafm_station_url + station
-    SomaPlayerUtil.setCurrentStation(station)
+    SomaLocalStorage.setCurrentStation(station)
     this.audioTag.removeAttribute('data-paused')
   }
 
   resetTrackInfoIfNecessary(station) {
-    if (SomaPlayerUtil.getCurrentStation() === station) {
+    if (SomaLocalStorage.getCurrentStation() === station) {
       return
     }
 
     console.debug('changed station from',
                   this.audioTag.getAttribute('data-station'), 'to', station,
                   'clearing current track info')
-    SomaPlayerUtil.setTrackList([])
+    SomaLocalStorage.setTrackList([])
+  }
+
+  onTracksFetched(station, tracks) {
+    console.debug('fetched track list', station)
+    SomaLocalStorage.setTrackList(tracks)
   }
 
   subscribe(station) {
@@ -39,19 +38,14 @@ class SomaPlayerBackground {
       clearInterval(this.songListInterval)
     }
 
-    SomaPlayerUtil.setTrackList([])
+    SomaLocalStorage.setTrackList([])
 
     const getter = () => {
       console.debug(`refreshing track list for ${station}`)
-
       const api = new SomaAPI()
-      api.getStationTracks(station).then(tracks => {
-        console.debug('fetched track list', station, tracks)
-        SomaPlayerUtil.setTrackList(tracks)
-
-      }).catch((xhr, status, error) => {
-        console.error('failed to fetch track list', station, error)
-      })
+      api.getStationTracks(station).
+        then(tracks => this.onTracksFetched(station, tracks)).
+        catch(error => console.error('failed to fetch track list', station, error))
     };
 
     const seconds = 30;
@@ -62,34 +56,35 @@ class SomaPlayerBackground {
 
   notifyOfTrack(track, opts) {
     if (typeof this.notifyTimer !== 'undefined') {
-      clearTimeout(this.notifyTimer);
+      clearTimeout(this.notifyTimer)
     }
+
     // Default to showing notifications, so if user has not saved preferences,
     // assume they want notifications.
     if (opts.notifications === false) {
-      return;
+      return
     }
+
     const notification = {
       type: 'basic',
       title: track.artist,
       message: track.title,
       iconUrl: 'icon48.png'
-    };
-    if (this.audioTag && this.audioTag.hasAttribute('data-station')) {
-      const station = this.audioTag.getAttribute('data-station');
+    }
+
+    if (this.audioTag.hasAttribute('data-station')) {
+      const station = this.audioTag.getAttribute('data-station')
+
       if (station.length > 0) {
-        notification.iconUrl = `station-images/${station}.png`;
+        notification.iconUrl = `station-images/${station}.png`
       }
     }
-    const delay = 15000; // 15 seconds
-    console.debug('notifying in', (delay / 1000), 'seconds', notification);
-    this.notifyTimer = setTimeout(() => {
-      chrome.notifications.create('', notification, () => {});
-    }, delay);
-  }
 
-  trackHasDuration(track) {
-    return typeof track.duration === 'number' && track.duration > 0;
+    const delay = 15000 // 15 seconds
+    console.debug('notifying in', (delay / 1000), 'seconds', notification)
+    this.notifyTimer = setTimeout(() => {
+      chrome.notifications.create('', notification, () => {})
+    }, delay)
   }
 
   pause(station) {
@@ -155,12 +150,12 @@ class SomaPlayerBackground {
   }
 
   getInfo() {
-    const station = SomaPlayerUtil.getCurrentStation()
+    const station = SomaLocalStorage.getCurrentStation()
     console.log('station', station)
 
     return {
       station,
-      tracks: SomaPlayerUtil.getTrackList(),
+      tracks: SomaLocalStorage.getTrackList(),
       paused: this.audioTag.hasAttribute('data-paused') || station === ''
     }
   }
@@ -208,14 +203,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const api = new SomaAPI()
     api.getStations().then(stations => {
       console.debug('fetched list of stations', stations)
-      SomaPlayerUtil.setStations(stations)
+      SomaLocalStorage.setStations(stations)
       sendResponse(stations)
     }).catch(error => sendResponse(null, error))
     return true
   }
 
   if (request.action === 'get_stations') {
-    const stations = SomaPlayerUtil.getStations()
+    const stations = SomaLocalStorage.getStations()
     console.debug('got saved list of stations', stations)
     sendResponse(stations)
     return true;

@@ -17,32 +17,6 @@ class SomaPlayerUtil {
     return decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 
-  static getStations() {
-    const list = window.localStorage.getItem('somaplayer_stations') || '[]'
-    return JSON.parse(list)
-  }
-
-  static setStations(stations) {
-    window.localStorage.setItem('somaplayer_stations', JSON.stringify(stations))
-  }
-
-  static getTrackList() {
-    const list = window.localStorage.getItem('somaplayer_track_list') || '[]'
-    return JSON.parse(list)
-  }
-
-  static setTrackList(tracks) {
-    window.localStorage.setItem('somaplayer_track_list', JSON.stringify(tracks))
-  }
-
-  static getCurrentStation() {
-    return window.localStorage.getItem('somaplayer_current_station')
-  }
-
-  static setCurrentStation(station) {
-    window.localStorage.setItem('somaplayer_current_station', station)
-  }
-
   static getOptions() {
     return new Promise(resolve => {
       chrome.storage.sync.get('somaplayer_options', opts => {

@@ -39,7 +39,7 @@ class SomaPlayerOptions {
   }
 
   restoreOptions() {
-    const stations = SomaPlayerUtil.getStations()
+    const stations = SomaLocalStorage.getStations()
     if (stations && stations.length > 0) {
       this.showCachedStations(stations)
     }
