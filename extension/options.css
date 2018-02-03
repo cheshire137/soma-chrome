@@ -1,5 +1,17 @@
+body {
+  font-size: 18px;
+}
+
+.container {
+  width: 780px;
+}
+
 .station-count {
   color: #fff;
   background-color: rgba(100, 100, 100, 0.5);
   line-height: 1;
+}
+
+.btn-donate {
+  color: #fc122e;
 }

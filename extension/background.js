@@ -207,7 +207,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'refresh_stations') {
     const api = new SomaAPI()
     api.getStations().then(stations => {
-      console.debug('got saved list of stations', stations)
+      console.debug('fetched list of stations', stations)
       SomaPlayerUtil.setStations(stations)
       sendResponse(stations)
     }).catch(error => sendResponse(null, error))

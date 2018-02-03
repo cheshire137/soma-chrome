@@ -85,19 +85,22 @@ class SomaPlayerOptions {
   }
 
   refreshStations() {
-    console.debug('refreshing stations list');
-    this.stationsList.textContent = '';
-    this.refreshStationsButton.disabled = true;
-    const msg = { action: 'refresh_stations' };
+    console.debug('refreshing stations list')
+
+    this.stationsList.textContent = ''
+    this.refreshStationsButton.disabled = true
+
+    const msg = { action: 'refresh_stations' }
     chrome.runtime.sendMessage(msg, (stations, error) => {
       if (error) {
-        this.stationsList.textContent = 'Could not fetch station list. :(';
+        this.stationsList.textContent = 'Could not fetch station list. :('
       } else {
-        this.showCachedStations(stations);
+        this.showCachedStations(stations)
       }
-      this.options.stations = stations;
-      this.refreshStationsButton.disabled = false;
-    });
+
+      this.options.stations = stations
+      this.refreshStationsButton.disabled = false
+    })
   }
 
   dismissNotice() {

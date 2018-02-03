@@ -8,14 +8,14 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="h1">
-      <img alt="SomaPlayer logo" class="icon-light logo" height="48" src="icon48.png" width="48">
-      <img alt="SomaPlayer logo" class="icon-dark logo" height="48" src="icon48-dark.png" width="48">
+    <h1 class="text-normal h1 py-4 my-4 d-flex flex-justify-center">
+      <img alt="SomaPlayer logo" class="rounded-2 icon-light mr-3" height="48" src="icon48.png" width="48">
+      <img alt="SomaPlayer logo" class="rounded-2 d-none icon-dark mr-3" height="48" src="icon48-dark.png" width="48">
       SomaPlayer Options
     </h1>
     <div id="status-message"></div>
-    <div>
-      <h2 class="h2">Desktop Notifications</h2>
+    <div class="mb-4">
+      <h2 class="h2 text-normal mb-2">Desktop Notifications</h2>
       <div>
         <label for="enable_notifications">
           <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
@@ -30,8 +30,8 @@
         Receive notifications when the track changes.
       </p>
     </div>
-    <div>
-      <h2 class="h2">Theme</h2>
+    <div class="mb-4">
+      <h2 class="h2 text-normal mb-2">Theme</h2>
       <div>
         <label for="light_theme">
           <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
@@ -46,18 +46,20 @@
         Black on white or white on black? Decisions, decisions.
       </p>
     </div>
-    <div id="stations-options">
-      <h2 class="h2">
-        Known Stations
-        <span class="station-count rounded-1 p-1 text-small v-align-middle d-inline-block" id="station-count"></span>
+    <div class="mb-4" id="stations-options">
+      <h2 class="h2 text-normal mb-2 d-flex flex-justify-between flex-items-center">
+        <span>
+          Known Stations
+          <span class="station-count rounded-1 p-1 text-small v-align-middle d-inline-block" id="station-count"></span>
+        </span>
+        <button id="refresh-stations" type="button" class="btn">
+          Refresh List
+        </button>
       </h2>
-      <button id="refresh-stations">
-        Refresh List
-      </button>
       <p id="stations-list"></p>
     </div>
     <div>
-      <h2 class="h2">About</h2>
+      <h2 class="h2 text-normal mb-2">About</h2>
       <p>
         This is an unofficial extension, not endorsed by
         <a href="http://somafm.com" target="_blank">SomaFM</a>.
@@ -65,26 +67,24 @@
       </p>
     </div>
     <div>
-      <a href="http://somafm.com/support/" target="_blank">
+      <a href="http://somafm.com/support/" class="btn btn-donate" target="_blank">
         Donate to SomaFM
       </a>
     </div>
   </div>
-  <footer>
-    <ul>
-      <li>
-        &copy; 2018
-        <a href="http://sarahvessels.com/" target="_blank">
-          Sarah Vessels
-        </a>
-      </li>
-      <li>&middot;</li>
-      <li>
-        <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
-          View source code
-        </a>
-      </li>
-    </ul>
+  <footer class="my-4 py-4 d-flex flex-justify-center text-small">
+    <div class="mr-2">
+      &copy; 2018
+      <a href="http://sarahvessels.com/" target="_blank">
+        Sarah Vessels
+      </a>
+    </div>
+    <div class="mr-2">&middot;</div>
+    <div>
+      <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
+        View source code
+      </a>
+    </div>
   </footer>
   <script src="config.js"></script>
   <script src="util.js"></script>
