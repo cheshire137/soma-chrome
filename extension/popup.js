@@ -130,17 +130,23 @@ class SomaPlayerPopup {
 
   onStationButtonClick(event) {
     const button = event.currentTarget
+    const stationID = button.value
+    const stationName = button.querySelector('.station-name').textContent
+
     button.blur()
     this.toggleStationMenu()
-    this.stationChanged(button.value, button.textContent)
+    this.stationChanged(stationID, stationName)
   }
 
   createStationListItem(data) {
     const el = this.stationListItemTpl.content.cloneNode(true)
     const button = el.querySelector('.station-button')
+    const nameEl = el.querySelector('.station-name')
+    const imageEl = el.querySelector('.station-image')
 
+    imageEl.src = `station-images/${data.id}.png`
     button.value = data.id
-    button.textContent = data.title
+    nameEl.textContent = data.title
     button.addEventListener('click', e => this.onStationButtonClick(e))
 
     return el
@@ -249,10 +255,10 @@ class SomaPlayerPopup {
 
   updateStationImage(station) {
     if (station && station.length > 0) {
-      this.stationImg.src = `station-images/${station}.png`;
-      this.stationImg.classList.remove('d-none');
+      this.stationImg.src = `station-images/${station}.png`
+      this.stationImg.classList.remove('d-none')
     } else {
-      this.stationImg.classList.add('d-none');
+      this.stationImg.classList.add('d-none')
     }
   }
 
