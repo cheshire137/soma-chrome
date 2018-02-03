@@ -3,48 +3,54 @@
 <head>
   <title>SomaPlayer Popup</title>
   <link href="primer-core.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-dropdown.css" media="screen" rel="stylesheet" type="text/css">
   <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
   <link href="popup.css" media="screen" rel="stylesheet" type="text/css">
 </head>
-<body class="popup">
-  <div class="container">
-    <h1>SomaPlayer</h1>
-    <div>
-      <img id="station-image" class="hidden">
-      <label for="station">Station:</label>
-      <span>
-        <select autofocus="autofocus" disabled="disabled" id="station" name="station">
-          <option value="">Choose a station</option>
-        </select>
-      </span>
-      <button disabled="disabled" id="play" type="button">
-        <i class="material-icons">play_arrow</i>
+<body>
+  <h1 class="h1 text-center mb-2">SomaPlayer</h1>
+  <div class="mb-4">
+    <img id="station-image" class="d-none rounded-2">
+    <div class="dropdown">
+      <button class="disabled btn dropdown-toggle" value="" id="station-menu-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+        Choose a station
+        <div class="dropdown-caret"></div>
       </button>
-      <button id="pause" type="button">
-        <i class="material-icons">pause</i>
-      </button>
+      <div class="dropdown-menu-content">
+        <ul id="station-list" class="dropdown-menu dropdown-menu-se"></ul>
+      </div>
     </div>
-    <ul id="track-list" class="list-style-none">
-    </ul>
-    <template id="track-list-item-template">
-      <li class="track-list-item">
-        <span class="track-name"></span>
-        by
-        <span class="artist"></span>
-        <span class="track-date"></span>
-      </li>
-    </template>
+    <button disabled id="play" type="button">
+      <i class="material-icons">play_arrow</i>
+    </button>
+    <button id="pause" type="button">
+      <i class="material-icons">pause</i>
+    </button>
   </div>
-  <footer>
-    <ul>
-      <li>
-        <a href="#options">Settings</a>
-      </li>
-      <li>&middot;</li>
-      <li>
-        <a href="http://somafm.com/support/">Donate to SomaFM</a>
-      </li>
-    </ul>
+  <ul id="track-list" class="list-style-none">
+  </ul>
+  <template id="track-list-item-template">
+    <li class="track-list-item">
+      <span class="track-name"></span>
+      by
+      <span class="artist"></span>
+      <span class="track-date"></span>
+    </li>
+  </template>
+  <template id="station-list-item-template">
+    <li class="station-list-item">
+      <button class="station-button" type="button">
+      </button>
+    </li>
+  </template>
+  <footer class="my-2 d-flex flex-justify-center text-small">
+    <div class="mr-2">
+      <a class="text-gray" href="#options">Settings</a>
+    </div>
+    <div class="mr-2">&middot;</div>
+    <div>
+      <a class="text-gray" href="http://somafm.com/support/">Donate to SomaFM</a>
+    </div>
   </footer>
   <script src="config.js"></script>
   <script src="util.js"></script>

@@ -1,21 +1,40 @@
 class SomaPlayerPopup {
   constructor() {
-    this.base = this;
-    this.findElements();
-    this.handleLinks();
-    this.applyTheme();
-    this.fetchSomaStations();
-    this.listenForPlayback();
-    this.listenForStationChange();
+    this.findElements()
+    this.handleLinks()
+    this.hookupMenu()
+    this.applyTheme()
+    this.fetchSomaStations()
+    this.listenForPlayback()
   }
 
-  listenForStationChange() {
-    this.stationSelect.addEventListener('change', () => {
-      this.stationChanged();
-    });
-    this.stationSelect.addEventListener('keypress', e => {
-      this.onStationKeypress(e.keyCode);
-    });
+  hookupMenu() {
+    this.stationMenuToggle.addEventListener('click', () => {
+      if (this.stationMenuToggle.classList.contains('disabled')) {
+        return
+      }
+      this.toggleStationMenu()
+    })
+    window.addEventListener('click', event => {
+      const dropdown = event.target.closest('.dropdown')
+      if (!dropdown) {
+        this.closeStationMenu()
+      }
+    })
+  }
+
+  closeStationMenu() {
+    const container = this.stationMenuToggle.closest('.dropdown')
+    this.stationMenuToggle.blur()
+    container.classList.remove('active')
+    this.stationMenuToggle.classList.remove('selected')
+  }
+
+  toggleStationMenu() {
+    const container = this.stationMenuToggle.closest('.dropdown')
+    this.stationMenuToggle.blur()
+    container.classList.toggle('active')
+    this.stationMenuToggle.classList.toggle('selected')
   }
 
   listenForPlayback() {
@@ -24,7 +43,9 @@ class SomaPlayerPopup {
   }
 
   findElements() {
-    this.stationSelect = document.getElementById('station')
+    this.stationMenuToggle = document.getElementById('station-menu-toggle')
+    this.stationListEl = document.getElementById('station-list')
+    this.stationListItemTpl = document.getElementById('station-list-item-template')
     this.playButton = document.getElementById('play')
     this.pauseButton = document.getElementById('pause')
     this.currentInfoEl = document.getElementById('currently-playing')
@@ -38,34 +59,30 @@ class SomaPlayerPopup {
       return
     }
 
-    if (this.stationSelect.value === '') {
+    if (this.stationMenuToggle.value === '') {
       return
     }
 
     if (!(this.playButton.disabled ||
-          this.playButton.classList.contains('hidden'))) {
+          this.playButton.classList.contains('d-none'))) {
       console.debug('pressing play button')
       this.play()
     }
 
     if (!(this.pauseButton.disabled ||
-          this.pauseButton.classList.contains('hidden'))) {
+          this.pauseButton.classList.contains('d-none'))) {
       console.debug('pressing pause button')
       this.pause()
     }
   }
 
   insertStationOptions(stations) {
-    for (let i = 0; i < stations.length; i++) {
-      const option = document.createElement('option')
-
-      option.value = stations[i].id
-      option.textContent = stations[i].title
-
-      this.stationSelect.appendChild(option)
+    for (const data of stations) {
+      const listItem = this.createStationListItem(data)
+      this.stationListEl.appendChild(listItem)
     }
 
-    this.stationSelect.disabled = false
+    this.stationMenuToggle.classList.remove('disabled')
     this.loadCurrentInfo()
   }
 
@@ -111,8 +128,25 @@ class SomaPlayerPopup {
     }
   }
 
+  onStationButtonClick(event) {
+    const button = event.currentTarget
+    button.blur()
+    this.toggleStationMenu()
+    this.stationChanged(button.value, button.textContent)
+  }
+
+  createStationListItem(data) {
+    const el = this.stationListItemTpl.content.cloneNode(true)
+    const button = el.querySelector('.station-button')
+
+    button.value = data.id
+    button.textContent = data.title
+    button.addEventListener('click', e => this.onStationButtonClick(e))
+
+    return el
+  }
+
   createTrackListItem(track) {
-    console.log(track)
     const el = this.trackListItemTpl.content.cloneNode(true)
     const nameEl = el.querySelector('.track-name')
     const artistEl = el.querySelector('.artist')
@@ -142,15 +176,18 @@ class SomaPlayerPopup {
 
   hideTrackInfo() {
     this.emptyTrackList()
-    this.trackListEl.classList.add('hidden')
+    this.trackListEl.classList.add('d-none')
   }
 
   loadCurrentInfo() {
-    this.stationSelect.disabled = true
+    this.stationMenuToggle.classList.add('disabled')
 
     chrome.runtime.sendMessage({ action: 'info' }, info => {
       console.debug('finished info request, info', info);
-      this.stationSelect.value = info.station
+      const currentStationButton = document.querySelector(`.station-button[value="${info.station}"]`)
+      if (currentStationButton) {
+        this.stationMenuToggle.textContent = currentStationButton.textContent
+      }
 
       if (info.paused) {
         this.stationIsPaused()
@@ -159,27 +196,27 @@ class SomaPlayerPopup {
       }
 
       this.updateStationImage(info.station)
-      this.stationSelect.disabled = false
+      this.stationMenuToggle.classList.remove('disabled')
       this.listTracks(info.tracks)
     })
   }
 
   stationIsPlaying() {
-    this.pauseButton.classList.remove('hidden');
-    this.playButton.classList.add('hidden');
-    this.stationSelect.focus();
+    this.pauseButton.classList.remove('d-none')
+    this.playButton.classList.add('d-none')
+    this.stationMenuToggle.focus()
   }
 
   stationIsPaused() {
-    this.pauseButton.classList.add('hidden');
-    this.playButton.classList.remove('hidden');
-    this.playButton.disabled = false;
-    this.stationSelect.focus();
+    this.pauseButton.classList.add('d-none')
+    this.playButton.classList.remove('d-none')
+    this.playButton.disabled = false
+    this.stationMenuToggle.focus()
   }
 
   play() {
-    const station = this.stationSelect.value
-    console.debug('play button clicked, station', station)
+    const station = this.stationMenuToggle.value
+    console.debug('play', station)
     this.updateStationImage(station)
 
     chrome.runtime.sendMessage({ action: 'play', station }, () => {
@@ -198,13 +235,13 @@ class SomaPlayerPopup {
   }
 
   pause() {
-    const station = this.stationSelect.value
+    const station = this.stationMenuToggle.value
     console.debug('pausing station', station)
 
     return new Promise(resolve => {
       chrome.runtime.sendMessage({ action: 'pause', station }, () => {
         this.stationIsPaused()
-        this.stationSelect.focus()
+        this.stationMenuToggle.focus()
         resolve()
       })
     })
@@ -213,31 +250,36 @@ class SomaPlayerPopup {
   updateStationImage(station) {
     if (station && station.length > 0) {
       this.stationImg.src = `station-images/${station}.png`;
-      this.stationImg.classList.remove('hidden');
+      this.stationImg.classList.remove('d-none');
     } else {
-      this.stationImg.classList.add('hidden');
+      this.stationImg.classList.add('d-none');
     }
   }
 
-  stationChanged() {
-    const newStation = this.stationSelect.value;
-    if (newStation === '') {
+  stationChanged(stationID, stationName) {
+    if (stationID === '') {
       chrome.runtime.sendMessage({ action: 'clear' }, () => {
-        console.debug('station cleared');
-        this.playButton.disabled = true;
-        this.hideTrackInfo();
-        this.pause();
-      });
-    } else {
-      chrome.runtime.sendMessage({ action: 'info' }, info => {
-        const currentStation = info.station;
-        if (newStation !== '' && newStation !== currentStation) {
-          console.debug(`station changed to ${newStation}`);
-          this.playButton.disabled = false;
-          this.pause().then(this.play.bind(this));
-        }
-      });
+        console.debug('station cleared')
+        this.playButton.disabled = true
+        this.hideTrackInfo()
+        this.pause()
+      })
+      return
     }
+
+    this.stationMenuToggle.value = stationID
+    this.stationMenuToggle.textContent = stationName
+    this.closeStationMenu()
+
+    chrome.runtime.sendMessage({ action: 'info' }, info => {
+      const currentStation = info.station
+
+      if (stationID !== currentStation) {
+        console.debug(`station changed to ${stationID}`)
+        this.playButton.disabled = false
+        this.pause().then(() => this.play())
+      }
+    })
   }
 
   handleLinks() {

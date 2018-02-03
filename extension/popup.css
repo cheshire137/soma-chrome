@@ -1,0 +1,9 @@
+body {
+  width: 30em;
+  overflow: hidden;
+}
+
+.dropdown-menu {
+  overflow: auto;
+  height: 200px;
+}
