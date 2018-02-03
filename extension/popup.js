@@ -83,7 +83,7 @@ class SomaPlayerPopup {
   fetchSomaStations() {
     chrome.runtime.sendMessage({ action: 'get_stations' }, stations => {
       if (!stations || stations.length < 1) {
-        const msg = { action: 'fetch_stations' }
+        const msg = { action: 'refresh_stations' }
         chrome.runtime.sendMessage(msg, (stations, error) => {
           if (error) {
             console.error('failed to fetch stations, using defaults')
