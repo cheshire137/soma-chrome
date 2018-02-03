@@ -2,29 +2,29 @@
 <html>
 <head>
   <title>SomaPlayer Popup</title>
-  <link href="bulma.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-core.css" media="screen" rel="stylesheet" type="text/css">
   <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
   <link href="popup.css" media="screen" rel="stylesheet" type="text/css">
 </head>
 <body class="popup">
   <div class="container">
-    <h1 class="title">SomaPlayer</h1>
-    <div class="control">
+    <h1>SomaPlayer</h1>
+    <div>
       <img id="station-image" class="hidden">
-      <label class="sr-only" for="station">Station:</label>
-      <span class="select is-medium">
+      <label for="station">Station:</label>
+      <span>
         <select autofocus="autofocus" disabled="disabled" id="station" name="station">
           <option value="">Choose a station</option>
         </select>
       </span>
-      <button disabled="disabled" id="play" class="button is-medium" type="button">
+      <button disabled="disabled" id="play" type="button">
         <i class="material-icons">play_arrow</i>
       </button>
-      <button class="hidden button is-medium" id="pause" type="button">
+      <buttonid="pause" type="button">
         <i class="material-icons">pause</i>
       </button>
     </div>
-    <ul id="track-list">
+    <ul id="track-list" class="list-style-none">
     </ul>
     <template id="track-list-item-template">
       <li class="track-list-item">
@@ -35,8 +35,8 @@
       </li>
     </template>
   </div>
-  <footer class="footer">
-    <ul class="list-inline">
+  <footer>
+    <ul>
       <li>
         <a href="#options">Settings</a>
       </li>

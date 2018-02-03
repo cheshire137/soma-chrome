@@ -42,5 +42,4 @@ Pull requests welcome!
 
 - [SomaFM](http://somafm.com/) - where all the music comes from!
 - [SomaScrobbler API](http://api.somascrobbler.com/) - for information about current tracks, used for knowing what to scrobble to Last.fm.
-- [Bulma CSS Framework](http://bulma.io/) - the CSS framework I use.
 - [Google Material Icons](https://design.google.com/icons/) - for pause and play icons.

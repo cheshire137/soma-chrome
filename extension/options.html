@@ -2,90 +2,76 @@
 <html>
 <head>
   <title>SomaPlayer Options</title>
-  <link href="bulma.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-core.css" media="screen" rel="stylesheet" type="text/css">
   <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
   <link href="options.css" media="screen" rel="stylesheet" type="text/css">
 </head>
-<body class="options">
-  <section class="section">
-    <div class="container">
-      <h1 class="title">
-        <img alt="SomaPlayer logo" class="icon-light logo" height="48" src="icon48.png" width="48">
-        <img alt="SomaPlayer logo" class="icon-dark logo" height="48" src="icon48-dark.png" width="48">
-        SomaPlayer Options
-      </h1>
-      <div class="hidden notification is-success" id="status-message"></div>
-      <div class="columns">
-        <div class="column">
-          <div class="box">
-            <h2 class="subtitle">Desktop Notifications</h2>
-            <div class="control hidden">
-              <label class="radio" for="enable_notifications">
-                <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
-                Enable notifications
-              </label>
-              <label class="radio" for="disable_notifications">
-                <input id="disable_notifications" name="notifications" type="radio" value="disabled">
-                Disable notifications
-              </label>
-            </div>
-            <p class="help">
-              Receive notifications when the track changes.
-            </p>
-          </div>
-        </div>
-        <div class="column">
-          <div class="box">
-            <h2 class="subtitle">Theme</h2>
-            <div class="control hidden">
-              <label class="radio" for="light_theme">
-                <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
-                Light theme
-              </label>
-              <label class="radio" for="dark_theme">
-                <input id="dark_theme" name="theme" type="radio" value="dark">
-                Dark theme
-              </label>
-            </div>
-            <p class="help">
-              Black on white or white on black? Decisions, decisions.
-            </p>
-          </div>
-          <div class="box stations-options hidden">
-            <h2 class="subtitle">
-              Known Stations
-              <span class="station-count"></span>
-            </h2>
-            <button class="button refresh-stations">
-              Refresh List
-            </button>
-            <p class="stations-list"></p>
-          </div>
-        </div>
+<body>
+  <div class="container">
+    <h1 class="h1">
+      <img alt="SomaPlayer logo" class="icon-light logo" height="48" src="icon48.png" width="48">
+      <img alt="SomaPlayer logo" class="icon-dark logo" height="48" src="icon48-dark.png" width="48">
+      SomaPlayer Options
+    </h1>
+    <div id="status-message"></div>
+    <div>
+      <h2 class="h2">Desktop Notifications</h2>
+      <div>
+        <label for="enable_notifications">
+          <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
+          Enable notifications
+        </label>
+        <label for="disable_notifications">
+          <input id="disable_notifications" name="notifications" type="radio" value="disabled">
+          Disable notifications
+        </label>
       </div>
+      <p>
+        Receive notifications when the track changes.
+      </p>
     </div>
-  </section>
-  <section class="section">
-    <div class="container">
-      <div class="columns">
-        <div class="column">
-          <h2 class="subtitle">About</h2>
-          <p>
-            This is an unofficial extension, not endorsed by
-            <a href="http://somafm.com" target="_blank">SomaFM</a>.
-            I just love SomaFM and hope you find this useful. :)
-          </p>
-        </div>
-        <div class="column center-vertically">
-          <a href="http://somafm.com/support/" target="_blank" class="button is-large is-primary">
-            Donate to SomaFM
-          </a>
-        </div>
+    <div>
+      <h2 class="h2">Theme</h2>
+      <div>
+        <label for="light_theme">
+          <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
+          Light theme
+        </label>
+        <label for="dark_theme">
+          <input id="dark_theme" name="theme" type="radio" value="dark">
+          Dark theme
+        </label>
       </div>
+      <p>
+        Black on white or white on black? Decisions, decisions.
+      </p>
     </div>
-  </section>
-  <footer class="footer">
-    <ul class="list-inline">
+    <div id="stations-options">
+      <h2 class="h2">
+        Known Stations
+        <span id="station-count"></span>
+      </h2>
+      <button id="refresh-stations">
+        Refresh List
+      </button>
+      <p id="stations-list"></p>
+    </div>
+    <div>
+      <h2 class="h2">About</h2>
+      <p>
+        This is an unofficial extension, not endorsed by
+        <a href="http://somafm.com" target="_blank">SomaFM</a>.
+        I just love SomaFM and hope you find this useful. :)
+      </p>
+    </div>
+    <div>
+      <a href="http://somafm.com/support/" target="_blank">
+        Donate to SomaFM
+      </a>
+    </div>
+  </div>
+  <footer>
+    <ul>
       <li>
         &copy; 2018
         <a href="http://sarahvessels.com/" target="_blank">

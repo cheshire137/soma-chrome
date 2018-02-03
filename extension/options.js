@@ -32,19 +32,21 @@ class SomaPlayerOptions {
     this.disableNotifications =
         document.getElementById('disable_notifications');
     this.darkTheme = document.getElementById('dark_theme');
-    this.stationsOptions = document.querySelector('.stations-options');
-    this.stationCount = document.querySelector('.station-count');
-    this.stationsList = document.querySelector('.stations-list');
-    this.refreshStationsButton = document.querySelector('.refresh-stations');
+    this.stationOptions = document.getElementById('stations-options');
+    this.stationCount = document.getElementById('station-count');
+    this.stationsList = document.getElementById('stations-list');
+    this.refreshStationsButton = document.getElementById('refresh-stations');
   }
 
   restoreOptions() {
+    const stations = SomaPlayerUtil.getStations()
+    if (stations && stations.length > 0) {
+      this.showCachedStations(stations)
+    }
+
     return SomaPlayerUtil.getOptions().then(opts => {
       if (opts.notifications === false) {
         this.disableNotifications.checked = true;
-      }
-      if (opts.stations && opts.stations.length > 0) {
-        this.showCachedStations(opts.stations);
       }
       if (opts.theme === 'dark') {
         this.darkTheme.checked = true;
@@ -74,7 +76,7 @@ class SomaPlayerOptions {
   }
 
   showCachedStations(stations) {
-    this.stationsOptions.classList.remove('hidden');
+    this.stationOptions.classList.remove('hidden');
     this.stationCount.textContent = stations.length;
     const titles = stations.map(s => s.title);
     const commaSeparated = titles.slice(0, titles.length - 1).join(', ');
