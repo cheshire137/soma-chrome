@@ -121,12 +121,27 @@ class SomaPlayerPopup {
     const nameEl = el.querySelector('.track-name')
     const artistEl = el.querySelector('.artist')
     const timeEl = el.querySelector('.track-date')
+    const date = new Date(track.date)
 
     nameEl.textContent = track.title
     artistEl.textContent = track.artist
-    timeEl.textContent = track.date
+    timeEl.textContent = this.prettyDate(date)
 
     return el
+  }
+
+  prettyDate(date) {
+    const fullHours = date.getHours()
+    const hours = fullHours - 12
+    let minutes = date.getMinutes()
+    if (minutes < 10) {
+      minutes = `0${minutes}`
+    }
+    let amPM = 'am'
+    if (fullHours >= 12) {
+      amPM = 'pm'
+    }
+    return `${hours}:${minutes} ${amPM}`
   }
 
   hideTrackInfo() {
@@ -187,16 +202,16 @@ class SomaPlayerPopup {
   }
 
   pause() {
-    const station = this.stationSelect.value;
-    console.debug('pause button clicked, station', station);
+    const station = this.stationSelect.value
+    console.debug('pausing station', station)
+
     return new Promise(resolve => {
       chrome.runtime.sendMessage({ action: 'pause', station }, () => {
-        console.debug('finished telling station to pause');
-        this.stationIsPaused();
-        this.stationSelect.focus();
-        resolve();
-      });
-    });
+        this.stationIsPaused()
+        this.stationSelect.focus()
+        resolve()
+      })
+    })
   }
 
   updateStationImage(station) {
