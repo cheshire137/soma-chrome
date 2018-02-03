@@ -19,3 +19,14 @@ body {
 .note {
   font-size: 14px;
 }
+
+.status-message {
+  z-index: 99999;
+  color: #165c26;
+  background-color: #dcffe4;
+  width: 20em;
+  left: 50%;
+  margin-top: 100px;
+  margin-left: -10em;
+  border: 1px solid rgba(27,31,35,0.15);
+}

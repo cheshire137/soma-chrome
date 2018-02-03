@@ -104,37 +104,23 @@ class SomaPlayerOptions {
   }
 
   dismissNotice() {
-    this.statusArea.classList.add('hidden');
-    while (this.statusArea.hasChildNodes()) {
-      this.statusArea.removeChild(this.statusArea.lastChild);
-    }
+    this.statusArea.textContent = ''
+    this.statusArea.classList.add('d-none')
   }
 
   flashNotice(message) {
     const show = () => {
-      this.statusArea.appendChild(this.getDismissButton());
-      const span = document.createElement('span');
-      span.textContent = message;
-      this.statusArea.appendChild(span);
-      this.statusArea.classList.remove('hidden');
-      setTimeout(this.dismissNotice.bind(this), 10000);
-    };
-    if (this.statusArea.classList.contains('hidden')) {
-      show();
-    } else {
-      this.dismissNotice();
-      setTimeout(show, 250);
+      this.statusArea.textContent = message
+      this.statusArea.classList.remove('d-none')
+      setTimeout(() => this.dismissNotice(), 5000)
     }
-  }
 
-  getDismissButton() {
-    const button = document.createElement('button');
-    button.className = 'delete';
-    button.addEventListener('click', event => {
-      event.preventDefault();
-      this.dismissNotice();
-    });
-    return button;
+    if (this.statusArea.classList.contains('d-none')) {
+      show()
+    } else {
+      this.dismissNotice()
+      setTimeout(show, 250)
+    }
   }
 
   saveOptions() {
