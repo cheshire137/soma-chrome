@@ -5,11 +5,17 @@ body {
 
 .dropdown-menu {
   overflow: auto;
-  width: 15em;
+  width: 17em;
   height: 200px;
 }
 
-.station-list-item + .station-list-item {
+.dropdown-toggle,
+.btn-audio {
+  height: 40px;
+}
+
+.station-list-item + .station-list-item,
+.track-list-item + .track-list-item {
   margin-top: 4px;
 }
 
