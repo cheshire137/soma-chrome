@@ -26,6 +26,7 @@ class SomaPlayerOptions {
   }
 
   findElements() {
+    this.stationListItemTpl = document.getElementById('station-list-item-template')
     this.statusArea = document.getElementById('status-message');
     this.disableScrobbling = document.getElementById('disable_scrobbling');
     this.enableScrobbling = document.getElementById('enable_scrobbling');
@@ -34,8 +35,18 @@ class SomaPlayerOptions {
     this.darkTheme = document.getElementById('dark_theme');
     this.stationOptions = document.getElementById('stations-options');
     this.stationCount = document.getElementById('station-count');
-    this.stationsList = document.getElementById('stations-list');
+    this.stationListEl = document.getElementById('stations-list');
     this.refreshStationsButton = document.getElementById('refresh-stations');
+  }
+
+  createStationListItem(data) {
+    const el = this.stationListItemTpl.content.cloneNode(true)
+    const link = el.querySelector('.station-link')
+
+    link.href = `http://somafm.com/${data.id}/`
+    link.textContent = data.title
+
+    return el
   }
 
   restoreOptions() {
@@ -78,22 +89,23 @@ class SomaPlayerOptions {
   showCachedStations(stations) {
     this.stationOptions.classList.remove('hidden');
     this.stationCount.textContent = stations.length;
-    const titles = stations.map(s => s.title);
-    const commaSeparated = titles.slice(0, titles.length - 1).join(', ');
-    const textList = `${commaSeparated}, and ${titles[titles.length - 1]}.`;
-    this.stationsList.textContent = textList;
+
+    for (const data of stations) {
+      const listItem = this.createStationListItem(data)
+      this.stationListEl.appendChild(listItem)
+    }
   }
 
   refreshStations() {
     console.debug('refreshing stations list')
 
-    this.stationsList.textContent = ''
+    this.stationListEl.textContent = ''
     this.refreshStationsButton.disabled = true
 
     const msg = { action: 'refresh_stations' }
     chrome.runtime.sendMessage(msg, (stations, error) => {
       if (error) {
-        this.stationsList.textContent = 'Could not fetch station list. :('
+        this.stationListEl.textContent = 'Could not fetch station list. :('
       } else {
         this.showCachedStations(stations)
       }
