@@ -33,15 +33,30 @@ class SomaPlayerPopup {
       case 'ArrowDown':
         this.focusStationListItem(1)
         this.openStationMenu()
-        break;
+        break
       case 'ArrowUp':
         this.focusStationListItem(-1)
         this.openStationMenu()
-        break;
+        break
       case 'Enter':
         this.handleEnter(event)
-        break;
+        break
+      case ' ':
+        this.handleSpace(event)
+        break
     }
+  }
+
+  handleSpace(event) {
+    event.preventDefault()
+
+    chrome.runtime.sendMessage({ action: 'info' }, info => {
+      if (info.paused) {
+        this.play()
+      } else {
+        this.pause()
+      }
+    })
   }
 
   handleEnter(event) {
