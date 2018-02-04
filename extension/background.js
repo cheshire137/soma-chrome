@@ -10,6 +10,12 @@ class SomaPlayerBackground {
 
   play(station) {
     console.debug('playing', station)
+    const isPaused = this.audioTag.hasAttribute('data-paused')
+    if (!isPaused && SomaLocalStorage.getCurrentStation() === station &&
+        this.audioTag.hasAttribute('src')) {
+      return
+    }
+
     this.resetTrackInfoIfNecessary(station)
     this.subscribe(station)
     this.audioTag.src = `${SomaPlayerConfig.somafm_station_url}/${station}`
