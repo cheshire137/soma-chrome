@@ -104,23 +104,27 @@ class SomaPlayerPopup {
 
   openStationMenu() {
     const container = this.stationMenuToggle.closest('.dropdown')
-    this.stationMenuToggle.blur()
     container.classList.add('active')
     this.stationMenuToggle.classList.add('selected')
+
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    if (focusedItem) {
+      focusedItem.scrollIntoView()
+    }
   }
 
   closeStationMenu() {
     const container = this.stationMenuToggle.closest('.dropdown')
-    this.stationMenuToggle.blur()
     container.classList.remove('active')
     this.stationMenuToggle.classList.remove('selected')
   }
 
   toggleStationMenu() {
-    const container = this.stationMenuToggle.closest('.dropdown')
-    this.stationMenuToggle.blur()
-    container.classList.toggle('active')
-    this.stationMenuToggle.classList.toggle('selected')
+    if (this.stationMenuToggle.classList.contains('selected')) {
+      this.closeStationMenu()
+    } else {
+      this.openStationMenu()
+    }
   }
 
   listenForPlayback() {
@@ -141,8 +145,10 @@ class SomaPlayerPopup {
   }
 
   insertStationOptions(stations) {
+    const activeStationID = SomaLocalStorage.getCurrentStation()
+
     for (const data of stations) {
-      const listItem = this.createStationListItem(data)
+      const listItem = this.createStationListItem(data, data.id === activeStationID)
       this.stationListEl.appendChild(listItem)
     }
 
@@ -202,17 +208,28 @@ class SomaPlayerPopup {
   playStationFromButton(button) {
     const stationID = button.value
     const stationName = button.querySelector('.station-name').textContent
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    const listItem = button.closest('.station-list-item')
 
+    if (focusedItem) {
+      focusedItem.classList.remove('focused')
+    }
     button.blur()
     this.toggleStationMenu()
     this.stationChanged(stationID, stationName)
+    listItem.classList.add('focused')
   }
 
-  createStationListItem(data) {
+  createStationListItem(data, isActive) {
     const el = this.stationListItemTpl.content.cloneNode(true)
     const button = el.querySelector('.station-button')
     const nameEl = el.querySelector('.station-name')
     const imageEl = el.querySelector('.station-image')
+
+    if (isActive) {
+      const listItem = el.querySelector('.station-list-item')
+      listItem.classList.add('focused')
+    }
 
     imageEl.src = `station-images/${data.id}.png`
     button.value = data.id
