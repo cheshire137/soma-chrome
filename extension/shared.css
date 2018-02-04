@@ -30,3 +30,45 @@
 .theme-light .icon-dark {
   display: none;
 }
+
+body.theme-light {
+  background-color: #fefefe;
+  color: #000;
+}
+
+body.theme-dark {
+  background-color: #333;
+  color: #fdfdfd;
+}
+
+body.theme-dark .btn,
+body.theme-dark a.btn,
+body.theme-dark a:link.btn,
+body.theme-dark a:visited.btn,
+body.theme-dark a:active.btn {
+  background-color: #47494D;
+  color: #eff3f6;
+  background-image: none;
+}
+
+body.theme-dark .btn:hover {
+  background-color: #4C4E51;
+  background-image: none;
+  background-position: -.5em;
+  border-color: rgba(158, 154, 150, 0.35);
+}
+
+body.theme-dark a,
+body.theme-dark a:link,
+body.theme-dark a:visited,
+body.theme-dark a:active {
+  color: #4EE851;
+}
+
+body.theme-dark .text-gray {
+  color: #aeaeae !important;
+}
+
+body.theme-dark .btn:focus {
+  box-shadow: 0 0 0 0.2em rgba(78, 232, 81, 0.3);
+}

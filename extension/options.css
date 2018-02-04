@@ -12,10 +12,6 @@ body {
   line-height: 1;
 }
 
-.btn-donate {
-  color: #fc122e;
-}
-
 .note {
   font-size: 14px;
 }
@@ -28,7 +24,13 @@ body {
   left: 50%;
   margin-top: 100px;
   margin-left: -10em;
-  border: 1px solid rgba(27,31,35,0.15);
+  border: 1px solid rgba(27, 31, 35, 0.15);
+}
+
+body.theme-dark .status-message.border {
+  background-color: #327E43;
+  color: #C1EFCC;
+  border-color: #1E612D !important;
 }
 
 .station-link::after {
@@ -39,4 +41,8 @@ body {
 .station-link:last-child::after {
   content: "";
   padding-left: 0;
+}
+
+body.theme-dark .note {
+  color: #999;
 }
