@@ -3,10 +3,16 @@ body {
   overflow: hidden;
 }
 
+.dropdown {
+  position: inherit;
+}
+
 .dropdown-menu {
   overflow: auto;
-  width: 17em;
-  height: 200px;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 18.5em;
 }
 
 .dropdown-toggle,
