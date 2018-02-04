@@ -35,7 +35,7 @@ class SomaPlayerBackground {
   }
 
   areTracksDifferent(track1, track2) {
-    if (!track1 && track2 || track1 && !track2) {
+    if (!track1 || !track2) {
       return true
     }
 
