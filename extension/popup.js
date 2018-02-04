@@ -38,6 +38,21 @@ class SomaPlayerPopup {
         this.focusStationListItem(-1)
         this.openStationMenu()
         break;
+      case 'Enter':
+        this.handleEnter(event)
+        break;
+    }
+  }
+
+  handleEnter(event) {
+    if (this.stationMenuToggle.classList.contains('selected')) {
+      event.preventDefault()
+
+      const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+      if (focusedItem) {
+        const button = focusedItem.querySelector('.station-button')
+        this.playStationFromButton(button)
+      }
     }
   }
 
@@ -166,6 +181,10 @@ class SomaPlayerPopup {
 
   onStationButtonClick(event) {
     const button = event.currentTarget
+    this.playStationFromButton(button)
+  }
+
+  playStationFromButton(button) {
     const stationID = button.value
     const stationName = button.querySelector('.station-name').textContent
 
