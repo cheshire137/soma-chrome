@@ -25,3 +25,8 @@
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+.theme-dark .icon-light,
+.theme-light .icon-dark {
+  display: none;
+}
