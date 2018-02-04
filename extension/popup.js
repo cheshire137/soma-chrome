@@ -17,6 +17,8 @@ class SomaPlayerPopup {
       this.toggleStationMenu()
     })
 
+    window.addEventListener('keydown', event => this.onKeydown(event))
+
     window.addEventListener('click', event => {
       const dropdown = event.target.closest('.dropdown')
 
@@ -24,6 +26,57 @@ class SomaPlayerPopup {
         this.closeStationMenu()
       }
     })
+  }
+
+  onKeydown(event) {
+    switch (event.key) {
+      case 'ArrowDown':
+        this.focusStationListItem(1)
+        this.openStationMenu()
+        break;
+      case 'ArrowUp':
+        this.focusStationListItem(-1)
+        this.openStationMenu()
+        break;
+    }
+  }
+
+  focusStationListItem(offset) {
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    const listItems = Array.from(this.stationListEl.querySelectorAll('.station-list-item'))
+    const firstListItem = listItems[0]
+    const lastListItem = listItems[listItems.length - 1]
+    let newFocusedItem
+
+    if (focusedItem) {
+      const index = listItems.indexOf(focusedItem)
+      focusedItem.classList.remove('focused')
+
+      if (offset > 0) {
+        newFocusedItem = listItems[index + 1] || firstListItem
+      } else {
+        newFocusedItem = listItems[index - 1] || lastListItem
+      }
+
+    } else {
+      if (offset > 0) {
+        newFocusedItem = firstListItem
+      } else {
+        newFocusedItem = lastListItem
+      }
+    }
+
+    if (newFocusedItem) {
+      newFocusedItem.classList.add('focused')
+      newFocusedItem.scrollIntoView()
+    }
+  }
+
+  openStationMenu() {
+    const container = this.stationMenuToggle.closest('.dropdown')
+    this.stationMenuToggle.blur()
+    container.classList.add('active')
+    this.stationMenuToggle.classList.add('selected')
   }
 
   closeStationMenu() {
