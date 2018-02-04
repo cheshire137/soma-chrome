@@ -31,6 +31,14 @@
   display: none;
 }
 
+a,
+a:link,
+a:visited,
+a:active,
+.btn-link {
+  color: #ae1f26;
+}
+
 body.theme-light {
   background-color: #fefefe;
   color: #000;
