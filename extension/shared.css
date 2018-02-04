@@ -61,7 +61,12 @@ body.theme-dark .btn:hover {
 body.theme-dark a,
 body.theme-dark a:link,
 body.theme-dark a:visited,
-body.theme-dark a:active {
+body.theme-dark a:active,
+body.theme-dark .btn-link,
+body.theme-dark a.btn-link,
+body.theme-dark a:link.btn-link,
+body.theme-dark a:visited.btn-link,
+body.theme-dark a:active.btn-link {
   color: #4EE851;
 }
 

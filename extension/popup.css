@@ -33,10 +33,18 @@ body {
   background-color: #ededed;
 }
 
+body.theme-dark .station-list-item:nth-child(even) .station-button {
+  background-color: #3d3d3d;
+}
+
 .btn-audio {
   line-height: 1;
 }
 
 .btn-audio i {
   opacity: 1;
+}
+
+body.theme-dark .dropdown-menu {
+  background-color: #444;
 }
