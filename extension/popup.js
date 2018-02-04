@@ -13,10 +13,13 @@ class SomaPlayerPopup {
       if (this.stationMenuToggle.classList.contains('disabled')) {
         return
       }
+
       this.toggleStationMenu()
     })
+
     window.addEventListener('click', event => {
       const dropdown = event.target.closest('.dropdown')
+
       if (!dropdown) {
         this.closeStationMenu()
       }
@@ -75,6 +78,7 @@ class SomaPlayerPopup {
     chrome.runtime.sendMessage({ action: 'get_stations' }, stations => {
       if (!stations || stations.length < 1) {
         const msg = { action: 'refresh_stations' }
+
         chrome.runtime.sendMessage(msg, (stations, error) => {
           if (error) {
             console.error('failed to fetch stations, using defaults')
@@ -84,6 +88,7 @@ class SomaPlayerPopup {
             this.insertStationOptions(stations)
           }
         })
+
       } else {
         console.debug('stations already stored', stations)
         this.insertStationOptions(stations)
@@ -177,7 +182,7 @@ class SomaPlayerPopup {
       if (info.paused) {
         this.stationIsPaused()
       } else {
-        this.stationIsPlaying()
+        this.play()
       }
 
       this.updateStationImage(info.station)
@@ -205,7 +210,6 @@ class SomaPlayerPopup {
     this.updateStationImage(station)
 
     chrome.runtime.sendMessage({ action: 'play', station }, () => {
-      console.debug('finishing telling station to play')
       this.stationIsPlaying()
 
       chrome.runtime.sendMessage({ action: 'info' }, info => {
@@ -213,10 +217,12 @@ class SomaPlayerPopup {
           this.listTracks(info.tracks)
         } else {
           const api = new SomaAPI()
-          api.getStationTracks(station).then(tracks => this.listTracks(tracks))
+          api.getStationTracks(station).
+            then(tracks => this.listTracks(tracks)).
+            catch(error => console.error('failed to get tracks', error))
         }
-      });
-    });
+      })
+    })
   }
 
   pause() {
@@ -244,7 +250,6 @@ class SomaPlayerPopup {
   stationChanged(stationID, stationName) {
     if (stationID === '') {
       chrome.runtime.sendMessage({ action: 'clear' }, () => {
-        console.debug('station cleared')
         this.playButton.disabled = true
         this.hideTrackInfo()
         this.pause()
@@ -291,10 +296,10 @@ class SomaPlayerPopup {
   }
 
   applyTheme() {
-    return SomaPlayerUtil.getOptions().then(opts => {
-      const theme = opts.theme || 'light';
-      return document.body.classList.add(`theme-${theme}`);
-    });
+    SomaPlayerUtil.getOptions().then(opts => {
+      const theme = opts.theme || 'light'
+      document.body.classList.add(`theme-${theme}`)
+    })
   }
 }
 
