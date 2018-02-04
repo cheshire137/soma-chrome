@@ -12,7 +12,7 @@ class SomaPlayerBackground {
     console.debug('playing', station)
     this.resetTrackInfoIfNecessary(station)
     this.subscribe(station)
-    this.audioTag.src = SomaPlayerConfig.somafm_station_url + station
+    this.audioTag.src = `${SomaPlayerConfig.somafm_station_url}/${station}`
     SomaLocalStorage.setCurrentStation(station)
     this.audioTag.removeAttribute('data-paused')
   }
@@ -23,13 +23,31 @@ class SomaPlayerBackground {
     }
 
     console.debug('changed station from',
-                  this.audioTag.getAttribute('data-station'), 'to', station,
+                  SomaLocalStorage.getCurrentStation(), 'to', station,
                   'clearing current track info')
     SomaLocalStorage.setTrackList([])
   }
 
+  areTracksDifferent(track1, track2) {
+    if (!track1 && track2 || track1 && !track2) {
+      return true
+    }
+
+    return track1.title !== track2.title ||
+      track1.artist !== track2.artist ||
+      track1.album !== track2.album
+  }
+
   onTracksFetched(station, tracks) {
     console.debug('fetched track list', station)
+    const newTrack = tracks[0]
+    const lastTrack = SomaLocalStorage.getLastTrack()
+
+    if (this.areTracksDifferent(newTrack, lastTrack)) {
+      this.notifyOfTrack(newTrack)
+    }
+
+    SomaLocalStorage.setLastTrack(newTrack)
     SomaLocalStorage.setTrackList(tracks)
   }
 
@@ -40,8 +58,8 @@ class SomaPlayerBackground {
 
     SomaLocalStorage.setTrackList([])
 
-    const getter = () => {
-      console.debug(`refreshing track list for ${station}`)
+    const updateTracksList = () => {
+      console.debug(`getting tracks for ${station}`)
       const api = new SomaAPI()
       api.getStationTracks(station).
         then(tracks => this.onTracksFetched(station, tracks)).
@@ -49,51 +67,46 @@ class SomaPlayerBackground {
     };
 
     const seconds = 30;
-    this.songListInterval = setInterval(getter, seconds * 1000)
+    this.songListInterval = setInterval(updateTracksList, seconds * 1000)
 
-    getter()
+    updateTracksList()
   }
 
-  notifyOfTrack(track, opts) {
+  notifyOfTrack(track) {
     if (typeof this.notifyTimer !== 'undefined') {
       clearTimeout(this.notifyTimer)
     }
 
-    // Default to showing notifications, so if user has not saved preferences,
-    // assume they want notifications.
-    if (opts.notifications === false) {
-      return
-    }
+    SomaPlayerUtil.getOptions().then(opts => {
+      // Default to showing notifications, so if user has not saved preferences,
+      // assume they want notifications.
+      if (opts.notifications === false) {
+        return
+      }
 
-    const notification = {
-      type: 'basic',
-      title: track.artist,
-      message: track.title,
-      iconUrl: 'icon48.png'
-    }
+      const notification = {
+        type: 'basic',
+        title: track.artist,
+        message: track.title,
+        iconUrl: 'icon48.png'
+      }
 
-    if (this.audioTag.hasAttribute('data-station')) {
-      const station = this.audioTag.getAttribute('data-station')
-
-      if (station.length > 0) {
+      const station = SomaLocalStorage.getCurrentStation()
+      if (station && station.length > 0) {
         notification.iconUrl = `station-images/${station}.png`
       }
-    }
 
-    const delay = 15000 // 15 seconds
-    console.debug('notifying in', (delay / 1000), 'seconds', notification)
-    this.notifyTimer = setTimeout(() => {
-      chrome.notifications.create('', notification, () => {})
-    }, delay)
+      const delay = 15000 // 15 seconds
+      console.debug('notifying in', (delay / 1000), 'seconds', notification)
+      this.notifyTimer = setTimeout(() => {
+        chrome.notifications.create('', notification, () => {})
+      }, delay)
+    })
   }
 
   pause(station) {
-    if (!this.audioTag) {
-      return
-    }
-
     if (typeof station === 'undefined') {
-      station = this.audioTag.getAttribute('data-station')
+      station = SomaLocalStorage.getCurrentStation()
     }
 
     if (!station || station.length < 1) {
@@ -108,11 +121,7 @@ class SomaPlayerBackground {
   }
 
   togglePlay() {
-    if (!this.audioTag) {
-      return
-    }
-
-    const station = this.audioTag.getAttribute('data-station')
+    const station = SomaLocalStorage.getCurrentStation()
     const haveStation = station && station.length > 0
     if (!haveStation) {
       return

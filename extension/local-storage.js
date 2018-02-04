@@ -4,6 +4,17 @@ class SomaLocalStorage {
     return JSON.parse(list)
   }
 
+  static getLastTrack() {
+    const track = window.localStorage.getItem('somaplayer_last_track')
+    if (track) {
+      return JSON.parse(track)
+    }
+  }
+
+  static setLastTrack(track) {
+    window.localStorage.setItem('somaplayer_last_track', JSON.stringify(track))
+  }
+
   static getStations() {
     return this.getList('somaplayer_stations')
   }
