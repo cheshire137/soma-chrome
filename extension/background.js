@@ -14,6 +14,10 @@ class SomaPlayerBackground {
     this.createArtistEl();
   }
 
+  get volume() {
+    return this.audioTag.volume;
+  }
+
   createAudioTag() {
     this.audioTag = document.querySelector('audio');
     if (!this.audioTag) {
@@ -51,6 +55,11 @@ class SomaPlayerBackground {
     this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
     this.audioTag.setAttribute('data-station', station);
     this.audioTag.removeAttribute('data-paused');
+  }
+
+  setVolume(volume) {
+    console.debug('setVolume', volume);
+    this.audioTag.volume = volume;
   }
 
   resetTrackInfoIfNecessary(station) {
@@ -383,6 +392,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.debug('got saved list of stations:', stations);
       sendResponse(stations);
     });
+    return true;
+  }
+  if (request.action === 'volume') {
+    somaPlayerBG.setVolume(request.volume);
+    return true;
+  }
+  if (request.action === 'get_volume') {
+    sendResponse(somaPlayerBG.volume);
     return true;
   }
 });

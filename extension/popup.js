@@ -5,6 +5,7 @@ class SomaPlayerPopup {
     this.handleLinks();
     this.applyTheme();
     this.fetchSomaStations();
+    this.fetchVolume();
     this.listenForPlayback();
     this.listenForStationChange();
   }
@@ -25,6 +26,14 @@ class SomaPlayerPopup {
     this.pauseButton.addEventListener('click', () => {
       this.pause();
     });
+    this.volumeSlider.addEventListener('mousemove', e => {
+      if (e.buttons === 1) {
+        this.setVolume(e);
+      }
+    });
+    this.volumeSlider.addEventListener('click', e => {
+      this.setVolume(e);
+    });
   }
 
   findElements() {
@@ -35,6 +44,7 @@ class SomaPlayerPopup {
     this.titleEl = document.getElementById('title');
     this.artistEl = document.getElementById('artist');
     this.stationImg = document.getElementById('station-image');
+    this.volumeSlider = document.getElementById('volume');
   }
 
   onStationKeypress(keyCode) {
@@ -90,6 +100,12 @@ class SomaPlayerPopup {
       } else {
         this.insertStationOptions(cache);
       }
+    });
+  }
+
+  fetchVolume() {
+    chrome.runtime.sendMessage({ action: 'get_volume' }, volume => {
+      this.volumeSlider.value = volume * this.volumeSlider.max;
     });
   }
 
@@ -166,6 +182,12 @@ class SomaPlayerPopup {
         resolve();
       });
     });
+  }
+
+  setVolume(event) {
+    const volume = event.offsetX / this.volumeSlider.offsetWidth;
+    this.volumeSlider.value = volume * this.volumeSlider.max;
+    chrome.runtime.sendMessage({ action: 'volume', volume });
   }
 
   updateStationImage(station) {
