@@ -11,7 +11,7 @@
     "page": "background.html"
   },
   "options_page": "options.html",
-  "content_security_policy": "script-src 'self' https://ws.audioscrobbler.com; object-src 'self'",
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "browser_action": {
     "default_icon": "icon48.png",
     "default_popup": "popup.html",
