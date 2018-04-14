@@ -29,5 +29,5 @@ Pull requests welcome!
 ## Thanks
 
 - [SomaFM](http://somafm.com/) - where all the music comes from!
-- [SomaScrobbler API](http://api.somascrobbler.com/) - for information about current tracks, used for knowing what to scrobble to Last.fm.
 - [Google Material Icons](https://design.google.com/icons/) - for pause and play icons.
+- [Primer CSS library](https://primer.github.io/)
