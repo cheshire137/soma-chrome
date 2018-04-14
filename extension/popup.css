@@ -49,3 +49,11 @@ body.theme-dark .station-list-item:nth-child(even) .station-button {
 body.theme-dark .dropdown-menu {
   background-color: #444;
 }
+
+.header {
+  background-color: #eff3f3;
+}
+
+body.theme-dark .header {
+  background-color: #47494d;
+}
