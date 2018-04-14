@@ -310,6 +310,9 @@ class SomaPlayerPopup {
 
   play() {
     const station = this.stationMenuToggle.value
+    if (!station || station.length < 1) {
+      return
+    }
     console.debug('play', station)
     this.updateStationImage(station)
 
