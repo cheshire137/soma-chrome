@@ -1,5 +1,11 @@
 # Change Log
 
+## Version 0.0.1.3:
+
+- Removed Last.fm scrobbling; see https://github.com/cheshire137/soma-chrome/issues/39.
+- Updated appearance, including showing station icons in the select menu.
+- Added tips for using SomaPlayer.
+
 ## Version 0.0.1.2:
 
 - Fixed bug where Last.fm user link would not be clickable when you first authenticated with Last.fm.
