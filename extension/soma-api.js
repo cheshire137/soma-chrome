@@ -27,11 +27,12 @@ class SomaAPI {
 
   getStationTracks(station) {
     const url = `${this.baseUrl}/songs/${station}.json`
+    const totalTracksToList = 5
 
     return new Promise((resolve, reject) => {
       window.fetch(url).then(response => {
         response.json().then(json => {
-          const tracks = json.songs.map(song => {
+          const tracks = json.songs.slice(0, totalTracksToList).map(song => {
             if (typeof song.date === 'string') {
               song.date = new Date(parseInt(song.date, 10) * 1000)
             }
