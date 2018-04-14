@@ -37,7 +37,8 @@
       "dot-location": [2, "object"],
       "babel/object-curly-spacing": [2, "always"],
       "camelcase": [2, {"properties": "never"}],
-      "no-new": 0
+      "no-new": 0,
+      "semi": 0
     }
   }
 }
