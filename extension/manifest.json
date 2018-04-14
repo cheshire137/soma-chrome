@@ -27,15 +27,13 @@
         "default": "MediaPlayPause",
         "mac": "MediaPlayPause"
       },
-      "description": "Toggle playing the selected station",
-      "global": true
+      "description": "Toggle playing the selected station"
     },
     "pause-station": {
       "suggested_key": {
         "default": "MediaStop"
       },
-      "description": "Pause the selected station",
-      "global": true
+      "description": "Pause the selected station"
     }
   },
   "web_accessible_resources": ["defaultStations.json", "icon48.png",
