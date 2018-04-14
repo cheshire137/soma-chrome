@@ -192,12 +192,14 @@ class SomaPlayerPopup {
   }
 
   listTracks(tracks) {
-    this.emptyTrackList()
+    setTimeout(() => {
+      this.emptyTrackList()
 
-    for (const track of tracks) {
-      const listItem = this.createTrackListItem(track)
-      this.trackListEl.appendChild(listItem)
-    }
+      for (const track of tracks) {
+        const listItem = this.createTrackListItem(track)
+        this.trackListEl.appendChild(listItem)
+      }
+    }, 70)
   }
 
   onStationButtonClick(event) {
