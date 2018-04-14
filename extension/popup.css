@@ -22,6 +22,7 @@ body {
 
 .station-list-item.focused {
   font-weight: 700;
+  text-decoration: underline;
 }
 
 .station-list-item + .station-list-item,
