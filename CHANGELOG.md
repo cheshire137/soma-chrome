@@ -5,6 +5,7 @@
 - Removed Last.fm scrobbling; see https://github.com/cheshire137/soma-chrome/issues/39.
 - Updated appearance, including showing station icons in the select menu.
 - Added tips for using SomaPlayer.
+- Now displays the last five songs for a station instead of the currently playing song.
 
 ## Version 0.0.1.2:
 
