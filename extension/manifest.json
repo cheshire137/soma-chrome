@@ -2,17 +2,16 @@
   "manifest_version": 2,
   "name": "SomaPlayer",
   "short_name": "SomaPlayer",
-  "description": "Listen to SomaFM web radio stations from your browser and scrobble tracks to your Last.fm account.",
-  "version": "0.0.1.1",
+  "description": "Listen to SomaFM web radio stations from your browser.",
+  "version": "0.0.1.3",
   "permissions": [
     "storage", "notifications"
   ],
   "background": {
-    "scripts": ["socket.io.min.js", "lastfm.min.js", "config.js", "util.js",
-                "background.js"]
+    "page": "background.html"
   },
   "options_page": "options.html",
-  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://ws.audioscrobbler.com; object-src 'self'",
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "browser_action": {
     "default_icon": "icon48.png",
     "default_popup": "popup.html",
@@ -28,15 +27,13 @@
         "default": "MediaPlayPause",
         "mac": "MediaPlayPause"
       },
-      "description": "Toggle playing the selected station",
-      "global": true
+      "description": "Toggle playing the selected station"
     },
     "pause-station": {
       "suggested_key": {
         "default": "MediaStop"
       },
-      "description": "Pause the selected station",
-      "global": true
+      "description": "Pause the selected station"
     }
   },
   "web_accessible_resources": ["defaultStations.json", "icon48.png",

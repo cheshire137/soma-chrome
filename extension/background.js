@@ -1,399 +1,245 @@
-const __bind = function(fn, me) {
-  return function() {
-    return fn.apply(me, arguments);
-  };
-};
-
 class SomaPlayerBackground {
   constructor() {
     console.debug('initializing SomaPlayer background script');
-    this.onTrack = __bind(this.onTrack, this);
-    this.lastfm = SomaPlayerUtil.getLastfmConnection();
-    this.createAudioTag();
-    this.createTitleEl();
-    this.createArtistEl();
+    this.findElements()
   }
 
-  createAudioTag() {
-    this.audioTag = document.querySelector('audio');
-    if (!this.audioTag) {
-      console.debug('adding new audio tag');
-      this.audioTag = document.createElement('audio');
-      this.audioTag.setAttribute('autoplay', 'true');
-      this.audioTag.setAttribute('data-station', '');
-      document.body.appendChild(this.audioTag);
-    }
-  }
-
-  createTitleEl() {
-    this.titleEl = document.getElementById('title');
-    if (!this.titleEl) {
-      this.titleEl = document.createElement('div');
-      this.titleEl.id = 'title';
-      document.body.appendChild(this.titleEl);
-    }
-  }
-
-  createArtistEl() {
-    this.artistEl = document.getElementById('artist');
-    if (!this.artistEl) {
-      this.artistEl = document.createElement('div');
-      this.artistEl.id = 'artist';
-      document.body.appendChild(this.artistEl);
-    }
+  findElements() {
+    this.audioTag = document.getElementById('audio')
   }
 
   play(station) {
-    console.debug('playing station', station);
-    this.resetTrackInfoIfNecessary(station);
-    this.subscribe(station);
-    this.socket.on('track', this.onTrack);
-    this.audioTag.src = SomaPlayerConfig.somafm_station_url + station;
-    this.audioTag.setAttribute('data-station', station);
-    this.audioTag.removeAttribute('data-paused');
+    console.debug('playing', station)
+    const isPaused = this.audioTag.hasAttribute('data-paused')
+    if (!isPaused && SomaLocalStorage.getCurrentStation() === station &&
+        this.audioTag.hasAttribute('src')) {
+      return
+    }
+
+    this.resetTrackInfoIfNecessary(station)
+    this.subscribe(station)
+    this.audioTag.src = `${SomaPlayerConfig.somafm_station_url}/${station}`
+    SomaLocalStorage.setCurrentStation(station)
+    this.audioTag.removeAttribute('data-paused')
   }
 
   resetTrackInfoIfNecessary(station) {
-    if (this.audioTag.getAttribute('data-station') === station) {
-      return;
+    if (SomaLocalStorage.getCurrentStation() === station) {
+      return
     }
+
     console.debug('changed station from',
-                  this.audioTag.getAttribute('data-station'), 'to', station,
-                  'clearing current track info');
-    this.titleEl.textContent = '';
-    this.artistEl.textContent = '';
+                  SomaLocalStorage.getCurrentStation(), 'to', station,
+                  'clearing current track info')
+    SomaLocalStorage.setTrackList([])
   }
 
-  displayCurrentTrack(station) {
-    return SomaPlayerUtil.getCurrentTrackInfo(station).then(track => {
-      this.titleEl.textContent = track.title;
-      this.artistEl.textContent = track.artist;
-    });
+  areTracksDifferent(track1, track2) {
+    if (!track1 || !track2) {
+      return true
+    }
+
+    return track1.title !== track2.title ||
+      track1.artist !== track2.artist ||
+      track1.album !== track2.album
+  }
+
+  onTracksFetched(station, tracks) {
+    console.debug('fetched track list', station)
+    const newTrack = tracks[0]
+    const lastTrack = SomaLocalStorage.getLastTrack()
+
+    if (this.areTracksDifferent(newTrack, lastTrack)) {
+      this.notifyOfTrack(newTrack)
+    }
+
+    SomaLocalStorage.setLastTrack(newTrack)
+    SomaLocalStorage.setTrackList(tracks)
   }
 
   subscribe(station) {
-    const emitSubscribe = () => {
-      this.socket.emit('subscribe', station, response => {
-        if (response.subscribed) {
-          console.debug('subscribed to', station);
-          this.displayCurrentTrack(station);
-        } else {
-          console.error('failed to subscribe to', station, response);
-        }
-      });
+    if (this.songListInterval) {
+      clearInterval(this.songListInterval)
+    }
+
+    SomaLocalStorage.setTrackList([])
+
+    const updateTracksList = () => {
+      console.debug(`getting tracks for ${station}`)
+      const api = new SomaAPI()
+      api.getStationTracks(station).
+        then(tracks => this.onTracksFetched(station, tracks)).
+        catch(error => console.error('failed to fetch track list', station, error))
     };
-    if (typeof this.socket === 'undefined') {
-      console.debug('connecting to socket', SomaPlayerConfig.scrobbler_api_url);
-      this.socket = io.connect(SomaPlayerConfig.scrobbler_api_url);
-    }
-    if (this.socket.connected) {
-      emitSubscribe();
-    } else {
-      this.socket.on('connect', () => {
-        emitSubscribe();
-      });
-    }
+
+    const seconds = 30;
+    this.songListInterval = setInterval(updateTracksList, seconds * 1000)
+
+    updateTracksList()
   }
 
-  onTrack(track) {
-    console.debug('new track', track.title, track.artist);
-    this.titleEl.textContent = track.title;
-    this.artistEl.textContent = track.artist;
-    SomaPlayerUtil.getOptions().then(opts => {
-      this.notifyOfTrack(track, opts);
-      this.waitToScrobbleTrack(track, opts);
-    });
-  }
-
-  waitToScrobbleTrack(track, opts) {
-    if (typeof this.scrobbleTimer !== 'undefined') {
-      clearTimeout(this.scrobbleTimer);
-    }
-    if (!this.shouldScrobble(opts)) {
-      return;
-    }
-    let delay = 60000; // 60 seconds
-    if (this.trackHasDuration(track)) {
-      delay = track.duration / 2; // half the length of the song
-    }
-    const timestamp = Math.round((new Date()).getTime() / 1000);
-    console.debug('waiting', (delay / 1000), 'seconds to scrobble',
-                  track.title, track.artist, 'that started at', timestamp);
-    this.scrobbleTimer = setTimeout(() => {
-      this.scrobbleTrack(track, timestamp, opts);
-    }, delay);
-  }
-
-  notifyOfTrack(track, opts) {
+  notifyOfTrack(track) {
     if (typeof this.notifyTimer !== 'undefined') {
-      clearTimeout(this.notifyTimer);
+      clearTimeout(this.notifyTimer)
     }
-    // Default to showing notifications, so if user has not saved preferences,
-    // assume they want notifications.
-    if (opts.notifications === false) {
-      return;
-    }
-    const notification = {
-      type: 'basic',
-      title: track.artist,
-      message: track.title,
-      iconUrl: 'icon48.png'
-    };
-    if (this.audioTag && this.audioTag.hasAttribute('data-station')) {
-      const station = this.audioTag.getAttribute('data-station');
-      if (station.length > 0) {
-        notification.iconUrl = `station-images/${station}.png`;
+
+    SomaPlayerUtil.getOptions().then(opts => {
+      // Default to showing notifications, so if user has not saved preferences,
+      // assume they want notifications.
+      if (opts.notifications === false) {
+        return
       }
-    }
-    const delay = 15000; // 15 seconds
-    console.debug('notifying in', (delay / 1000), 'seconds', notification);
-    this.notifyTimer = setTimeout(() => {
-      chrome.notifications.create('', notification, () => {});
-    }, delay);
-  }
 
-  trackHasDuration(track) {
-    return typeof track.duration === 'number' && track.duration > 0;
-  }
-
-  getScrobbleData(track, timestamp, opts) {
-    // http://www.last.fm/api/show/track.scrobble
-    const data = {
-      artist: (track.artist || '').replace(/"/g, "'"),
-      track: (track.title || '').replace(/"/g, "'"),
-      user: opts.lastfm_user,
-      chosenByUser: 0,
-      timestamp: timestamp
-    };
-    if (typeof track.trackMBID === 'string') {
-      data.mbid = track.trackMBID;
-    }
-    if (this.trackHasDuration(track)) {
-      const milliseconds = track.duration;
-      data.duration = milliseconds / 1000;
-    }
-    if (typeof track.album === 'string') {
-      data.album = track.album;
-    }
-    return data;
-  }
-
-  shouldScrobble(opts) {
-    if (!opts.scrobbling) {
-      return false;
-    }
-    return typeof opts.lastfm_session_key === 'string' &&
-        opts.lastfm_session_key.length > 0 &&
-        typeof opts.lastfm_user === 'string' && opts.lastfm_user.length > 0;
-  }
-
-  scrobbleTrack(track, timestamp, opts) {
-    if (!this.shouldScrobble(opts)) {
-      return;
-    }
-    const data = this.getScrobbleData(track, timestamp, opts);
-    const auth = { key: opts.lastfm_session_key };
-    return this.lastfm.track.scrobble(data, auth, {
-      success() {
-        let e;
-        try {
-          const iframeWin = document.querySelector('iframe').contentWindow;
-          iframeWin.document.querySelector('form').submit();
-          console.debug('scrobbled track', track.title, track.artist);
-        } catch (_error) {
-          // Mysterious second submit after scrobble form has already POSTed
-          // to Last.fm and the iframe has its origin changed to
-          // ws.audioscrobbler.com, which can't be touched by the extension.
-          e = _error;
-          if (e.name !== 'SecurityError') {
-            throw e;
-          }
-        }
-      },
-      error(err) {
-        console.error('failed to scrobble track', track, 'response:', err);
+      const notification = {
+        type: 'basic',
+        title: track.artist,
+        message: track.title,
+        iconUrl: 'icon48.png'
       }
-    });
+
+      const station = SomaLocalStorage.getCurrentStation()
+      if (station && station.length > 0) {
+        notification.iconUrl = `station-images/${station}.png`
+      }
+
+      const delay = 15000 // 15 seconds
+      console.debug('notifying in', (delay / 1000), 'seconds', notification)
+      this.notifyTimer = setTimeout(() => {
+        chrome.notifications.create('', notification, () => {})
+      }, delay)
+    })
   }
 
   pause(station) {
-    if (!this.audioTag) {
-      return;
-    }
     if (typeof station === 'undefined') {
-      station = this.audioTag.getAttribute('data-station');
+      station = SomaLocalStorage.getCurrentStation()
     }
+
     if (!station || station.length < 1) {
-      return;
+      return
     }
-    console.debug('pausing station', station);
-    this.unsubscribe(station);
-    this.audioTag.pause();
-    this.audioTag.currentTime = 0;
-    this.audioTag.setAttribute('data-paused', 'true');
+
+    console.debug('pausing station', station)
+    this.unsubscribe(station)
+    this.audioTag.pause()
+    this.audioTag.currentTime = 0
+    this.audioTag.setAttribute('data-paused', 'true')
   }
 
   togglePlay() {
-    if (!this.audioTag) {
-      return;
-    }
-    const station = this.audioTag.getAttribute('data-station');
-    const haveStation = station && station.length > 0;
+    const station = SomaLocalStorage.getCurrentStation()
+    const haveStation = station && station.length > 0
     if (!haveStation) {
-      return;
+      return
     }
+
     if (this.audioTag.hasAttribute('data-paused')) {
-      this.play(station);
+      this.play(station)
     } else {
-      this.pause(station);
+      this.pause(station)
     }
   }
 
   clear() {
-    const info = this.getInfo();
-    this.unsubscribe(info.station);
-    this.audioTag.pause();
-    this.audioTag.currentTime = 0;
-    this.audioTag.setAttribute('data-station', '');
-    this.audioTag.removeAttribute('data-paused');
+    const info = this.getInfo()
+    this.unsubscribe(info.station)
+    this.audioTag.pause()
+    this.audioTag.currentTime = 0
+    this.audioTag.setAttribute('data-station', '')
+    this.audioTag.removeAttribute('data-paused')
   }
 
   unsubscribe(station) {
     if (!(typeof station === 'string' && station.length > 0)) {
-      return;
+      return
     }
-    if (typeof this.socket === 'undefined') {
-      return;
+
+    console.debug('unsubscribing from', station)
+    if (this.notifyTimer) {
+      clearTimeout(this.notifyTimer)
     }
-    console.debug('unsubscribing from', station);
-    this.socket.emit('unsubscribe', station, response => {
-      if (!response.unsubscribed) {
-        console.error('failed to unsubscribe from', station);
-      }
-    });
-    this.socket.removeListener('track', this.onTrack);
-    if (typeof this.scrobbleTimer !== 'undefined') {
-      clearTimeout(this.scrobbleTimer);
-    }
-    if (typeof this.notifyTimer !== 'undefined') {
-      clearTimeout(this.notifyTimer);
+
+    if (this.songListInterval) {
+      clearInterval(this.songListInterval)
     }
   }
 
   getInfo() {
-    let station = '';
-    if (this.audioTag) {
-      station = this.audioTag.getAttribute('data-station') || '';
-    }
+    const station = SomaLocalStorage.getCurrentStation()
+    console.log('station', station)
+
     return {
       station,
-      artist: this.artistEl.textContent,
-      title: this.titleEl.textContent,
+      tracks: SomaLocalStorage.getTrackList(),
       paused: this.audioTag.hasAttribute('data-paused') || station === ''
-    };
-  }
-
-  setStations(stations) {
-    console.debug('set stations', stations);
-    SomaPlayerUtil.getOptions().then(opts => {
-      opts.stations = stations;
-      SomaPlayerUtil.setOptions(opts);
-    });
-  }
-
-  getStations() {
-    return new Promise(resolve => {
-      SomaPlayerUtil.getOptions().then(opts => {
-        resolve(opts.stations);
-      });
-    });
-  }
-
-  fetchStations() {
-    const url = `${SomaPlayerConfig.somafm_api_url}channels.json`;
-    console.debug(`fetching channels list from ${url}`);
-    return new Promise((resolve, reject) => {
-      SomaPlayerUtil.getJSON(url).then(data => {
-        console.debug('fetched stations list', data);
-        const simpleStations = this.extractStations(data);
-        this.setStations(simpleStations);
-        resolve(simpleStations);
-      }).catch((xhr, status, error) => {
-        console.error('failed to fetch stations list', error);
-        reject(error);
-      });
-    });
-  }
-
-  extractStations(data) {
-    const stations = data.channels.map(station => {
-      return { id: station.id, title: station.title };
-    });
-    stations.sort(this.stationCompare);
-    return stations;
-  }
-
-  stationCompare(a, b) {
-    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+    }
   }
 }
 
 let somaPlayerBG;
 
 document.addEventListener('DOMContentLoaded', () => {
-  somaPlayerBG = new SomaPlayerBackground();
-});
+  somaPlayerBG = new SomaPlayerBackground()
+})
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (typeof somaPlayerBG === 'undefined') {
-    return;
+    return
   }
-  console.debug('received:', request.action, request);
+
+  console.debug('received', request.action, request)
+
   if (request.action === 'play') {
-    somaPlayerBG.play(request.station);
-    sendResponse();
-    return true;
+    somaPlayerBG.play(request.station)
+    sendResponse()
+    return true
   }
+
   if (request.action === 'pause') {
-    somaPlayerBG.pause(request.station);
-    sendResponse();
-    return true;
+    somaPlayerBG.pause(request.station)
+    sendResponse()
+    return true
   }
+
   if (request.action === 'info') {
-    const info = somaPlayerBG.getInfo();
-    console.debug('info:', info);
-    sendResponse(info);
-    return true;
+    const info = somaPlayerBG.getInfo()
+    console.debug('info', info)
+    sendResponse(info)
+    return true
   }
+
   if (request.action === 'clear') {
-    somaPlayerBG.clear();
-    sendResponse();
-    return true;
+    somaPlayerBG.clear()
+    sendResponse()
+    return true
   }
-  if (request.action === 'fetch_stations') {
-    somaPlayerBG.fetchStations().then(stations => {
-      sendResponse(stations);
-    }).catch(error => {
-      sendResponse(null, error);
-    });
-    return true;
+
+  if (request.action === 'refresh_stations') {
+    const api = new SomaAPI()
+    api.getStations().then(stations => {
+      console.debug('fetched list of stations', stations)
+      SomaLocalStorage.setStations(stations)
+      sendResponse(stations)
+    }).catch(error => sendResponse(null, error))
+    return true
   }
+
   if (request.action === 'get_stations') {
-    somaPlayerBG.getStations().then(stations => {
-      console.debug('got saved list of stations:', stations);
-      sendResponse(stations);
-    });
+    const stations = SomaLocalStorage.getStations()
+    console.debug('got saved list of stations', stations)
+    sendResponse(stations)
     return true;
   }
-});
+})
 
 chrome.commands.onCommand.addListener(command => {
   if (typeof somaPlayerBG === 'undefined') {
-    return;
+    return
   }
+
   if (command === 'play-pause-station') {
-    somaPlayerBG.togglePlay();
+    somaPlayerBG.togglePlay()
   } else if (command === 'pause-station') {
-    somaPlayerBG.pause();
+    somaPlayerBG.pause()
   }
-});
+})

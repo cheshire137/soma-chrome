@@ -1,78 +1,48 @@
 body {
-  font-size: 17px;
+  font-size: 18px;
 }
-.theme-dark .radio:hover {
+
+.container {
+  width: 780px;
+}
+
+.station-count {
   color: #fff;
+  background-color: rgba(100, 100, 100, 0.5);
+  line-height: 1;
 }
-.subtitle {
-  font-size: 19px;
+
+.note {
+  font-size: 14px;
 }
-.title .logo {
-  vertical-align: middle;
-}
-.icon-dark {
-  display: none;
-}
-.theme-dark .icon-light {
-  display: none;
-}
-.theme-dark .icon-dark {
-  display: inline-block;
-}
-.station-count:before {
-  content: "(";
-}
-.station-count:after {
-  content: ")";
-}
-.refresh-stations {
-  margin-bottom: 14px;
-}
-.stations-list {
-  margin-bottom: 0;
-}
-.lastfm-auth,
-.theme-dark .box .lastfm-auth {
-  background-color: #c91e24;
-  border-color: #b31b20;
-  color: white;
-}
-.lastfm-auth:hover,
-.theme-dark .box .lastfm-auth:hover,
-.lastfm-auth:focus,
-.theme-dark .box .lastfm-auth:focus {
-  color: white;
-  background-color: #9d171c;
-  border-color: #861418;
-}
-.radio + .radio {
-  margin-left: 2em;
-}
-.help {
-  font-size: 13px;
-  margin-top: 10px;
-}
-#lastfm-is-authenticated p:first-child {
-  margin-bottom: 10px;
-}
-#status-message {
-  position: absolute;
+
+.status-message {
+  z-index: 99999;
+  color: #165c26;
+  background-color: #dcffe4;
+  width: 20em;
   left: 50%;
-  width: 60%;
-  margin-left: -30%;
-  top: 15px;
+  margin-top: 100px;
+  margin-left: -10em;
+  border: 1px solid rgba(27, 31, 35, 0.15);
 }
-.theme-dark .notification.is-success {
-  color: #dff0d8;
-  background-color: #468847;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
-  border-color: #2F7130;
+
+body.theme-dark .status-message.border {
+  background-color: #327E43;
+  color: #C1EFCC;
+  border-color: #1E612D !important;
 }
-.radio input[type="radio"] {
-  margin-right: 0.2em;
+
+.station-link::after {
+  content: "\b7";
+  padding-left: 8px;
 }
-.center-vertically {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+.station-link:last-child::after {
+  content: "";
+  padding-left: 0;
+}
+
+body.theme-dark .note {
+  color: #999;
 }

@@ -2,150 +2,123 @@
 <html>
 <head>
   <title>SomaPlayer Options</title>
-  <link href="bulma.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-core.css" media="screen" rel="stylesheet" type="text/css">
   <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
   <link href="options.css" media="screen" rel="stylesheet" type="text/css">
 </head>
-<body class="options">
-  <section class="section">
-    <div class="container">
-      <h1 class="title">
-        <img alt="SomaPlayer logo" class="icon-light logo" height="48" src="icon48.png" width="48">
-        <img alt="SomaPlayer logo" class="icon-dark logo" height="48" src="icon48-dark.png" width="48">
-        SomaPlayer Options
-      </h1>
-      <div class="hidden notification is-success" id="status-message"></div>
-      <div class="columns">
-        <div class="column">
-          <div class="box">
-            <h2 class="subtitle">Last.fm Authentication</h2>
-            <div class="hidden" id="lastfm-is-authenticated">
-              <p>
-                Connected as:
-                <a id="lastfm-user" target="_blank"></a>
-                &mdash;
-                <a href="#" id="lastfm-disconnect">
-                  Disconnect
-                </a>
-              </p>
-              <button class="lastfm-auth button hidden">
-                Authenticate with Last.fm
-              </button>
-              <p class="help">
-                You can re-authenticate if scrobbling isn't working.
-              </p>
-            </div>
-            <div class="hidden" id="lastfm-is-not-authenticated">
-              <button class="lastfm-auth button hidden">
-                Authenticate with Last.fm
-              </button>
-            </div>
-          </div>
-          <div class="box">
-            <h2 class="subtitle">Last.fm Scrobbling</h2>
-            <div class="control hidden">
-              <label class="radio" for="enable_scrobbling">
-                <input disabled="disabled" id="enable_scrobbling" name="scrobbling" type="radio" value="enabled">
-                Enable scrobbling
-              </label>
-              <label class="radio" for="disable_scrobbling">
-                <input checked="checked" id="disable_scrobbling" name="scrobbling" type="radio" value="disabled">
-                Disable scrobbling
-              </label>
-            </div>
-            <p class="help">
-              Requires Last.fm authentication. Only stations supported by the
-              <a href="http://api.somascrobbler.com/">SomaScrobbler</a>
-              will get notifications/scrobbling.
-            </p>
-          </div>
-          <div class="box">
-            <h2 class="subtitle">Desktop Notifications</h2>
-            <div class="control hidden">
-              <label class="radio" for="enable_notifications">
-                <input checked="checked" id="enable_notifications" name="notifications" type="radio" value="enabled">
-                Enable notifications
-              </label>
-              <label class="radio" for="disable_notifications">
-                <input id="disable_notifications" name="notifications" type="radio" value="disabled">
-                Disable notifications
-              </label>
-            </div>
-            <p class="help">
-              Receive notifications when the track changes.
-            </p>
-          </div>
+<body>
+  <div class="container position-relative">
+    <h1 class="text-normal h1 py-4 my-4 d-flex flex-justify-center">
+      <img alt="SomaPlayer logo" class="rounded-2 icon-light mr-3" height="48" src="icon48.png" width="48">
+      <img alt="SomaPlayer logo" class="rounded-2 icon-dark mr-3" height="48" src="icon48-dark.png" width="48">
+      SomaPlayer Options
+    </h1>
+    <div id="status-message" class="top-0 status-message border rounded-2 p-3 d-none position-absolute"></div>
+    <div class="mb-4">
+      <h2 class="h2 text-normal mb-2">Desktop Notifications</h2>
+      <div class="d-flex">
+        <div class="form-checkbox my-0 mr-4">
+          <label for="enable_notifications">
+            <input checked id="enable_notifications" name="notifications" type="radio" value="enabled">
+            Enable notifications
+          </label>
         </div>
-        <div class="column">
-          <div class="box">
-            <h2 class="subtitle">Theme</h2>
-            <div class="control hidden">
-              <label class="radio" for="light_theme">
-                <input checked="checked" id="light_theme" name="theme" type="radio" value="light">
-                Light theme
-              </label>
-              <label class="radio" for="dark_theme">
-                <input id="dark_theme" name="theme" type="radio" value="dark">
-                Dark theme
-              </label>
-            </div>
-            <p class="help">
-              Black on white or white on black? Decisions, decisions.
-            </p>
-          </div>
-          <div class="box stations-options hidden">
-            <h2 class="subtitle">
-              Known Stations
-              <span class="station-count"></span>
-            </h2>
-            <button class="button refresh-stations">
-              Refresh List
-            </button>
-            <p class="stations-list"></p>
-          </div>
+        <div class="form-checkbox my-0">
+          <label for="disable_notifications">
+            <input id="disable_notifications" name="notifications" type="radio" value="disabled">
+            Disable notifications
+          </label>
         </div>
       </div>
+      <p class="note">
+        Receive notifications when the track changes.
+      </p>
     </div>
-  </section>
-  <section class="section">
-    <div class="container">
-      <div class="columns">
-        <div class="column">
-          <h2 class="subtitle">About</h2>
-          <p>
-            This is an unofficial extension, endorsed by neither
-            <a href="http://somafm.com" target="_blank">SomaFM</a>
-            nor
-            <a href="http://last.fm" target="_blank">Last.fm.</a>
-            I just love both services and hope you find this useful. :)
-          </p>
+    <div class="mb-4">
+      <h2 class="h2 text-normal mb-2">Theme</h2>
+      <div class="d-flex">
+        <div class="form-checkbox my-0 mr-4">
+          <label for="light_theme">
+            <input checked id="light_theme" name="theme" type="radio" value="light">
+            Light theme
+          </label>
         </div>
-        <div class="column center-vertically">
-          <a href="http://somafm.com/support/" target="_blank" class="button is-large is-primary">
-            Donate to SomaFM
-          </a>
+        <div class="form-checkbox my-0">
+          <label for="dark_theme">
+            <input id="dark_theme" name="theme" type="radio" value="dark">
+            Dark theme
+          </label>
         </div>
       </div>
+      <p class="note">
+        Black on white or white on black? Decisions, decisions.
+      </p>
     </div>
-  </section>
-  <footer class="footer">
-    <ul class="list-inline">
-      <li>
-        &copy; 2016
-        <a href="http://3till7.net/" target="_blank">
-          Sarah Vessels
-        </a>
-      </li>
-      <li>&middot;</li>
-      <li>
-        <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
-          View source code
-        </a>
-      </li>
-    </ul>
+    <div class="mb-4">
+      <h2 class="h2 text-normal mb-2">Tips</h2>
+      <div class="d-flex">
+        <div class="form-checkbox my-0 mr-4">
+          <label for="tips_on">
+            <input checked id="tips_on" name="tips" type="radio" value="on">
+            Show tips
+          </label>
+        </div>
+        <div class="form-checkbox my-0">
+          <label for="tips_off">
+            <input id="tips_off" name="tips" type="radio" value="off">
+            Hide tips
+          </label>
+        </div>
+      </div>
+      <p class="note">
+        Display helpful hints for how to use SomaPlayer.
+      </p>
+    </div>
+    <div class="mb-4" id="stations-options">
+      <h2 class="h2 text-normal mb-2 d-flex flex-justify-between flex-items-center">
+        <span>
+          Known Stations
+          <span class="station-count rounded-1 p-1 text-small v-align-middle d-inline-block" id="station-count"></span>
+        </span>
+        <button id="refresh-stations" type="button" class="btn">
+          Refresh List
+        </button>
+      </h2>
+      <div id="stations-list" class="d-flex flex-wrap"></div>
+    </div>
+    <template id="station-list-item-template">
+      <a class="station-link mr-2" target="_blank"></a>
+    </template>
+    <div>
+      <h2 class="h2 text-normal mb-2">About</h2>
+      <p>
+        This is an unofficial extension, not endorsed by
+        <a href="http://somafm.com" target="_blank">SomaFM</a>.
+        I just love SomaFM and hope you find this useful. :)
+      </p>
+    </div>
+    <div>
+      <a href="http://somafm.com/support/" class="btn btn-donate" target="_blank">
+        Donate to SomaFM
+      </a>
+    </div>
+  </div>
+  <footer class="my-4 py-4 d-flex flex-justify-center text-small">
+    <div class="mr-2">
+      Built with &hearts; by
+      <a href="http://sarahvessels.com/" target="_blank">
+        Sarah
+      </a>
+    </div>
+    <div class="mr-2">&middot;</div>
+    <div>
+      <a href="https://github.com/cheshire137/soma-chrome" target="_blank">
+        View source code
+      </a>
+    </div>
   </footer>
-  <script src="lastfm.min.js"></script>
   <script src="config.js"></script>
+  <script src="local-storage.js"></script>
   <script src="util.js"></script>
   <script src="options.js"></script>
 </body>

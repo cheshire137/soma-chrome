@@ -1,209 +1,397 @@
 class SomaPlayerPopup {
   constructor() {
-    this.base = this;
-    this.findElements();
-    this.handleLinks();
-    this.applyTheme();
-    this.fetchSomaStations();
-    this.listenForPlayback();
-    this.listenForStationChange();
+    this.findElements()
+    this.handleLinks()
+    this.hookupMenu()
+    this.applyTheme()
+    this.fetchSomaStations()
+    this.listenForPlayback()
+    this.displayTip()
   }
 
-  listenForStationChange() {
-    this.stationSelect.addEventListener('change', () => {
-      this.stationChanged();
-    });
-    this.stationSelect.addEventListener('keypress', e => {
-      this.onStationKeypress(e.keyCode);
-    });
+  hookupMenu() {
+    this.stationMenuToggle.addEventListener('click', () => {
+      if (this.stationMenuToggle.classList.contains('disabled')) {
+        return
+      }
+
+      this.toggleStationMenu()
+    })
+
+    window.addEventListener('keydown', event => this.onKeydown(event))
+
+    window.addEventListener('click', event => {
+      const dropdown = event.target.closest('.dropdown')
+
+      if (!dropdown) {
+        this.closeStationMenu()
+      }
+    })
+  }
+
+  onKeydown(event) {
+    switch (event.key) {
+      case 'ArrowDown':
+        this.focusStationListItem(1)
+        this.openStationMenu()
+        break
+      case 'ArrowUp':
+        this.focusStationListItem(-1)
+        this.openStationMenu()
+        break
+      case 'Enter':
+        this.handleEnter(event)
+        break
+      case ' ':
+        this.handleSpace(event)
+        break
+    }
+  }
+
+  handleSpace(event) {
+    event.preventDefault()
+
+    chrome.runtime.sendMessage({ action: 'info' }, info => {
+      if (info.paused) {
+        this.play()
+      } else {
+        this.pause()
+      }
+    })
+  }
+
+  handleEnter(event) {
+    if (this.stationMenuToggle.classList.contains('selected')) {
+      event.preventDefault()
+
+      const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+      if (focusedItem) {
+        const button = focusedItem.querySelector('.station-button')
+        this.playStationFromButton(button)
+      }
+    }
+  }
+
+  focusStationListItem(offset) {
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    const listItems = Array.from(this.stationListEl.querySelectorAll('.station-list-item'))
+    const firstListItem = listItems[0]
+    const lastListItem = listItems[listItems.length - 1]
+    let newFocusedItem
+
+    if (focusedItem) {
+      const index = listItems.indexOf(focusedItem)
+      focusedItem.classList.remove('focused')
+
+      if (offset > 0) {
+        newFocusedItem = listItems[index + 1] || firstListItem
+      } else {
+        newFocusedItem = listItems[index - 1] || lastListItem
+      }
+    } else if (offset > 0) {
+      newFocusedItem = firstListItem
+    } else {
+      newFocusedItem = lastListItem
+    }
+
+    if (newFocusedItem) {
+      newFocusedItem.classList.add('focused')
+      newFocusedItem.scrollIntoView()
+    }
+  }
+
+  openStationMenu() {
+    const container = this.stationMenuToggle.closest('.dropdown')
+    container.classList.add('active')
+    this.stationMenuToggle.classList.add('selected')
+
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    if (focusedItem) {
+      focusedItem.scrollIntoView()
+    }
+  }
+
+  closeStationMenu() {
+    const container = this.stationMenuToggle.closest('.dropdown')
+    container.classList.remove('active')
+    this.stationMenuToggle.classList.remove('selected')
+  }
+
+  toggleStationMenu() {
+    if (this.stationMenuToggle.classList.contains('selected')) {
+      this.closeStationMenu()
+    } else {
+      this.openStationMenu()
+    }
   }
 
   listenForPlayback() {
-    this.playButton.addEventListener('click', () => {
-      this.play();
-    });
-    this.pauseButton.addEventListener('click', () => {
-      this.pause();
-    });
+    this.playButton.addEventListener('click', () => this.play())
+    this.pauseButton.addEventListener('click', () => this.pause())
+  }
+
+  displayTip() {
+    SomaPlayerUtil.getOptions().then(opts => {
+      const tipsSetting = opts.tips || 'on'
+      if (tipsSetting !== 'on') {
+        return
+      }
+
+      const tips = Array.from(this.tipsList.querySelectorAll('.js-tip'))
+      const index = Math.floor(Math.random() * tips.length)
+      const tip = tips[index]
+      tip.classList.remove('d-none')
+      this.tipsList.classList.remove('d-none')
+    })
   }
 
   findElements() {
-    this.stationSelect = document.getElementById('station');
-    this.playButton = document.getElementById('play');
-    this.pauseButton = document.getElementById('pause');
-    this.currentInfoEl = document.getElementById('currently-playing');
-    this.titleEl = document.getElementById('title');
-    this.artistEl = document.getElementById('artist');
-    this.stationImg = document.getElementById('station-image');
-  }
-
-  onStationKeypress(keyCode) {
-    if (keyCode !== 13) { // Enter
-      return;
-    }
-    if (this.stationSelect.value === '') {
-      return;
-    }
-    if (!(this.playButton.disabled ||
-          this.playButton.classList.contains('hidden'))) {
-      console.debug('pressing play button');
-      this.play();
-    }
-    if (!(this.pauseButton.disabled ||
-          this.pauseButton.classList.contains('hidden'))) {
-      console.debug('pressing pause button');
-      this.pause();
-    }
+    this.stationMenuToggle = document.getElementById('station-menu-toggle')
+    this.stationListEl = document.getElementById('station-list')
+    this.stationListItemTpl = document.getElementById('station-list-item-template')
+    this.playButton = document.getElementById('play')
+    this.pauseButton = document.getElementById('pause')
+    this.currentInfoEl = document.getElementById('currently-playing')
+    this.trackListEl = document.getElementById('track-list')
+    this.trackListItemTpl = document.getElementById('track-list-item-template')
+    this.stationImg = document.getElementById('station-image')
+    this.tipsList = document.getElementById('tips-list')
   }
 
   insertStationOptions(stations) {
-    for (let i = 0; i < stations.length; i++) {
-      const option = document.createElement('option');
-      option.value = stations[i].id;
-      option.textContent = stations[i].title;
-      this.stationSelect.appendChild(option);
+    const activeStationID = SomaLocalStorage.getCurrentStation()
+
+    for (const data of stations) {
+      const listItem = this.createStationListItem(data, data.id === activeStationID)
+      this.stationListEl.appendChild(listItem)
     }
-    this.stationSelect.disabled = false;
-    this.loadCurrentInfo();
+
+    this.stationMenuToggle.classList.remove('disabled')
+    this.loadCurrentInfo()
   }
 
   loadDefaultStations() {
-    console.debug('loading default station list');
-    const url = chrome.extension.getURL('defaultStations.json');
-    SomaPlayerUtil.getJSON(url).then(defaultStations => {
-      this.insertStationOptions(defaultStations);
-    });
+    console.debug('loading default station list')
+    const url = chrome.extension.getURL('defaultStations.json')
+    SomaPlayerUtil.getJSON(url).
+      then(defaultStations => this.insertStationOptions(defaultStations))
   }
 
   fetchSomaStations() {
-    chrome.runtime.sendMessage({ action: 'get_stations' }, cache => {
-      console.log('stations already stored', cache);
-      if (!cache || cache.length < 1) {
-        const msg = { action: 'fetch_stations' };
+    chrome.runtime.sendMessage({ action: 'get_stations' }, stations => {
+      if (!stations || stations.length < 1) {
+        const msg = { action: 'refresh_stations' }
+
         chrome.runtime.sendMessage(msg, (stations, error) => {
           if (error) {
-            this.loadDefaultStations();
+            console.error('failed to fetch stations, using defaults')
+            this.loadDefaultStations()
           } else {
-            this.insertStationOptions(stations);
+            console.debug('fetched stations', stations)
+            this.insertStationOptions(stations)
           }
-        });
+        })
       } else {
-        this.insertStationOptions(cache);
+        console.debug('stations already stored', stations)
+        this.insertStationOptions(stations)
       }
-    });
+    })
   }
 
-  displayTrackInfo(info) {
-    if (info.artist || info.title) {
-      this.titleEl.textContent = info.title;
-      this.artistEl.textContent = info.artist;
-      this.currentInfoEl.classList.remove('hidden');
+  emptyTrackList() {
+    while (this.trackListEl.hasChildNodes()) {
+      this.trackListEl.removeChild(this.trackListEl.lastChild);
     }
+  }
+
+  listTracks(tracks) {
+    setTimeout(() => {
+      this.emptyTrackList()
+
+      for (const track of tracks) {
+        const listItem = this.createTrackListItem(track)
+        this.trackListEl.appendChild(listItem)
+      }
+    }, 70)
+  }
+
+  onStationButtonClick(event) {
+    const button = event.currentTarget
+    this.playStationFromButton(button)
+  }
+
+  playStationFromButton(button) {
+    const stationID = button.value
+    const stationName = button.querySelector('.station-name').textContent
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    const listItem = button.closest('.station-list-item')
+
+    if (focusedItem) {
+      focusedItem.classList.remove('focused')
+    }
+    button.blur()
+    this.toggleStationMenu()
+    this.stationChanged(stationID, stationName)
+    listItem.classList.add('focused')
+  }
+
+  createStationListItem(data, isActive) {
+    const el = this.stationListItemTpl.content.cloneNode(true)
+    const button = el.querySelector('.station-button')
+    const nameEl = el.querySelector('.station-name')
+    const imageEl = el.querySelector('.station-image')
+
+    if (isActive) {
+      const listItem = el.querySelector('.station-list-item')
+      listItem.classList.add('focused')
+    }
+
+    imageEl.src = `station-images/${data.id}.png`
+    button.value = data.id
+    nameEl.textContent = data.title
+    button.addEventListener('click', e => this.onStationButtonClick(e))
+
+    return el
+  }
+
+  createTrackListItem(track) {
+    const el = this.trackListItemTpl.content.cloneNode(true)
+    const nameEl = el.querySelector('.track-name')
+    const artistEl = el.querySelector('.artist')
+    const timeEl = el.querySelector('.track-date')
+    const date = new Date(track.date)
+
+    nameEl.textContent = track.title
+    artistEl.textContent = track.artist
+    timeEl.textContent = this.prettyDate(date)
+
+    return el
+  }
+
+  prettyDate(date) {
+    const fullHours = date.getHours()
+    const hours = fullHours - 12
+    let minutes = date.getMinutes()
+    if (minutes < 10) {
+      minutes = `0${minutes}`
+    }
+    let amPM = 'am'
+    if (fullHours >= 12) {
+      amPM = 'pm'
+    }
+    return `${hours}:${minutes} ${amPM}`
   }
 
   hideTrackInfo() {
-    this.titleEl.textContent = '';
-    this.artistEl.textContent = '';
-    this.currentInfoEl.classList.add('hidden');
+    this.emptyTrackList()
+    this.trackListEl.classList.add('d-none')
   }
 
   loadCurrentInfo() {
-    this.stationSelect.disabled = true;
+    this.stationMenuToggle.classList.add('disabled')
+
     chrome.runtime.sendMessage({ action: 'info' }, info => {
       console.debug('finished info request, info', info);
-      this.stationSelect.value = info.station;
-      if (info.paused) {
-        this.stationIsPaused();
-      } else {
-        this.stationIsPlaying();
+      const currentStationButton = document.querySelector(`.station-button[value="${info.station}"]`)
+      if (currentStationButton) {
+        this.stationMenuToggle.value = info.station
+        this.stationMenuToggle.textContent = currentStationButton.textContent
       }
-      this.updateStationImage(info.station);
-      this.stationSelect.disabled = false;
-      this.displayTrackInfo(info);
-    });
+
+      if (info.paused) {
+        this.stationIsPaused()
+      } else {
+        this.play()
+      }
+
+      this.updateStationImage(info.station)
+      this.stationMenuToggle.classList.remove('disabled')
+      this.listTracks(info.tracks)
+    })
   }
 
   stationIsPlaying() {
-    this.pauseButton.classList.remove('hidden');
-    this.playButton.classList.add('hidden');
-    this.stationSelect.focus();
+    this.pauseButton.classList.remove('d-none')
+    this.playButton.classList.add('d-none')
+    this.stationMenuToggle.focus()
   }
 
   stationIsPaused() {
-    this.pauseButton.classList.add('hidden');
-    this.playButton.classList.remove('hidden');
-    this.playButton.disabled = false;
-    this.stationSelect.focus();
+    this.pauseButton.classList.add('d-none')
+    this.playButton.classList.remove('d-none')
+    this.playButton.disabled = false
+    this.stationMenuToggle.focus()
   }
 
   play() {
-    const station = this.stationSelect.value;
-    console.debug('play button clicked, station', station);
-    this.updateStationImage(station);
+    const station = this.stationMenuToggle.value
+    if (!station || station.length < 1) {
+      return
+    }
+    console.debug('play', station)
+    this.updateStationImage(station)
+
     chrome.runtime.sendMessage({ action: 'play', station }, () => {
-      console.debug('finishing telling station to play');
-      this.stationIsPlaying();
+      this.stationIsPlaying()
+
       chrome.runtime.sendMessage({ action: 'info' }, info => {
-        if (info.artist !== '' || info.title !== '') {
-          this.displayTrackInfo(info);
+        if (info.tracks && info.tracks.length > 0) {
+          this.listTracks(info.tracks)
         } else {
-          SomaPlayerUtil.getCurrentTrackInfo(station).then(info => {
-            this.displayTrackInfo(info);
-          });
+          const api = new SomaAPI()
+          api.getStationTracks(station).
+            then(tracks => this.listTracks(tracks)).
+            catch(error => console.error('failed to get tracks', error))
         }
-      });
-    });
+      })
+    })
   }
 
   pause() {
-    const station = this.stationSelect.value;
-    console.debug('pause button clicked, station', station);
+    const station = this.stationMenuToggle.value
+    console.debug('pausing station', station)
+
     return new Promise(resolve => {
       chrome.runtime.sendMessage({ action: 'pause', station }, () => {
-        console.debug('finished telling station to pause');
-        this.stationIsPaused();
-        this.stationSelect.focus();
-        resolve();
-      });
-    });
+        this.stationIsPaused()
+        this.stationMenuToggle.focus()
+        resolve()
+      })
+    })
   }
 
   updateStationImage(station) {
-    if (!this.stationImg) {
-      this.stationImg = document.createElement('img');
-      this.stationImg.className = 'hidden';
-      this.stationImg.id = 'station-image';
-      const nextSibling = this.titleEl.parentNode;
-      const container = nextSibling.parentNode;
-      container.insertBefore(this.stationImg, nextSibling);
-    }
     if (station && station.length > 0) {
-      this.stationImg.src = `station-images/${station}.png`;
-      this.stationImg.classList.remove('hidden');
+      this.stationImg.src = `station-images/${station}.png`
+      this.stationImg.classList.remove('d-none')
     } else {
-      this.stationImg.classList.add('hidden');
+      this.stationImg.classList.add('d-none')
     }
   }
 
-  stationChanged() {
-    const newStation = this.stationSelect.value;
-    if (newStation === '') {
+  stationChanged(stationID, stationName) {
+    if (stationID === '') {
       chrome.runtime.sendMessage({ action: 'clear' }, () => {
-        console.debug('station cleared');
-        this.playButton.disabled = true;
-        this.hideTrackInfo();
-        this.pause();
-      });
-    } else {
-      chrome.runtime.sendMessage({ action: 'info' }, info => {
-        const currentStation = info.station;
-        if (newStation !== '' && newStation !== currentStation) {
-          console.debug(`station changed to ${newStation}`);
-          this.playButton.disabled = false;
-          this.pause().then(this.play.bind(this));
-        }
-      });
+        this.playButton.disabled = true
+        this.hideTrackInfo()
+        this.pause()
+      })
+      return
     }
+
+    this.stationMenuToggle.value = stationID
+    this.stationMenuToggle.textContent = stationName
+    this.closeStationMenu()
+
+    chrome.runtime.sendMessage({ action: 'info' }, info => {
+      const currentStation = info.station
+
+      if (stationID !== currentStation) {
+        console.debug(`station changed to ${stationID}`)
+        this.playButton.disabled = false
+        this.pause().then(() => this.play())
+      }
+    })
   }
 
   handleLinks() {
@@ -230,10 +418,10 @@ class SomaPlayerPopup {
   }
 
   applyTheme() {
-    return SomaPlayerUtil.getOptions().then(opts => {
-      const theme = opts.theme || 'light';
-      return document.body.classList.add(`theme-${theme}`);
-    });
+    SomaPlayerUtil.getOptions().then(opts => {
+      const theme = opts.theme || 'light'
+      document.body.classList.add(`theme-${theme}`)
+    })
   }
 }
 

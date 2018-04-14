@@ -2,51 +2,72 @@
 <html>
 <head>
   <title>SomaPlayer Popup</title>
-  <link href="bulma.min.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-core.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="primer-dropdown.css" media="screen" rel="stylesheet" type="text/css">
   <link href="shared.css" media="screen" rel="stylesheet" type="text/css">
   <link href="popup.css" media="screen" rel="stylesheet" type="text/css">
 </head>
-<body class="popup">
-  <div class="container">
-    <h1 class="title">SomaPlayer</h1>
-    <div class="hidden box" id="currently-playing">
-      <h2 class="subtitle">
-        <span id="title"></span><span id="artist"></span>
-      </h2>
+<body>
+  <header class="py-2 px-4 mb-2 header d-flex flex-items-center flex-justify-between text-small">
+    <div class="d-flex">
+      <img alt="SomaPlayer logo" class="rounded-2 icon-light mr-1" height="20" src="icon48.png" width="20">
+      <img alt="SomaPlayer logo" class="rounded-2 icon-dark mr-1" height="20" src="icon48-dark.png" width="20">
+      <h5 class="mr-2 h5">SomaPlayer</h5>
     </div>
-    <div class="control">
-      <label class="sr-only" for="station">Station:</label>
-      <span class="select is-medium">
-        <select autofocus="autofocus" disabled="disabled" id="station" name="station">
-          <option value="">Choose a station</option>
-        </select>
-      </span>
-      <button disabled="disabled" id="play" class="button is-medium" type="button">
+    <div class="d-flex">
+      <a class="text-gray mr-2 d-inline-block" href="#options">Options</a>
+      <div class="mr-2">&middot;</div>
+      <a class="text-gray d-inline-block" href="http://somafm.com/support/">Donate to SomaFM</a>
+    </div>
+  </header>
+  <div class="mb-3 d-flex width-full position-relative flex-justify-center">
+    <img id="station-image" width="60" height="60" class="flex-shrink-0 mt-2 mr-4 d-none rounded-2">
+    <div class="d-flex flex-items-center flex-justify-center">
+      <div class="dropdown mr-2">
+        <button class="disabled no-wrap btn dropdown-toggle" value="" id="station-menu-toggle" type="button" aria-expanded="false" aria-haspopup="true">
+          Choose a station
+          <div class="dropdown-caret"></div>
+        </button>
+        <div class="dropdown-menu-content">
+          <ul id="station-list" class="rounded-0 dropdown-menu dropdown-menu-se"></ul>
+        </div>
+      </div>
+      <button disabled id="play" class="btn btn-audio" type="button">
         <i class="material-icons">play_arrow</i>
       </button>
-      <button class="hidden button is-medium" id="pause" type="button">
+      <button id="pause" class="btn d-none btn-audio" type="button">
         <i class="material-icons">pause</i>
       </button>
     </div>
   </div>
-  <footer class="footer">
-    <ul class="list-inline">
-      <li>
-        <a href="#options">
-          Settings
-        </a>
-      </li>
-      <li>&middot;</li>
-      <li>
-        <a href="http://somafm.com/support/">
-          Donate to SomaFM
-        </a>
-      </li>
-    </ul>
-  </footer>
+  <ul id="track-list" class="mx-4 mb-3 list-style-none">
+  </ul>
+  <ul id="tips-list" class="d-none mx-4 mb-3 f6 text-gray tips-list list-style-none">
+    <li class="text-bold">Tip:</li>
+    <li class="d-none js-tip">Hit Space to toggle play/pause</li>
+    <li class="d-none js-tip">Hit Enter to open/close the station list</li>
+    <li class="d-none js-tip">Use up/down arrow keys to select a station in the list</li>
+  </ul>
+  <template id="track-list-item-template">
+    <li class="track-list-item">
+      <span class="track-name text-bold"></span>
+      by
+      <span class="artist"></span>
+      <span class="track-date text-small text-gray"></span>
+    </li>
+  </template>
+  <template id="station-list-item-template">
+    <li class="station-list-item">
+      <button class="width-full station-button p-2 d-flex btn-link flex-items-center" type="button">
+        <img class="station-image rounded-2 mr-2" width="30" height="30">
+        <span class="station-name no-wrap"></span>
+      </button>
+    </li>
+  </template>
   <script src="config.js"></script>
   <script src="util.js"></script>
-  <script src="analytics.js"></script>
+  <script src="local-storage.js"></script>
+  <script src="soma-api.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
