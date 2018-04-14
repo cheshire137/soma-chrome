@@ -3,6 +3,14 @@ body {
   overflow: hidden;
 }
 
+.tips-list li {
+  display: inline-block;
+}
+
+.tips-list li + li {
+  margin-left: 0.75em;
+}
+
 .dropdown {
   position: inherit;
 }

@@ -6,6 +6,7 @@ class SomaPlayerPopup {
     this.applyTheme()
     this.fetchSomaStations()
     this.listenForPlayback()
+    this.displayTip()
   }
 
   hookupMenu() {
@@ -132,6 +133,13 @@ class SomaPlayerPopup {
     this.pauseButton.addEventListener('click', () => this.pause())
   }
 
+  displayTip() {
+    const tips = Array.from(this.tipsList.querySelectorAll('.js-tip'))
+    const index = Math.floor(Math.random() * tips.length)
+    const tip = tips[index]
+    tip.classList.remove('d-none')
+  }
+
   findElements() {
     this.stationMenuToggle = document.getElementById('station-menu-toggle')
     this.stationListEl = document.getElementById('station-list')
@@ -142,6 +150,7 @@ class SomaPlayerPopup {
     this.trackListEl = document.getElementById('track-list')
     this.trackListItemTpl = document.getElementById('track-list-item-template')
     this.stationImg = document.getElementById('station-image')
+    this.tipsList = document.getElementById('tips-list')
   }
 
   insertStationOptions(stations) {
