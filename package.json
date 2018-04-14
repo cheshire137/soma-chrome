@@ -24,8 +24,10 @@
     "esnext": true,
     "globals": [
       "document",
+      "SomaAPI",
       "SomaPlayerUtil",
       "SomaPlayerConfig",
+      "SomaLocalStorage",
       "io",
       "chrome",
       "window"
@@ -38,7 +40,8 @@
       "babel/object-curly-spacing": [2, "always"],
       "camelcase": [2, {"properties": "never"}],
       "no-new": 0,
-      "semi": 0
+      "semi": 0,
+      "default-case": 0
     }
   }
 }

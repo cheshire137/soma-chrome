@@ -88,13 +88,10 @@ class SomaPlayerPopup {
       } else {
         newFocusedItem = listItems[index - 1] || lastListItem
       }
-
+    } else if (offset > 0) {
+      newFocusedItem = firstListItem
     } else {
-      if (offset > 0) {
-        newFocusedItem = firstListItem
-      } else {
-        newFocusedItem = lastListItem
-      }
+      newFocusedItem = lastListItem
     }
 
     if (newFocusedItem) {
@@ -194,7 +191,6 @@ class SomaPlayerPopup {
             this.insertStationOptions(stations)
           }
         })
-
       } else {
         console.debug('stations already stored', stations)
         this.insertStationOptions(stations)
