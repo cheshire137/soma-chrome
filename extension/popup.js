@@ -134,10 +134,18 @@ class SomaPlayerPopup {
   }
 
   displayTip() {
-    const tips = Array.from(this.tipsList.querySelectorAll('.js-tip'))
-    const index = Math.floor(Math.random() * tips.length)
-    const tip = tips[index]
-    tip.classList.remove('d-none')
+    SomaPlayerUtil.getOptions().then(opts => {
+      const tipsSetting = opts.tips || 'on'
+      if (tipsSetting !== 'on') {
+        return
+      }
+
+      const tips = Array.from(this.tipsList.querySelectorAll('.js-tip'))
+      const index = Math.floor(Math.random() * tips.length)
+      const tip = tips[index]
+      tip.classList.remove('d-none')
+      this.tipsList.classList.remove('d-none')
+    })
   }
 
   findElements() {

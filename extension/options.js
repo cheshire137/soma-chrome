@@ -16,7 +16,8 @@ class SomaPlayerOptions {
   listenForChanges() {
     const selectors = ['input[name="scrobbling"]',
                        'input[name="notifications"]',
-                       'input[name="theme"]'];
+                       'input[name="theme"]',
+                       'input[name="tips"]'];
     selectors.forEach(selector => {
       const inputs = Array.from(document.querySelectorAll(selector));
       inputs.forEach(input => {
@@ -33,6 +34,7 @@ class SomaPlayerOptions {
     this.disableNotifications =
         document.getElementById('disable_notifications');
     this.darkTheme = document.getElementById('dark_theme');
+    this.tipsOff = document.getElementById('tips_off')
     this.stationOptions = document.getElementById('stations-options');
     this.stationCount = document.getElementById('station-count');
     this.stationListEl = document.getElementById('stations-list');
@@ -61,6 +63,9 @@ class SomaPlayerOptions {
       }
       if (opts.theme === 'dark') {
         this.darkTheme.checked = true;
+      }
+      if (opts.tips === 'off') {
+        this.tipsOff.checked = true
       }
       for (const key in opts) {
         if (opts.hasOwnProperty(key)) {
@@ -139,8 +144,13 @@ class SomaPlayerOptions {
     const checkedNotifications =
         document.querySelector('input[name="notifications"]:checked');
     this.options.notifications = checkedNotifications.value === 'enabled';
+
     const checkedTheme = document.querySelector('input[name="theme"]:checked');
     this.options.theme = checkedTheme.value;
+
+    const checkedTips = document.querySelector('input[name="tips"]:checked')
+    this.options.tips = checkedTips.value
+
     return SomaPlayerUtil.setOptions(this.options).then(() => {
       this.flashNotice('Saved your options!');
       this.applyTheme();
