@@ -59,9 +59,18 @@ class SomaPlayerPopup {
   }
 
   updateStationFilter(newValue) {
+    if (newValue === this.stationFilter) {
+      return
+    }
+
     this.stationFilter = newValue
-    this.stationFilterEl.textContent = this.stationFilter
-    this.stationFilterEl.classList.toggle('d-none', this.stationFilter === '')
+    this.stationFilterEl.textContent = newValue
+
+    const isFilterBlank = newValue === ''
+    this.stationFilterEl.classList.toggle('d-none', isFilterBlank)
+    if (isFilterBlank) {
+      this.closeStationMenu()
+    }
   }
 
   handleStationFilterTyping(character) {
