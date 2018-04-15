@@ -3,6 +3,7 @@
 ## Version 0.0.1.4:
 
 - "Choose a station" menu focused by default when opening the extension, so you can hit Enter to see the list of stations.
+- Can type the name of a station to filter the station menu.
 
 ## Version 0.0.1.3:
 
