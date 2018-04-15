@@ -4,7 +4,7 @@
 
 - "Choose a station" menu focused by default when opening the extension, so you can hit Enter to see the list of stations.
 - Can type the name of a station to filter the station menu.
-- Add shortcut to open the extension; defaults to Alt S (or Option S on a Mac).
+- Add shortcut to open the extension; defaults to Alt+S (or Option+S on a Mac).
 
 ## Version 0.0.1.3:
 
