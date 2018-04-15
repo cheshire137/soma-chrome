@@ -7,6 +7,7 @@ class SomaPlayerPopup {
     this.applyTheme()
     this.fetchSomaStations()
     this.listenForPlayback()
+    this.addShortcutTip()
     this.displayTip()
   }
 
@@ -190,6 +191,17 @@ class SomaPlayerPopup {
     this.pauseButton.addEventListener('click', () => this.pause())
   }
 
+  addShortcutTip() {
+    chrome.commands.getAll(commands => {
+      const popupCommand = commands.filter(c => c.name === '_execute_browser_action')[0]
+
+      if (popupCommand && popupCommand.shortcut && popupCommand.shortcut.length > 0) {
+        this.shortcut.textContent = popupCommand.shortcut
+        this.shortcutTip.classList.add('js-tip')
+      }
+    })
+  }
+
   displayTip() {
     SomaPlayerUtil.getOptions().then(opts => {
       const tipsSetting = opts.tips || 'on'
@@ -217,6 +229,8 @@ class SomaPlayerPopup {
     this.trackListItemTpl = document.getElementById('track-list-item-template')
     this.stationImg = document.getElementById('station-image')
     this.tipsList = document.getElementById('tips-list')
+    this.shortcut = document.getElementById('shortcut')
+    this.shortcutTip = document.getElementById('shortcut-tip')
   }
 
   insertStationOptions(stations) {
