@@ -135,6 +135,8 @@ class SomaPlayerPopup {
         hasListItemBeenFocused = true
       }
     }
+
+    this.noStationMessage.classList.toggle('d-none', hasListItemBeenFocused)
   }
 
   focusStationListItem(offset) {
@@ -231,6 +233,7 @@ class SomaPlayerPopup {
     this.stationFilterEl = document.getElementById('station-filter')
     this.stationListEl = document.getElementById('station-list')
     this.stationListItemTpl = document.getElementById('station-list-item-template')
+    this.noStationMessage = document.getElementById('no-station-message')
     this.playButton = document.getElementById('play')
     this.pauseButton = document.getElementById('pause')
     this.currentInfoEl = document.getElementById('currently-playing')
