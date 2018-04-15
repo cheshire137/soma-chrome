@@ -51,8 +51,7 @@ class SomaPlayerPopup {
         this.handleStationFilterTyping(null)
         break
       default:
-        const input = String.fromCharCode(event.keyCode)
-        if (/[a-zA-Z0-9]/.test(input)) {
+        if (/[a-zA-Z0-9]/.test(String.fromCharCode(event.keyCode))) {
           this.handleStationFilterTyping(event.key)
         }
     }
