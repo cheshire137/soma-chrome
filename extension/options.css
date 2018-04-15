@@ -2,6 +2,10 @@ body {
   font-size: 18px;
 }
 
+code {
+  font-size: inherit;
+}
+
 .container {
   width: 780px;
 }

@@ -1,10 +1,12 @@
 class SomaPlayerOptions {
   constructor() {
-    this.findElements();
-    this.options = { scrobbling: false, notifications: true };
-    this.listenForChanges();
-    this.listenForRefresh();
-    this.restoreOptions();
+    this.findElements()
+    this.options = { scrobbling: false, notifications: true }
+    this.listenForChanges()
+    this.listenForRefresh()
+    this.restoreOptions()
+    this.hookUpLinks()
+    this.showShortcutTip()
   }
 
   listenForRefresh() {
@@ -27,7 +29,11 @@ class SomaPlayerOptions {
   }
 
   findElements() {
+    this.shortcutTipContainer = document.getElementById('shortcut-tip-container')
+    this.noShortcutTipContainer = document.getElementById('no-shortcut-tip-container')
+    this.shortcut = document.getElementById('shortcut')
     this.stationListItemTpl = document.getElementById('station-list-item-template')
+    this.chromeExtensionsLinks = document.querySelectorAll('.chrome-extensions-link')
     this.statusArea = document.getElementById('status-message');
     this.disableScrobbling = document.getElementById('disable_scrobbling');
     this.enableScrobbling = document.getElementById('enable_scrobbling');
@@ -39,6 +45,32 @@ class SomaPlayerOptions {
     this.stationCount = document.getElementById('station-count');
     this.stationListEl = document.getElementById('stations-list');
     this.refreshStationsButton = document.getElementById('refresh-stations');
+  }
+
+  hookUpLinks() {
+    for (const link of this.chromeExtensionsLinks) {
+      link.addEventListener('click', e => this.openChromeExtensions(e))
+    }
+  }
+
+  openChromeExtensions(event) {
+    event.preventDefault()
+    event.target.blur()
+
+    chrome.tabs.create({ url: 'chrome://extensions' })
+  }
+
+  showShortcutTip() {
+    chrome.commands.getAll(commands => {
+      const popupCommand = commands.filter(c => c.name === '_execute_browser_action')[0]
+
+      if (popupCommand && popupCommand.shortcut && popupCommand.shortcut.length > 0) {
+        this.shortcut.textContent = popupCommand.shortcut
+        this.shortcutTipContainer.classList.remove('d-none')
+      } else {
+        this.noShortcutTipContainer.classList.remove('d-none')
+      }
+    })
   }
 
   createStationListItem(data) {
