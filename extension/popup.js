@@ -1,5 +1,6 @@
 class SomaPlayerPopup {
   constructor() {
+    this.stationFilter = ''
     this.findElements()
     this.handleLinks()
     this.hookupMenu()
@@ -45,7 +46,28 @@ class SomaPlayerPopup {
       case ' ':
         this.handleSpace(event)
         break
+      case 'Backspace':
+        this.handleStationFilterTyping(null)
+        break
+      default:
+        const input = String.fromCharCode(event.keyCode)
+        if (/[a-zA-Z0-9]/.test(input)) {
+          this.handleStationFilterTyping(event.key)
+        }
     }
+  }
+
+  handleStationFilterTyping(character) {
+    if (!this.isStationMenuOpen()) {
+      this.openStationMenu()
+    }
+    if (character) {
+      this.stationFilter += character
+    } else {
+      this.stationFilter = this.stationFilter.slice(0, this.stationFilter.length - 1)
+    }
+    this.stationFilterEl.textContent = this.stationFilter
+    this.filterStations()
   }
 
   handleSpace(event) {
@@ -61,16 +83,30 @@ class SomaPlayerPopup {
   }
 
   handleEnter(event) {
-    if (this.stationMenuToggle.classList.contains('selected')) {
-      event.preventDefault()
+    if (!this.isStationMenuOpen()) {
+      return
+    }
+    event.preventDefault()
 
-      const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
-      if (focusedItem) {
-        const button = focusedItem.querySelector('.station-button')
-        this.playStationFromButton(button)
-      } else {
-        this.toggleStationMenu()
-      }
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    if (focusedItem) {
+      const button = focusedItem.querySelector('.station-button')
+      this.stationFilter = ''
+      this.playStationFromButton(button)
+    } else {
+      this.toggleStationMenu()
+    }
+  }
+
+  filterStations() {
+    const listItems = Array.from(this.stationListEl.querySelectorAll('.station-list-item'))
+    const showAllStations = this.stationFilter === ''
+
+    for (const listItem of listItems) {
+      const value = listItem.getAttribute('data-station-filter')
+      const filterMatchesStation = value.indexOf(this.stationFilter) === 0
+      const isVisible = showAllStations || filterMatchesStation
+      listItem.classList.toggle('d-none', !isVisible)
     }
   }
 
@@ -114,13 +150,18 @@ class SomaPlayerPopup {
   }
 
   closeStationMenu() {
+    this.stationFilter = ''
     const container = this.stationMenuToggle.closest('.dropdown')
     container.classList.remove('active')
     this.stationMenuToggle.classList.remove('selected')
   }
 
+  isStationMenuOpen() {
+    return this.stationMenuToggle.classList.contains('selected')
+  }
+
   toggleStationMenu() {
-    if (this.stationMenuToggle.classList.contains('selected')) {
+    if (this.isStationMenuOpen()) {
       this.closeStationMenu()
     } else {
       this.openStationMenu()
@@ -149,6 +190,7 @@ class SomaPlayerPopup {
 
   findElements() {
     this.stationMenuToggle = document.getElementById('station-menu-toggle')
+    this.stationFilterEl = document.getElementById('station-filter')
     this.stationListEl = document.getElementById('station-list')
     this.stationListItemTpl = document.getElementById('station-list-item-template')
     this.playButton = document.getElementById('play')
@@ -238,17 +280,22 @@ class SomaPlayerPopup {
     listItem.classList.add('focused')
   }
 
+  filterValueForStation(stationTitle) {
+    return stationTitle.toLowerCase().replace(/\s+/g, '')
+  }
+
   createStationListItem(data, isActive) {
     const el = this.stationListItemTpl.content.cloneNode(true)
     const button = el.querySelector('.station-button')
     const nameEl = el.querySelector('.station-name')
     const imageEl = el.querySelector('.station-image')
+    const listItem = el.querySelector('.station-list-item')
 
     if (isActive) {
-      const listItem = el.querySelector('.station-list-item')
       listItem.classList.add('focused')
     }
 
+    listItem.setAttribute('data-station-filter', this.filterValueForStation(data.title))
     imageEl.src = `station-images/${data.id}.png`
     button.value = data.id
     nameEl.textContent = data.title
