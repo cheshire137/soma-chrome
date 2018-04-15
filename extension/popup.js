@@ -167,6 +167,7 @@ class SomaPlayerPopup {
     }
 
     this.stationMenuToggle.classList.remove('disabled')
+    setTimeout(() => this.stationMenuToggle.focus(), 100)
     this.loadCurrentInfo()
   }
 
