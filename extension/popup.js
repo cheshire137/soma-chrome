@@ -70,6 +70,7 @@ class SomaPlayerPopup {
 
     if (isFilterBlank) {
       this.closeStationMenu()
+      this.noStationMessage.classList.add('d-none')
 
       const hiddenStationListItems = this.stationListEl.querySelectorAll('.station-list-item.d-none')
       for (const listItem of hiddenStationListItems) {

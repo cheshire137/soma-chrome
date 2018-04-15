@@ -3,6 +3,7 @@
 ## Version 0.0.1.5:
 
 - Fixed bug where only stations matching the previous filter would be shown when closing and reopening the station menu.
+- Fixed bug where "No stations match" message would incorrectly be shown when you open the station menu without filtering.
 
 ## Version 0.0.1.4:
 
