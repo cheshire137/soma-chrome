@@ -104,6 +104,11 @@ class SomaPlayerPopup {
   }
 
   filterStations() {
+    const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
+    if (focusedItem) {
+      focusedItem.classList.remove('focused')
+    }
+
     const listItems = Array.from(this.stationListEl.querySelectorAll('.station-list-item'))
     const showAllStations = this.stationFilter === ''
 
