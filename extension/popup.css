@@ -33,7 +33,6 @@ body {
   text-decoration: underline;
 }
 
-.station-list-item + .station-list-item,
 .track-list-item + .track-list-item {
   margin-top: 4px;
 }
