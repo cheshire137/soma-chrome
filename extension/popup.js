@@ -57,16 +57,21 @@ class SomaPlayerPopup {
     }
   }
 
+  updateStationFilter(newValue) {
+    this.stationFilter = newValue
+    this.stationFilterEl.textContent = this.stationFilter
+    this.stationFilterEl.classList.toggle('d-none', this.stationFilter === '')
+  }
+
   handleStationFilterTyping(character) {
     if (!this.isStationMenuOpen()) {
       this.openStationMenu()
     }
     if (character) {
-      this.stationFilter += character
+      this.updateStationFilter(this.stationFilter + character)
     } else {
-      this.stationFilter = this.stationFilter.slice(0, this.stationFilter.length - 1)
+      this.updateStationFilter(this.stationFilter.slice(0, this.stationFilter.length - 1))
     }
-    this.stationFilterEl.textContent = this.stationFilter
     this.filterStations()
   }
 
@@ -91,7 +96,7 @@ class SomaPlayerPopup {
     const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
     if (focusedItem) {
       const button = focusedItem.querySelector('.station-button')
-      this.stationFilter = ''
+      this.updateStationFilter('')
       this.playStationFromButton(button)
     } else {
       this.toggleStationMenu()
@@ -150,7 +155,7 @@ class SomaPlayerPopup {
   }
 
   closeStationMenu() {
-    this.stationFilter = ''
+    this.updateStationFilter('')
     const container = this.stationMenuToggle.closest('.dropdown')
     container.classList.remove('active')
     this.stationMenuToggle.classList.remove('selected')
