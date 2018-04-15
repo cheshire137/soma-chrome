@@ -67,8 +67,14 @@ class SomaPlayerPopup {
 
     const isFilterBlank = newValue === ''
     this.stationFilterEl.classList.toggle('d-none', isFilterBlank)
+
     if (isFilterBlank) {
       this.closeStationMenu()
+
+      const hiddenStationListItems = this.stationListEl.querySelectorAll('.station-list-item.d-none')
+      for (const listItem of hiddenStationListItems) {
+        listItem.classList.remove('d-none')
+      }
     }
   }
 

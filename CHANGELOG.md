@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.5:
+
+- Fixed bug where only stations matching the previous filter would be shown when closing and reopening the station menu.
+
 ## Version 0.0.1.4:
 
 - "Choose a station" menu focused by default when opening the extension, so you can hit Enter to see the list of stations.
