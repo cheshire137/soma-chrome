@@ -68,6 +68,8 @@ class SomaPlayerPopup {
       if (focusedItem) {
         const button = focusedItem.querySelector('.station-button')
         this.playStationFromButton(button)
+      } else {
+        this.toggleStationMenu()
       }
     }
   }
