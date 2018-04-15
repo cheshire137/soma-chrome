@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.4:
+
+- "Choose a station" menu focused by default when opening the extension, so you can hit Enter to see the list of stations.
+
 ## Version 0.0.1.3:
 
 - Removed Last.fm scrobbling; see https://github.com/cheshire137/soma-chrome/issues/39.
