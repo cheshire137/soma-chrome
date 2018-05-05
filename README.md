@@ -18,8 +18,11 @@ See the [change log](CHANGELOG.md). You might also be interested in my [desktop 
 
 Pull requests welcome!
 
-1. `npm install` to install necessary packages and get a config.js to customize.
-1. In Chrome at `chrome://extensions/`, click 'Load unpacked extension...' and choose the extension/ directory.
+In Chrome:
+
+1. Navigate to `chrome://extensions/`
+1. Toggle on "Developer mode" in the top right
+1. Click "Load Unpacked" and choose the extension/ directory
 
 ## How to Check Code Style
 

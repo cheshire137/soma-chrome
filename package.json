@@ -14,8 +14,7 @@
   "license": "MIT",
   "scripts": {
     "test": "npm run-script style",
-    "style": "node_modules/xo/cli.js extension/background.js extension/options.js extension/popup.js extension/util.js",
-    "postinstall": "if [ ! -f extension/config.js ]; then echo \"Copying config.js.example to extension/config.js\"; cp config.js.example extension/config.js; fi"
+    "style": "node_modules/xo/cli.js extension/background.js extension/options.js extension/popup.js extension/util.js"
   },
   "devDependencies": {
     "xo": "^0.15.1"
