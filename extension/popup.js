@@ -225,10 +225,8 @@ class SomaPlayerPopup {
   }
 
   listenForVolumeChange() {
-    this.volumeSlider.addEventListener('change', () => {
-      const volume = parseFloat(this.volumeSlider.value)
-      this.changeVolume(volume)
-    })
+    this.volumeSlider.addEventListener('change', () => this.onVolumeSliderChange())
+    this.volumeSlider.addEventListener('input', () => this.onVolumeSliderChange())
 
     this.volumeUp.addEventListener('click', () => {
       const volume = parseFloat(this.volumeSlider.value) + 0.1
@@ -239,6 +237,11 @@ class SomaPlayerPopup {
       const volume = parseFloat(this.volumeSlider.value) - 0.1
       this.changeVolume(volume)
     })
+  }
+
+  onVolumeSliderChange() {
+    const volume = parseFloat(this.volumeSlider.value)
+    this.changeVolume(volume)
   }
 
   changeVolume(volume) {
