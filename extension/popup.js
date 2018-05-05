@@ -440,7 +440,10 @@ class SomaPlayerPopup {
 
   prettyDate(date) {
     const fullHours = date.getHours()
-    const hours = fullHours - 12
+    let hours = fullHours
+    if (hours > 12) {
+      hours -= 12
+    }
     let minutes = date.getMinutes()
     if (minutes < 10) {
       minutes = `0${minutes}`
