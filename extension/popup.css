@@ -105,6 +105,7 @@ body.theme-dark input[type=range]:focus::-webkit-slider-thumb {
 .btn-volume {
   color: #24292e;
   line-height: 1;
+  margin-bottom: -1px;
 }
 
 .btn-volume:focus {
