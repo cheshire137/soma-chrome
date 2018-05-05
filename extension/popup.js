@@ -473,6 +473,7 @@ class SomaPlayerPopup {
       if (currentStationButton) {
         this.stationMenuToggle.value = info.station
         this.stationMenuToggle.textContent = currentStationButton.textContent
+        this.volumeContainer.classList.remove('d-none')
       }
 
       if (info.paused) {
