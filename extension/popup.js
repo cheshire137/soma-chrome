@@ -321,6 +321,7 @@ class SomaPlayerPopup {
     this.volumeSlider = document.getElementById('volume-slider')
     this.volumeDown = document.getElementById('volume-down')
     this.volumeUp = document.getElementById('volume-up')
+    this.volumeContainer = document.getElementById('volume-container')
   }
 
   insertStationOptions(stations) {
@@ -551,6 +552,7 @@ class SomaPlayerPopup {
         this.playButton.disabled = true
         this.hideTrackInfo()
         this.pause()
+        this.volumeContainer.classList.add('d-none')
       })
       return
     }
@@ -558,6 +560,7 @@ class SomaPlayerPopup {
     this.stationMenuToggle.value = stationID
     this.stationMenuToggle.textContent = stationName
     this.closeStationMenu()
+    this.volumeContainer.classList.remove('d-none')
 
     chrome.runtime.sendMessage({ action: 'info' }, info => {
       const currentStation = info.station
