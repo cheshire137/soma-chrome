@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.6:
+
+- Added volume control.
+
 ## Version 0.0.1.5:
 
 - Fixed bug where only stations matching the previous filter would be shown when closing and reopening the station menu.
