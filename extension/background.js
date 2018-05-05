@@ -110,6 +110,11 @@ class SomaPlayerBackground {
     })
   }
 
+  getVolume() {
+    console.debug('current volume', this.audioTag.volume)
+    return this.audioTag.volume
+  }
+
   setVolume(volume) {
     console.debug('setting volume to', volume)
     this.audioTag.volume = volume
@@ -239,6 +244,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'change_volume') {
     somaPlayerBG.setVolume(request.volume)
     sendResponse()
+    return true
+  }
+
+  if (request.action === 'get_volume') {
+    sendResponse(somaPlayerBG.getVolume())
     return true
   }
 })

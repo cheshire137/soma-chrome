@@ -3,6 +3,7 @@ class SomaPlayerPopup {
     this.stationFilter = ''
     this.findElements()
     this.handleLinks()
+    this.initializeVolume()
     this.hookupMenu()
     this.applyTheme()
     this.fetchSomaStations()
@@ -202,6 +203,13 @@ class SomaPlayerPopup {
     } else {
       this.openStationMenu()
     }
+  }
+
+  initializeVolume() {
+    chrome.runtime.sendMessage({ action: 'get_volume' }, volume => {
+      console.debug('volume restored', volume)
+      this.volumeSlider.value = volume
+    })
   }
 
   listenForVolumeChange() {
