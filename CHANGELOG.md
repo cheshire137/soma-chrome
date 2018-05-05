@@ -3,6 +3,7 @@
 ## Version 0.0.1.6:
 
 - Added volume control.
+- Fixed bug where incorrect or negative timestamps were shown for the recent tracks.
 
 ## Version 0.0.1.5:
 
