@@ -97,10 +97,12 @@ class SomaPlayerPopup {
     event.preventDefault()
 
     chrome.runtime.sendMessage({ action: 'info' }, info => {
-      if (info.paused) {
-        this.play()
-      } else {
-        this.pause()
+      if (info.station && info.station.length > 0) {
+        if (info.paused) {
+          this.play()
+        } else {
+          this.pause()
+        }
       }
     })
   }
