@@ -216,6 +216,12 @@ class SomaPlayerPopup {
     this.volumeSlider.value = volume
     this.volumeUp.disabled = volume >= 1
     this.volumeDown.disabled = volume <= 0
+
+    const minVolume = parseFloat(this.volumeSlider.getAttribute('min'))
+    const colorStop = volume - minVolume
+    const leftColor = this.volumeSlider.getAttribute('data-left-color')
+    const rightColor = this.volumeSlider.getAttribute('data-right-color')
+    this.volumeSlider.style.backgroundImage = `-webkit-gradient(linear, left top, right top, color-stop(${colorStop}, ${leftColor}), color-stop(${colorStop}, ${rightColor}))`
   }
 
   listenForVolumeChange() {
