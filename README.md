@@ -29,5 +29,5 @@ Pull requests welcome!
 ## Thanks
 
 - [SomaFM](http://somafm.com/) - where all the music comes from!
-- [Google Material Icons](https://design.google.com/icons/) - for pause and play icons.
+- [Google Material Icons](https://material.io/icons/) - for pause and play icons.
 - [Primer CSS library](https://primer.github.io/)
