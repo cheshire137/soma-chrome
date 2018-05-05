@@ -208,16 +208,37 @@ class SomaPlayerPopup {
   initializeVolume() {
     chrome.runtime.sendMessage({ action: 'get_volume' }, volume => {
       console.debug('volume restored', volume)
-      this.volumeSlider.value = volume
+      this.volumeChanged(volume)
     })
+  }
+
+  volumeChanged(volume) {
+    this.volumeSlider.value = volume
+    this.volumeUp.disabled = volume >= 1
+    this.volumeDown.disabled = volume <= 0
   }
 
   listenForVolumeChange() {
     this.volumeSlider.addEventListener('change', () => {
-      const volume = this.volumeSlider.value
-      chrome.runtime.sendMessage({ action: 'change_volume', volume }, () => {
-        console.debug('volume changed to', volume)
-      })
+      const volume = parseFloat(this.volumeSlider.value)
+      this.changeVolume(volume)
+    })
+
+    this.volumeUp.addEventListener('click', () => {
+      const volume = parseFloat(this.volumeSlider.value) + 0.1
+      this.changeVolume(volume)
+    })
+
+    this.volumeDown.addEventListener('click', () => {
+      const volume = parseFloat(this.volumeSlider.value) - 0.1
+      this.changeVolume(volume)
+    })
+  }
+
+  changeVolume(volume) {
+    chrome.runtime.sendMessage({ action: 'change_volume', volume }, () => {
+      console.debug('volume changed to', volume)
+      this.volumeChanged(volume)
     })
   }
 
@@ -268,6 +289,8 @@ class SomaPlayerPopup {
     this.shortcut = document.getElementById('shortcut')
     this.shortcutTip = document.getElementById('shortcut-tip')
     this.volumeSlider = document.getElementById('volume-slider')
+    this.volumeDown = document.getElementById('volume-down')
+    this.volumeUp = document.getElementById('volume-up')
   }
 
   insertStationOptions(stations) {

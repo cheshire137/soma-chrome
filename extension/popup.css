@@ -154,3 +154,8 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #E62834;
 }
+
+.btn-volume {
+  color: #24292e;
+  line-height: 1;
+}
