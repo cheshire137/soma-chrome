@@ -180,6 +180,10 @@ class SomaPlayerPopup {
     container.classList.add('active')
     this.stationMenuToggle.classList.add('selected')
 
+    const rect = this.stationListEl.getBoundingClientRect()
+    const height = window.innerHeight - rect.top
+    this.stationListEl.style.height = `${height}px`
+
     const focusedItem = this.stationListEl.querySelector('.station-list-item.focused')
     if (focusedItem) {
       focusedItem.scrollIntoView()
