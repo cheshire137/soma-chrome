@@ -85,3 +85,9 @@ body.theme-dark .text-gray {
 body.theme-dark .btn:focus {
   box-shadow: 0 0 0 0.2em rgba(78, 232, 81, 0.3);
 }
+
+.btn:focus,
+a:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2em rgba(230, 40, 52, 0.6);
+}

@@ -90,6 +90,9 @@ input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -7px;
 }
+input[type=range]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 0.2em rgba(230, 40, 52, 0.6);
+}
 
 .btn-volume {
   color: #24292e;
@@ -98,4 +101,5 @@ input[type=range]::-webkit-slider-thumb {
 
 .btn-volume:focus {
   outline: none;
+  box-shadow: 0 0 0 0.2em rgba(230, 40, 52, 0.6);
 }
