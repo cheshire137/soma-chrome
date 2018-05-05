@@ -110,6 +110,11 @@ class SomaPlayerBackground {
     })
   }
 
+  setVolume(volume) {
+    console.debug('setting volume to', volume)
+    this.audioTag.volume = volume
+  }
+
   pause(station) {
     if (typeof station === 'undefined') {
       station = SomaLocalStorage.getCurrentStation()
@@ -229,6 +234,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.debug('got saved list of stations', stations)
     sendResponse(stations)
     return true;
+  }
+
+  if (request.action === 'change_volume') {
+    somaPlayerBG.setVolume(request.volume)
+    sendResponse()
+    return true
   }
 })
 

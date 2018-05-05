@@ -7,6 +7,7 @@ class SomaPlayerPopup {
     this.applyTheme()
     this.fetchSomaStations()
     this.listenForPlayback()
+    this.listenForVolumeChange()
     this.addShortcutTip()
     this.displayTip()
   }
@@ -203,6 +204,15 @@ class SomaPlayerPopup {
     }
   }
 
+  listenForVolumeChange() {
+    this.volumeSlider.addEventListener('change', () => {
+      const volume = this.volumeSlider.value
+      chrome.runtime.sendMessage({ action: 'change_volume', volume }, () => {
+        console.debug('volume changed to', volume)
+      })
+    })
+  }
+
   listenForPlayback() {
     this.playButton.addEventListener('click', () => this.play())
     this.pauseButton.addEventListener('click', () => this.pause())
@@ -249,6 +259,7 @@ class SomaPlayerPopup {
     this.tipsList = document.getElementById('tips-list')
     this.shortcut = document.getElementById('shortcut')
     this.shortcutTip = document.getElementById('shortcut-tip')
+    this.volumeSlider = document.getElementById('volume-slider')
   }
 
   insertStationOptions(stations) {
