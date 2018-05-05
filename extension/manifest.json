@@ -3,7 +3,7 @@
   "name": "SomaPlayer",
   "short_name": "SomaPlayer",
   "description": "Listen to SomaFM web radio stations from your browser.",
-  "version": "0.0.1.6",
+  "version": "0.0.1.7",
   "permissions": [
     "storage", "notifications"
   ],

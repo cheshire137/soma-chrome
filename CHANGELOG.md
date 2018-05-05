@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 0.0.1.7:
+
+- Updated station images, including adding missing images for some holiday stations. Thanks lukeart!
+
 ## Version 0.0.1.6:
 
 - Added volume control.
