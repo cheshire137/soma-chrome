@@ -4,6 +4,7 @@
 
 - Added volume control.
 - Fixed bug where incorrect or negative timestamps were shown for the recent tracks.
+- Station image now links to the station's page on SomaFM.
 
 ## Version 0.0.1.5:
 

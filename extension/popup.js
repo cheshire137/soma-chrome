@@ -314,6 +314,7 @@ class SomaPlayerPopup {
     this.trackListEl = document.getElementById('track-list')
     this.trackListItemTpl = document.getElementById('track-list-item-template')
     this.stationImg = document.getElementById('station-image')
+    this.stationLink = document.getElementById('station-link')
     this.tipsList = document.getElementById('tips-list')
     this.shortcut = document.getElementById('shortcut')
     this.shortcutTip = document.getElementById('shortcut-tip')
@@ -536,9 +537,11 @@ class SomaPlayerPopup {
   updateStationImage(station) {
     if (station && station.length > 0) {
       this.stationImg.src = `station-images/${station}.png`
-      this.stationImg.classList.remove('d-none')
+      this.stationLink.classList.remove('d-none')
+      this.stationLink.href = `http://somafm.com/${station}/`
     } else {
-      this.stationImg.classList.add('d-none')
+      this.stationLink.href = '#'
+      this.stationLink.classList.add('d-none')
     }
   }
 
@@ -576,17 +579,17 @@ class SomaPlayerPopup {
 
   handleLink(link) {
     link.addEventListener('click', event => {
-      event.preventDefault();
-      let url;
-      const href = link.href;
-      const optionsSuffix = '#options';
+      event.preventDefault()
+      let url
+      const href = link.href
+      const optionsSuffix = '#options'
       if (href.indexOf(optionsSuffix) === href.length - optionsSuffix.length) {
-        url = chrome.extension.getURL('options.html');
+        url = chrome.extension.getURL('options.html')
       } else {
-        url = href;
+        url = href
       }
-      chrome.tabs.create({ url });
-      return false;
+      chrome.tabs.create({ url })
+      return false
     });
   }
 
