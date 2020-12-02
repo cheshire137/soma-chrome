@@ -65,11 +65,15 @@
     <li class="d-none js-tip">Type a station name and hit Enter to begin playing</li>
   </ul>
   <template id="track-list-item-template">
-    <li class="track-list-item">
-      <span class="track-name text-bold"></span>
-      by
-      <span class="artist"></span>
-      <span class="track-date text-small text-gray"></span>
+    <li class="track-list-item d-flex">
+      <img class="favorite-icon nofavorite mr-2" alt="favorite track" src="" width="16" height="16">
+      <div>
+        <span class="track-name text-bold"></span>
+        by
+        <span class="artist"></span>
+        <span class="track-date text-small text-gray"></span>
+        <span class="album d-none"></span>
+      </div>
     </li>
   </template>
   <template id="station-list-item-template">
