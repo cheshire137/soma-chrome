@@ -38,6 +38,14 @@ class SomaLocalStorage {
   static setCurrentStation(station) {
     window.localStorage.setItem('somaplayer_current_station', station)
   }
+
+  static getFavoritesList() {
+    return this.getList('somaplayer_favorites_list')
+  }
+
+  static setFavoritesList(favorites) {
+    window.localStorage.setItem('somaplayer_favorites_list', JSON.stringify(favorites))
+  }
 }
 
 window.SomaLocalStorage = SomaLocalStorage

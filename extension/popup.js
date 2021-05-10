@@ -1,6 +1,7 @@
 class SomaPlayerPopup {
   constructor() {
     this.stationFilter = ''
+    this.favoritesList = SomaLocalStorage.getFavoritesList()
     this.findElements()
     this.handleLinks()
     this.initializeVolume()
@@ -432,14 +433,79 @@ class SomaPlayerPopup {
     const el = this.trackListItemTpl.content.cloneNode(true)
     const nameEl = el.querySelector('.track-name')
     const artistEl = el.querySelector('.artist')
+    const albumEl = el.querySelector('.album')
     const timeEl = el.querySelector('.track-date')
     const date = new Date(track.date)
+    const iconEl = el.querySelector('.favorite-icon')
 
     nameEl.textContent = track.title
     artistEl.textContent = track.artist
+    albumEl.textContent = track.album
     timeEl.textContent = this.prettyDate(date)
 
+    iconEl.addEventListener('click', e => this.handleFavoriteClicked(e))
+    if (this.getIndexOfFavorite(track) >= 0) {
+      this.showFavoriteIcon(iconEl, track)
+    } else {
+      this.showNoFavoriteIcon(iconEl, track)
+    }
+
     return el
+  }
+
+  getIndexOfFavorite(track) {
+    for (let i = 0; i < this.favoritesList.length; i++)
+    {
+      if (this.favoritesList[i].title === track.title
+          && this.favoritesList[i].artist === track.artist
+          && this.favoritesList[i].album === track.album)
+      {
+        return i
+      }
+    }
+
+    return -1;
+  }
+
+  showFavoriteIcon(element) {
+    element.classList.remove('nofavorite')
+
+    if (document.body.classList.contains('theme-dark')) {
+      element.src = 'favorite32-dark.png'
+    } else {
+      element.src = 'favorite32.png'
+    }
+  }
+
+  showNoFavoriteIcon(element) {
+    element.classList.add('nofavorite')
+
+    if (document.body.classList.contains('theme-dark')) {
+      element.src = 'nofavorite32-dark.png'
+    } else {
+      element.src = 'nofavorite32.png'
+    }
+  }
+
+  handleFavoriteClicked(event) {
+    let node = event.currentTarget.parentNode;
+    let favorite = {
+      title: node.querySelector('.track-name').textContent,
+      artist: node.querySelector('.artist').textContent,
+      album: node.querySelector('.album').textContent,
+      date: node.querySelector('.track-date').textContent
+    }
+
+    let index = this.getIndexOfFavorite(favorite)
+    if (index >= 0) {
+      this.showNoFavoriteIcon(event.currentTarget)
+      this.favoritesList.splice(index, 1)
+    } else {
+      this.showFavoriteIcon(event.currentTarget)
+      this.favoritesList.push(favorite)
+    }
+
+    SomaLocalStorage.setFavoritesList(this.favoritesList)
   }
 
   prettyDate(date) {
