@@ -73,6 +73,7 @@ class SomaPlayerBackground {
     };
 
     const seconds = 30;
+    const secons_hours = 60;
     this.songListInterval = setInterval(updateTracksList, seconds * 1000)
 
     updateTracksList()
